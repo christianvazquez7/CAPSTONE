@@ -19,7 +19,8 @@ module.exports = function MarshallBuilder() {
 	 * @param value: Value to be assigned.
 	 */
 	this.lat = function(value) {
-
+		mLatLabel = value;
+		return this;
 	};
 
 	/**
@@ -28,7 +29,8 @@ module.exports = function MarshallBuilder() {
 	 * @param value: Value to be assigned.
 	 */
 	this.long = function(value) {
-
+		mLongLabel = value;
+		return this;
 	};
 
 	/**
@@ -37,7 +39,8 @@ module.exports = function MarshallBuilder() {
 	 * @param value: Value to be assigned.
 	 */
 	this.type = function(value) {
-
+		mTypeLabel = value;
+		return this;
 	};
 
 	/**
@@ -46,7 +49,8 @@ module.exports = function MarshallBuilder() {
 	 * @param value: Value to be assigned.
 	 */
 	this.date = function(value) {
-
+		mDateLabel = value;
+		return this;
 	};
 
 	/**
@@ -55,7 +59,8 @@ module.exports = function MarshallBuilder() {
 	 * @param value: Value to be assigned.
 	 */
 	this.time = function(value) {
-
+		mTimeLabel = value;
+		return this;
 	};
 
 	/**
@@ -64,7 +69,8 @@ module.exports = function MarshallBuilder() {
 	 * @param value: Value to be assigned.
 	 */
 	this.id = function(value) {
-
+		mIdLabel = value;
+		return this;
 	};
 
 	/**
@@ -73,7 +79,8 @@ module.exports = function MarshallBuilder() {
 	 * @param value: Value to be assigned.
 	 */
 	this.domestic = function(value) {
-
+		mDomLabel = value;
+		return this;
 	};
 
 	/**
@@ -82,7 +89,8 @@ module.exports = function MarshallBuilder() {
 	 * @param value: Value to be assigned.
 	 */
 	this.ignore = function(value) {
-
+		mIgnoreList = value;
+		return this;
 	};
 
 	/**
@@ -90,7 +98,7 @@ module.exports = function MarshallBuilder() {
 	 * Builds a new Marshall object.
 	 */
 	this.build = function() {
-
+		return new Marshall(mLatLabel,mLongLabel,mTypeLabel,mDateLabel,mTimeLabel,mIdLabel,mDomLabel,mIgnoreList);
 	};
 
 };
