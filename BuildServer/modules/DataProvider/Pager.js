@@ -4,20 +4,40 @@
  * determines the total amount of results and splits it into chunks (pages).
  * @constructor
  */
-module.exports = function Pager(chunk) {
+module.exports = function Pager() {
 
-	var mChunkSize = chunk;
-	var mTotalSize;
-	var mCurrentOffset;
+	var Socrata = require('node-socrata');
+	var mChunkSize = 0;
+	var numberOfPages = 0;
+	var currentPage = 0;
 
 	/**
 	 * Initializes the pager module. Determines number of pages from query result.
 	 *
 	 * @param query Query to perform and count results.
+	 * @param callback called when query is succesful.
 	 * @return True if query was successful, false otherwise.
 	 */
-	this.init = function(query) {
+	this.init = function(request,callback) {
+		mChunkSize = request.getLimit();
+		var config = {
+			hostDomain: request.getSource(),
+			resource: request.getResource(),
+			XAppToken: request.getToken()
+		};
 
+		var params = {
+			$select: ['count(*)'],
+			$where: request.getLimit(),
+		};
+
+		var soda = new Socrata(config);
+
+		soda.get(params,function(err,response,data){
+			numberOfPages = ceil(data[0].count/parseFloat(chunk));
+			mCurrentOffset = 0;
+			callback();
+		});
 	};
 
 	/**
@@ -25,7 +45,9 @@ module.exports = function Pager(chunk) {
 	 * called again to reuse pager for a different query.
 	 */
 	this.reset = function() {
-
+		currentPage = 0;
+		numberOfPages = 0;
+		mChunkSize = 0;
 	};
 
 	/**
@@ -34,7 +56,7 @@ module.exports = function Pager(chunk) {
 	 * @return True if more pages are still available. False otherwise.
 	 */
 	this.hasNext = function() {
-
+		return currentPage < numberOfPages;
 	};
 
 	/**
@@ -44,7 +66,6 @@ module.exports = function Pager(chunk) {
 	 * @throws Error if no more pages exist.
 	 */
 	this.nextPage = function() {
-
+		return mChunkSize*currentPage++; 
 	}
-
 };
