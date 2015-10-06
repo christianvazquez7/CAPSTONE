@@ -2,7 +2,7 @@
  * Builder for Marshall classes.
  */
 module.exports = function MarshallBuilder() {
-	var Marshall = require('marshall.js');
+	var Marshall = require('./marshall.js');
 
 	var mLatLabel;
 	var mLongLabel;
@@ -28,7 +28,7 @@ module.exports = function MarshallBuilder() {
 	 *
 	 * @param value: Value to be assigned.
 	 */
-	this.long = function(value) {
+	this.lon = function(value) {
 		mLongLabel = value;
 		return this;
 	};
@@ -98,7 +98,16 @@ module.exports = function MarshallBuilder() {
 	 * Builds a new Marshall object.
 	 */
 	this.build = function() {
-		return new Marshall(mLatLabel,mLongLabel,mTypeLabel,mDateLabel,mTimeLabel,mIdLabel,mDomLabel,mIgnoreList);
+		var marshall = new Marshall(mLatLabel,mLongLabel,mTypeLabel,mDateLabel,mTimeLabel,mIdLabel,mDomLabel,mIgnoreList);
+		mLatLabel = undefined;
+		mLongLabel = undefined;
+		mTypeLabel = undefined;
+		mDateLabel = undefined;
+		mTimeLabel = undefined;
+		mIdLabel = undefined;
+		mDomLabel = undefined;
+		mIgnoreList = undefined;
+		return marshall;
 	};
 
 };
