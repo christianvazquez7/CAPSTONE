@@ -1,21 +1,18 @@
 /**
  * Builds http requests for SODA API.
  */
-module.exports = function RequestBuilder() {
-	var source;
+module.exports = function RequestBuilder(pSource, pToken, pResource, marshall) {
+
+	var Request = require('./request.js');
+	var source = pSource;
+	var token = pToken;
+	var resource = pResource;
 	var start;
 	var end;
 	var offset;
+	var increasing;
+	var limit;
 
-	/**
-	 * Specifies the http endpoint for the service.
-	 *
-	 * @param sourceString: Address to endpoint.
-	 */
-	this.source = function(sourceString) {
-		source = sourceString;
-		return this;
-	};
 
 	/**
 	 * Specifies the start date for crime lookup.
@@ -43,7 +40,18 @@ module.exports = function RequestBuilder() {
 	 * @param offsetString: Page number of query result.
 	 */
 	this.offset = function(offsetString) {
+		offset = offsetString;
+		return this;
+	};
 
+	this.increasing = function(isIncreasing) {
+		increasing = isIncreasing;
+		return this;
+	};
+
+	this.limit = function(pLimit) {
+		limit = pLimit;
+		return this;
 	};
 
 	/**
@@ -52,7 +60,33 @@ module.exports = function RequestBuilder() {
 	 * @return The query string to the remote SODA service.
 	 */
 	this.build =  function() {
+		var where;
 
+		if (end !== undefined && start !== undefined ) {
+			where = marshall.getDateLabel() + " >= " + "'" + start + "'" + " AND " + marshall.getDateLabel() + " <= " + "'" + end + "'";
+		} else if (end === undefined) {
+			where = marshall.getDateLabel() + " >= " + "'" + start + "'";
+		} else if (start === undefined) {
+			where = marshall.getDateLabel() + " <= " + "'" + end + "'";
+		}
+
+		var order;
+
+		if(increasing) {
+			order = marshall.getDateLabel() + " ASC";
+		} else {
+			order = marshall.getDateLabel() + " DESC";
+		}
+
+		var request = new Request(source, resource, token, where, order, offset, limit);
+
+		start = undefined;
+		end = undefined;
+		offset = undefined;
+		increasing = undefined;
+		limit = undefined;
+
+		return request;
 	};
 
-}
+};
