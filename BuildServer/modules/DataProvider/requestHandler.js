@@ -3,19 +3,27 @@
  * is ready. Delegates parsing to Crime class, paging to the Pager, and 
  * request building to the RequestBuilder.
  */
-module.exports = function RequestHandler(chunk) {
+module.exports = function RequestHandler(source,token,resource,chunk,marshall,lastPage,lastOffset,start,end) {
 	
 	/**
 	 * Module imports.
 	 */
 	var Crime = require('./crime.js');
-	var MarshallBuilder = require('./marshallBuilder.js');
 	var RequestBuilder = require('./requestBuilder.js');
 	var Pager = require('./pager.js');
-
-	var requestBuilder = new RequestBuilder();
-	var Pager = new Pager(chunk);
+	var mPager = new Pager();
+	var mMarshall = pMarshall;
+	var mLastPage = lastPage;
+	var mLastOffset = lastOffset;
+	var requestBuilder = new RequestBuilder(source,token,resource,mMarshall);
+	var mPager = new Pager();
+	var mStart = start;
+	var mEnd =end;
+	var mChunk = chunk;
 	var dataCallback;
+	var baseRequest = requestBuilder.start(mStart).end(mEnd).limit(chunk).increasing(true).build();
+	mPager.init(baseRequest,ready);
+	
 
 	/**
 	 * Queries the SODA service to check if unprocessed records exist.
@@ -49,4 +57,10 @@ module.exports = function RequestHandler(chunk) {
 
 	};
 
+	/**
+	 * Module is ready to extract data.
+	 */
+	function ready(){
+
+	}
 };

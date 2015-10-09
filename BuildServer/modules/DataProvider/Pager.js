@@ -59,6 +59,10 @@ module.exports = function Pager() {
 		return currentPage < numberOfPages;
 	};
 
+	this.setLastPage = function(pageNumber) {
+		currentPage = pageNumber;
+	};
+
 	/**
 	 * Fetches the index of the next page in query.
 	 *
@@ -66,6 +70,6 @@ module.exports = function Pager() {
 	 * @throws Error if no more pages exist.
 	 */
 	this.nextPage = function() {
-		return mChunkSize*currentPage++; 
-	}
+		return mChunkSize * (currentPage++); 
+	};
 };
