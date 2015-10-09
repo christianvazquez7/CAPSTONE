@@ -1,0 +1,24 @@
+package KYA;
+
+// Telemetry
+message Telemetry {
+    
+    //Heartbeat
+    message Heartbeat {
+        required int32 before = 1;
+        required int32 after = 2;
+    }
+    
+    //Survey
+    message Survey {
+        required int32 zoneID = 1;
+        required int32 actualRisk = 2;
+        required int32 perceivedRisk = 3;
+    }
+    
+    required  int32  userID  = 1;                 
+    required  int32  notificationID = 2;          
+    optional  Heartbeat  heartbeat  = 3;
+    optional  Survey  survey = 4;
+
+}
