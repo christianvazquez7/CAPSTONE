@@ -3,27 +3,27 @@
  * It’s purpose is to “serially” extract data from this service, and structure
  * it into crime POJO’s. These are then made available to other modules to 
  * classify or cluster criminal areas. Its main components include:
- * 	
+ * 
  *	a)Marshall
  *  b)Request Handler
  *  c)Scheduler
  *  d)Pager
  *  e)RequestBuilder
  */
-module.exports = function DataProvider(source,limit) {
+module.exports = function DataProvider(source,resource,token,start,end) {
 
 	/**
 	 * Module imports.
 	 */
 	var Scheduler = require('./scheduler.js');
 	var RequestHandler = require('./requestHandler.js');
-
-
-	var mSrouce = source;
 	var mLastProcessedId;
 	var mLastProcessedDate;
 	var mScheduler = new Scheduler(limit);
 	var mRequestHandler = new RequestHandler();
+
+
+
 
 	/**
 	 * Requests data from the remote service. Forwards request to request handler.

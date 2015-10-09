@@ -28,13 +28,15 @@ module.exports = function Pager() {
 
 		var params = {
 			$select: ['count(*)'],
-			$where: request.getLimit(),
+			$where: request.getWhere()
 		};
 
 		var soda = new Socrata(config);
-
+		console.log(params);
 		soda.get(params,function(err,response,data){
-			numberOfPages = ceil(data[0].count/parseFloat(chunk));
+			console.log(data);
+			numberOfPages = Math.ceil(data[0].count/parseFloat(request.getLimit()));
+			console.log('Number of pages ' +numberOfPages);
 			mCurrentOffset = 0;
 			callback();
 		});
@@ -50,12 +52,17 @@ module.exports = function Pager() {
 		mChunkSize = 0;
 	};
 
+	this.getPages = function() {
+		return numberOfPages;
+	};
+
 	/**
 	 * Determines if all pages have been processed.
 	 *
 	 * @return True if more pages are still available. False otherwise.
 	 */
 	this.hasNext = function() {
+		console.log(currentPage);
 		return currentPage < numberOfPages;
 	};
 
@@ -70,6 +77,6 @@ module.exports = function Pager() {
 	 * @throws Error if no more pages exist.
 	 */
 	this.nextPage = function() {
-		return mChunkSize * (currentPage++); 
+		return mChunkSize * (currentPage++);
 	};
 };
