@@ -1,5 +1,3 @@
-
-console.log('hello');
 /**
  * The data provider module connects to a remote service through the SODA API.
  * It’s purpose is to “serially” extract data from this service, and structure

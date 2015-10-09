@@ -1,0 +1,96 @@
+// Message sent from server to wear device, when a check in occurs.
+// The notification logic is deferred to the Android device. The folloing
+// scenarios can occur during the application's runtime:
+//  (i)   lastLevel = newLevel : User has not moved, or has moved between
+//        areas of the same risk level.
+//  (ii)  lastLevel < newLevel : User moving in the direciton of risk!
+//  (iii) lastLevel > newLevel : User moving away from risk.
+message KYAResponse {
+
+	// Last risk zone level classification in which the user was present.
+	required int32 lastLevel = 1;
+
+	// New risk zone level classification in which the user is currently in.
+	required int32 newLevel = 2;
+
+	// Next suggested time delta for check in.
+	required int32 nextRequestTimeInSeconds = 3;
+
+	// True if feedback should be requested from user. False otherwise.
+	required bool requestFeedback = 4;
+}
+
+message Telemetry {
+	required int32 userId = 1;
+	optional int32 userSurveyClassification = 2;
+	optional int32 heartBeatBeforeNotification = 3;
+	optional int32 heartBeatAfterNotification = 4;
+}
+
+// Feedback sent from the user. This includes how useful was the app and the
+// user perception of the area that was visited.
+message Feedback {
+	
+	// How useful was the application for the user.
+	optional int32 howUseful = 1;
+
+	// How would the user classify the encountered area.
+	optional int32 userClassification = 2;
+}
+
+// Contains a latitude and longitude that represents a location in space. 
+message GeoPoint {
+	
+	// Latitude coordinate in physical space.
+	required double latitude = 1;
+
+	// Longitude coordinate in physical space.
+	required double longitude = 2;
+}
+
+// Message sent by the wear device to check in. This message is sent periodically
+// from the client device, to check if the wearable device has moved in a positive
+// risk gradient.
+message CheckIn {
+	
+	// Unique Id for the wearable device. This could either be registered or use
+	// a particular serial value unique to the physical device.
+	required double userId = 1;
+
+	// Location of wearable device at the time of checkin. This has two purposes
+	// (1) to check for changes between areas that the user traverses and (2) to 
+	// track user mobility for telemetry purposes.
+	required GeoPoint location = 2;
+
+	// Speed at which user is moving. This can be used to determine the what is 
+	// the most efficient request interval, along with the user distance from 
+	// the closest risk zone increase.
+	optional double speed = 3;
+}
+
+// A zone classified with a specific risk level. The KYA Geozone representation
+// uses grid thematic mapping. Therefore, our Geozone will be defined by four 
+// GeoPoints.
+message GeoZone {
+
+	// Risk zone classification for this particular area. This number will be
+	// between 1 and 10. 
+	required int32 classification = 1;
+
+	// Crime rate for this particular GeoZone, for statistical purposes. This
+	// information can be included as part of info in admin dashboard detail.
+	required double crimeRate = 2;
+
+	// Boundaries of the classified zone. This will always contain exactly 
+	// four GeoPoints.
+	repeated GeoPoint boundaries = 3;
+}
+
+// Grid of zones requested by the admin dashboard. This grid should contain 
+// all the risk areas for a subset of the area of study. Message will be a 
+// list of geozones that can be mapped to Google Map API.
+message Grid {
+	
+	// List of geozones in the area currently visualized.
+	repeated GeoZone tiles = 1;
+}
