@@ -4,9 +4,9 @@
  * or throttling limits have been reached, this module schedules an alarm and
  * sends the data provider to sleep.
  */
-module.exports = function Scheduler(limit) {
+module.exports = function Scheduler(limitPerHour) {
 	var mLastRequest;
-	var mLimit = limit;
+	var mLimit = limitPerHour;
 	var mRequestHour;
 
 	/**
