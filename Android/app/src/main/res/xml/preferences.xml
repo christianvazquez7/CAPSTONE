@@ -14,11 +14,11 @@
         android:key="vibrate_preference"
         android:title="Vibration"
         android:summary="Enable or disable vibration."></CheckBoxPreference>
-    <PreferenceScreen android:title="Threshold options"
+    <Preference
+        android:title="Threshold options"
         android:summary="Set the base threshold for notifications to occur."
-        >
-    <intent android:action="com.nvbyte.kya.ThresholdActivity"></intent>
-    </PreferenceScreen>
-
+        android:key="threshold_preference" >
+    <intent  android:action="com.nvbyte.kya.ThresholdActivity"></intent>
+    </Preference>
 </PreferenceCategory>
 </PreferenceScreen>

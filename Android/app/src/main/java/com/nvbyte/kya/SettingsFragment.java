@@ -3,13 +3,14 @@ package com.nvbyte.kya;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
 /**
  * Fragment that contains setting controls. These update shared preferences.
  */
 public class SettingsFragment extends PreferenceFragment {
-    private static final int THRESHOLD_SELECTED = 7;
+    private static final int THRESHOLD_SELECTED = 1500;
 
     @Override
     /**
@@ -20,6 +21,15 @@ public class SettingsFragment extends PreferenceFragment {
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
+
+        Preference pref = (Preference) findPreference("threshold_key");
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivityForResult(preference.getIntent(), THRESHOLD_SELECTED);
+                return true;
+            }
+        });
 
     }
 
