@@ -18,6 +18,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SurveyActivity"
+            android:label="@string/title_activity_survey" >
+        </activity>
+        <activity
+            android:name=".NotificationActivity"
+            android:label="@string/title_activity_notification" >
+        </activity>
+        <activity
+            android:name=".ThresholdActivity"
+            android:label="@string/title_activity_threshold" >
+        </activity>
+
+        <service
+            android:name=".KYANotificationService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name=".OrientationActivity"
+            android:label="@string/title_activity_orientation" >
+        </activity>
     </application>
 
 </manifest>
