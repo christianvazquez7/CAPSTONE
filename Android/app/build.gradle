@@ -25,4 +25,5 @@ dependencies {
     compile 'com.google.android.support:wearable:1.1.0'
     compile 'com.google.android.gms:play-services-wearable:6.5.87'
     compile 'com.mcxiaoke.volley:library:1.0.17'
+    compile 'fr.avianey.com.viewpagerindicator:library:2.4.1@aar'
 }

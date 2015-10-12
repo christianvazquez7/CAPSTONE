@@ -1,9 +1,24 @@
 package com.nvbyte.kya;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.GestureDetector;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import com.viewpagerindicator.TitlePageIndicator;
+import com.viewpagerindicator.UnderlinePageIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +26,17 @@ import java.util.List;
 /**
  * Activity that allows user to select the threshold needed for notifications.
  */
-public class ThresholdActivity extends Activity {
+public class ThresholdActivity extends FragmentActivity {
 
     private ViewPager mMainContentPager;
     private FragmentPagerAdapter mMainContentAdaper;
     private ArrayList<ThresholdOptionFragment> thresholdOptionFragments;
+    private UnderlinePageIndicator mUnderlinePageIndicator;
+    private static final int NUM_OF_OPTIONS = 10;
+    private static final String THRESHOLD_PREFERENCE = "THRESHOLD";
+    private static final int DEFAULT_THRESHOLD = 1;
+    private int mSelectedThreshold;
+    private static final String SELECTED_THRESHOLD = "SELECTED_THRESHOLD";
 
     @Override
     /**
@@ -24,6 +45,36 @@ public class ThresholdActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_threshold);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mSelectedThreshold = prefs.getInt(THRESHOLD_PREFERENCE,DEFAULT_THRESHOLD);
+        thresholdOptionFragments = buildThresholdOptions();
+        mMainContentPager = (ViewPager) findViewById(R.id.view_pager);
+        mMainContentAdaper = buildAdapter();
+
+        mMainContentPager.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener(){
+                    @Override
+                    public boolean onSingleTapConfirmed(MotionEvent e) {
+                        // Your Code here
+                        Intent resultIntent = new Intent();
+                        int selectedThreshold = thresholdOptionFragments.get(mMainContentPager.getCurrentItem()).getThreshold();
+                        resultIntent.putExtra(SELECTED_THRESHOLD,selectedThreshold);
+                        setResult(RESULT_OK,resultIntent);
+                        ThresholdActivity.this.finish();
+                        return false;
+                    }
+                };
+                GestureDetector detector = new GestureDetector(getApplicationContext(),listener);
+                detector.onTouchEvent(event);
+                return false;
+            }
+        });
+
+        mMainContentPager.setAdapter(mMainContentAdaper);
+        mUnderlinePageIndicator = (UnderlinePageIndicator) findViewById(R.id.indicator);
+        mUnderlinePageIndicator.setViewPager(mMainContentPager);
+        mUnderlinePageIndicator.setFades(false);
     }
 
     /**
@@ -32,7 +83,16 @@ public class ThresholdActivity extends Activity {
      * @return Adapter set to manage list of threshold options.
      */
     private FragmentPagerAdapter buildAdapter() {
-        return null;
+        return new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return thresholdOptionFragments.get(position);
+            }
+            @Override
+            public int getCount() {
+                return NUM_OF_OPTIONS;
+            }
+        };
     }
 
     /**
@@ -40,8 +100,13 @@ public class ThresholdActivity extends Activity {
      *
      * @return A list of option fragments in incremental order of threshold from 1-9.
      */
-    private List<ThresholdOptionFragment> buildThresholdOptions() {
-        return null;
+    private ArrayList<ThresholdOptionFragment> buildThresholdOptions() {
+        ArrayList<ThresholdOptionFragment> options = new ArrayList<>();
+        for (int i = 0; i<NUM_OF_OPTIONS; i++) {
+            boolean isSelected = ((i+1) == mSelectedThreshold);
+            options.add(ThresholdOptionFragment.forThreshold(i+1,isSelected));
+        }
+        return options;
     }
 
 }

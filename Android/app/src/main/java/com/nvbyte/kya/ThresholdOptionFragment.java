@@ -14,7 +14,7 @@ import android.widget.TextView;
  * Contains and present information about a option to select for threshold. These options
  * are from 1 - 10 where 1 is the safest zone and 10 is a very dangerous zone.
  */
-public class ThresholdOptionFragment extends Fragment {
+public class ThresholdOptionFragment extends android.support.v4.app.Fragment {
 
     private TextView mThresholdTextView;
     private TextView mSelectedView;
