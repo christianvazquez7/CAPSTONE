@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+<PreferenceCategory android:title="Notification Settings" >
+    <CheckBoxPreference
+        android:key="mute_preference"
+        android:title="Mute"
+        android:summary="Enable or disable all notifications." ></CheckBoxPreference>
+    <CheckBoxPreference
+        android:key="lower_preference"
+        android:title="Negative Delta"
+        android:summary="Notify me when leaving an area of risk."></CheckBoxPreference>
+    <CheckBoxPreference
+        android:key="vibrate_preference"
+        android:title="Vibration"
+        android:summary="Enable or disable vibration."></CheckBoxPreference>
+    <PreferenceScreen android:title="Threshold options"
+        android:summary="Set the base threshold for notifications to occur."
+        >
+    <intent android:action="com.nvbyte.kya.ThresholdActivity"></intent>
+    </PreferenceScreen>
+
+</PreferenceCategory>
+</PreferenceScreen>

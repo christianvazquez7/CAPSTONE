@@ -1,6 +1,7 @@
 package com.nvbyte.kya;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
@@ -18,7 +19,8 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         // Load the preferences from an XML resource
-        //addPreferencesFromResource(R.xml.preferences);
+        addPreferencesFromResource(R.xml.preferences);
+
     }
 
     @Override

@@ -14,7 +14,6 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -29,6 +28,10 @@
         <activity
             android:name=".ThresholdActivity"
             android:label="@string/title_activity_threshold" >
+            <intent-filter>
+                <action android:name="com.nvbyte.kya.ThresholdActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <service
