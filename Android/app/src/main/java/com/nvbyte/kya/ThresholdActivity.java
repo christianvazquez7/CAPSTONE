@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,6 +38,7 @@ public class ThresholdActivity extends FragmentActivity {
     private static final int DEFAULT_THRESHOLD = 1;
     private int mSelectedThreshold;
     private static final String SELECTED_THRESHOLD = "SELECTED_THRESHOLD";
+    private GestureDetector detector;
 
     @Override
     /**
@@ -50,22 +52,25 @@ public class ThresholdActivity extends FragmentActivity {
         thresholdOptionFragments = buildThresholdOptions();
         mMainContentPager = (ViewPager) findViewById(R.id.view_pager);
         mMainContentAdaper = buildAdapter();
+        GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener(){
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                // Your Code here
+                Log.d("TAG","TAP Detected");
+                Intent resultIntent = new Intent();
+                int selectedThreshold = thresholdOptionFragments.get(mMainContentPager.getCurrentItem()).getThreshold();
+                resultIntent.putExtra(SELECTED_THRESHOLD,selectedThreshold);
+                setResult(RESULT_OK,resultIntent);
+                ThresholdActivity.this.finish();
+                return false;
+            }
+        };
+
+        detector = new GestureDetector(ThresholdActivity.this,listener);
 
         mMainContentPager.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-                GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener(){
-                    @Override
-                    public boolean onSingleTapConfirmed(MotionEvent e) {
-                        // Your Code here
-                        Intent resultIntent = new Intent();
-                        int selectedThreshold = thresholdOptionFragments.get(mMainContentPager.getCurrentItem()).getThreshold();
-                        resultIntent.putExtra(SELECTED_THRESHOLD,selectedThreshold);
-                        setResult(RESULT_OK,resultIntent);
-                        ThresholdActivity.this.finish();
-                        return false;
-                    }
-                };
-                GestureDetector detector = new GestureDetector(getApplicationContext(),listener);
+                Log.d("TAG","TAP");
                 detector.onTouchEvent(event);
                 return false;
             }

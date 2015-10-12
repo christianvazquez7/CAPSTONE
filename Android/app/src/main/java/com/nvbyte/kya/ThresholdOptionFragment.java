@@ -54,7 +54,7 @@ public class ThresholdOptionFragment extends android.support.v4.app.Fragment {
         if(mIsSelected) {
             mSelectedView.setVisibility(View.VISIBLE);
         } else {
-            mSelectedView.setVisibility(View.INVISIBLE);
+            mSelectedView.setVisibility(View.GONE);
         }
         return rootView;
     }

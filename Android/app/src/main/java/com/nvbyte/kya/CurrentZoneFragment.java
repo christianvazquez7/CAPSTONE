@@ -12,7 +12,7 @@ import android.widget.TextView;
 /**
  * Fragment that contains information about the current zone level.
  */
-public class CurrentZoneFragment extends Fragment {
+public class CurrentZoneFragment extends android.support.v4.app.Fragment {
 
     private ProgressBar mLoading;
     private View mBackgroundView;

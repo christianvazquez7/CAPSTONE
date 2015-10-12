@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 /**
  * Fragment that contains setting controls. These update shared preferences.
@@ -27,7 +29,7 @@ public class SettingsFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
-        Preference pref = (Preference) findPreference("threshold_key");
+        Preference pref = (Preference) findPreference("threshold_preference");
         pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -43,9 +45,11 @@ public class SettingsFragment extends PreferenceFragment {
      * is THRESHOLD_SELECTED.
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == Activity.RESULT_OK) {
+        Log.d("TAG","From result with: "+ resultCode);
+        if(resultCode == Activity.RESULT_OK) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            preferences.edit().putInt(THRESHOLD_PREFERENCE,data.getIntExtra(SELECTED_THRESHOLD,0));
+            Log.d("TAG","SELECTED THRESHOLD: "+data.getIntExtra(SELECTED_THRESHOLD,0));
+            preferences.edit().putInt(THRESHOLD_PREFERENCE,data.getIntExtra(SELECTED_THRESHOLD,0)).commit();
         }
     }
 }
