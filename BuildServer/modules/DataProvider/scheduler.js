@@ -4,32 +4,24 @@
  * or throttling limits have been reached, this module schedules an alarm and
  * sends the data provider to sleep.
  */
-module.exports = function Scheduler(limitPerHour) {
-	var mLastRequest;
-	var mLimit = limitPerHour;
-	var mRequestHour;
+module.exports = function Scheduler(limit,timeWindow,sleepPeriod) {
+	var sleep = require('sleep');
+	var mLastAnchor;
+	var mLimit = limit;
+	var mSleep = sleepPeriod;
+	var mWindow = timeWindow;
+	var totalCount;
 
-	/**
-	 * Sends the data provider to sleep.
-	 *
-	 * @param desiredTime: Time request that may be overriden by the scheduler.
-	 */
-	this.sleep = function(desiredTime) {
-
+	this.addRequest = function() {
+		if (mLastAnchor === undefined || (Date.now() - mLastAnchor > timeWindow)) {
+			mLastAnchor = Date.now();
+			totalCount = 0;
+		} else if (Date.now() - mLastAnchor <= timeWindow) {
+			if(totalCount + 1 >= mLimit) {
+				sleep.sleep(mSleep);
+				totalCount = 0;
+			}
+		}
+		totalCount ++;
 	};
-
-	/**
-	 * Sets the latest request size.
-	 */
-	this.setLastRequest = function(lastRequest) {
-
-	};
-
-	/**
-	 * Sets the numer of requests in the last hour.
-	 */
-	this.setRequestHour = function(requestHour) {
-
-	};
-
 };

@@ -10,19 +10,52 @@
  *  d)Pager
  *  e)RequestBuilder
  */
-module.exports = function DataProvider(source,resource,token,start,end) {
+module.exports = function DataProvider(marshall) {
 
 	/**
 	 * Module imports.
 	 */
 	var Scheduler = require('./scheduler.js');
 	var RequestHandler = require('./requestHandler.js');
-	var mLastProcessedId;
-	var mLastProcessedDate;
-	var mScheduler = new Scheduler(limit);
+	var pg = require('pg');
+	var conString = "postgres://postgres:Aguaseka7!@localhost/KYAUtility";
+	var mLastPage;
+	var mLastOffset;
 	var mRequestHandler = new RequestHandler();
+	var mChunk = 1000;
+	var mPgClient = new pg.Client(conString);
+	var mUserDataCallback;
+	var mUserEndCallback;
+	var mMarshall = marshall;
+	var that = this;
+	var mScheduler = new Scheduler(1000,3600000,3600);
 
+	
+	/**
+	 * Initialize the data provider.
+	 */
+	this.init = function(onProviderReady,source,appToken,resource,start,end) {
+		mPgClient.connect(function(err) {
+			if(err) {
+				return console.error('could not connect to postgres', err);
+			}
+			mPgClient.query('SELECT * FROM utility', function(err, result) {
+				if(err) {
+					return console.error('error running query', err);
+				}
+				if(result.length > 0) {
+					console.log('closing');
+					console.log(result.rows[0]);
+					mLastPage = result.rows[0].lastpage;
+					mLastOffset = result.rows[1].lastoffset;
+				}
+				mPgClient.end();
 
+				mRequestHandler.init(onProviderReady, onRecords , onEnd, source, appToken,resource, mChunk, mMarshall, mLastPage, mLastOffset, start, end);
+			});
+
+		});
+	};
 
 
 	/**
@@ -34,43 +67,27 @@ module.exports = function DataProvider(source,resource,token,start,end) {
 	 * @param lastRecordId: Id of last crime processed.
 	 * @param lastRecordDate: Date of last crime processed.
 	 */
-	this.getData = function(callback,chunkSize,lastRecordId,lastRecordDate) {
-
+	this.getData = function(dataCallback,endCallback) {
+		mUserEndCallback = endCallback;
+		mUserDataCallback = dataCallback;
+		mScheduler.addRequest();
+		mRequestHandler.requestData();
 	};
 
-	/**
-	 * Updates the last record in the KYA DB.
-	 *
-	 * @param lastRecordId: Id of last record processed.
-	 * @param lastRecordDate: Date of last record processed.
-	 * @param callback: Called when last record has been updated.
-	 */
-	function updateLastRecord(lastRecordId,lastRecordDate,callback) {
+	function onRecords(records) {
+		mUserDataCallback(records);
+		that.getData(mUserDataCallback,mUserEndCallback);
+	}
 
-	};
+	function onEnd() {
+		mUserEndCallback();
+	}
 
-	/**
-	 * Fetch last record accessed from KYA DB.
-	 *
-	 * @param callback: Called when last record is fetched.
-	 */
-	function getLastRecordAccessed(callback) {
-
-	};
-
-	/**
-	 * Callback for last record fetching.
-	 *
-	 * Proto message that contains id and date of last record processed.
-	 */
-	function onLastRecordFetched(proto) {
-
-	};
-
-	/**
-	 * Callback for last record updating.
-	 */
-	function onLastRecordUpdated() {
-
+	this.setChunkSize = function(size) {
+		if (mChunk > 1000) {
+			console.log('Error: SODA only permits a maximum chunk of 1000');
+			return;
+		}
+		mChunk = size;
 	};
 };

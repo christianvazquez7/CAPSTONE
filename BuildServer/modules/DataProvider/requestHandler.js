@@ -117,12 +117,10 @@ module.exports = function RequestHandler() {
 			}
 			console.log('Notify subscriber...');
 			mOnRecordProcessed(splicedCrimeList);
-			self.requestData();
 			mLastOffset = undefined;
 		} else {
 			console.log('Notify subscriber...');
 			mOnRecordProcessed(crimeList);
-			self.requestData();
 		}
 	}
 };
