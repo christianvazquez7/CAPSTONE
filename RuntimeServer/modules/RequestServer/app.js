@@ -2,6 +2,7 @@
 
 var RequestHandlers = require("./requestHandlers.js");
 var Server = require("./server.js");
+var logger = require('./utils/logger.js');
 
 // Initialize objetcs
 var handlers = new RequestHandlers();

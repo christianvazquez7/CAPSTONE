@@ -9,9 +9,8 @@ module.exports = function Route(app, handlers) {
 	// Initialization
 	var bufferParser = bodyParser.raw()
 
-	/**
-	 *
-	 */	
+
+	// Routes
 	app.get('/stats', handlers.getStats);
 	
 	app.get('/zones/:northWest/:southEast/:area', handlers.getZones);
@@ -26,6 +25,7 @@ module.exports = function Route(app, handlers) {
 	
 	app.post('/telemetry/movement', bufferParser, handlers.handleMovement);
 	
+	// 
 	app.use(function(req, res, next) {
  		res.status(404).send('Sorry cant find that!');
 	});

@@ -26,7 +26,7 @@ module.exports = function TelemetryRequestHandler() {
 		var telemetryRecord = Telemetry.decode(telemetryDataBuffer);
 		console.log('Telemetry record handle:')
 		console.log(telemetryRecord);
-		console.log('Current zone id: ' + currentZoneID);
+// 		console.log('Current zone id: ' + currentZoneID);
 	};
 
 	/**

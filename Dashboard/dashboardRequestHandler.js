@@ -34,13 +34,14 @@ module.exports = function DashboardRequestHandler() {
 		  } 
 		  else {
 		    // Connected
-		    console.log('Connection established to', url);
+		    // console.log('Connection established to', url);
 
 		    // Get the documents collection
 		    var collection = db.collection('GeoZones');
 
 	        collection.find().sort({"totalCrime":-1}).limit(1).toArray(function (err, result)
 	        {
+	        	console.log(result);
 	            if (err) {
 	            	console.log(err);
 	            }
@@ -61,12 +62,12 @@ module.exports = function DashboardRequestHandler() {
 	            				else if (result.length) {
 	            					crimeRate = result[0].crimeRate;
 									// console.log(crimeRate);
-									// console.log(minCrime);
+									console.log(minCrime);
 			                        db.close();                    
 			                        var stat = new Stats(maxCrime, minCrime, crimeRate);
-			                        console.log('Stats');
+// 			                        console.log('Stats');
 			                        var result = stat.toJSON();
-			                        console.log(result);
+			                        // console.log(result);
 			                        callback(err, result)
 	            				}
 							});
@@ -91,7 +92,34 @@ module.exports = function DashboardRequestHandler() {
 	 * @param callback: Callback function to be called when the zones have been fetched from the database.
 	 */
 	this.requestZones = function(nwPoint, sePoint, area, callback) {
-	
+		var mNwPoint = parseFloat(nwPoint);
+		var mSePoint = parseFloat(sePoint);
+		
+		MongoClient.connect(url, function (err, db) {
+			if (err) {
+				console.log('Unable to connect to the mongoDB server. Error:', err);
+			} 
+			else {
+			    // Connected
+			    // console.log('Connection established to', url);
+
+			    // Get the documents collection
+			    var collection = db.collection('GeoZones');
+			    
+			    var query = {};
+				query['coordinates'] = [mNwPoint, mSePoint];
+				query['type'] = "Point";
+
+				collection.find({loc:{$geoIntersects: {$geometry: query }}}).toArray(function (err, result) {
+				console.log(result);
+					if (err) {
+				        console.log(err);
+				    }
+				    else {
+				    	callback(err, result);
+				    }
+				});
+			}
+		});
 	};
-	
 };

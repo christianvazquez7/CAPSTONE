@@ -1,3 +1,4 @@
+var ProtoBuf = require("../../../node_modules/protobufjs");
 var should = require('should'); 
 var assert = require('assert');
 var request = require('supertest');  
@@ -5,22 +6,18 @@ var request = require('supertest');
 // var winston = require('winston');
 // var config = require('./config-debug');
 
-
 describe('Routes', function() {
   var url = 'http://localhost:3000';
+  var builder = ProtoBuf.loadProtoFile("../../resources/kya.proto"),
+  KYA = builder.build("KYA"),
+  Telemetry = KYA.Telemetry;
 
   // Operations that are needed to setup the tests.
   before(function(done) {
-    // In our tests we use the test db
-//     mongoose.connect(config.db.mongodb);
-    // Constructing Telemetry Proto buffer for testing purposes
-    
-    
-    
    			
     done();
   });
-  // Testing corrct routing
+  // Testing correct routing
   describe('Routing', function() {
     // Test /stats route
     it('should return 200 status code trying to access /stats', function(done) {
@@ -135,6 +132,31 @@ describe('Routes', function() {
       .get('/')
       // end handles the response
       .expect(404) //Status code
+      .end(function(err, res) {
+          if (err) {
+            throw err;
+          }
+          done();
+        });
+    });
+    
+     // Test / route
+    it('should correctly send a Telemetry survey protobuffer', function(done) {
+    	var telRecord = new Telemetry({
+			"userID" : 10,
+			"notificationID" : 20
+			"heartbeat" : 100
+		});
+ 
+		var buffer = telRecord.encode();
+		var bodyBuffer = buffer.toBuffer();
+		
+    request(url)
+      .post('/telemetry/survey')
+      .set('Content-Type', 'application/octet-stream')
+      .send(bodyBuffer)
+      // end handles the response
+      .expect(200) //Status code
       .end(function(err, res) {
           if (err) {
             throw err;
