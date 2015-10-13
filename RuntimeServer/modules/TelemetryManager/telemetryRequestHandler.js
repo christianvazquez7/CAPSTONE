@@ -18,20 +18,22 @@ module.exports = function TelemetryRequestHandler() {
 
 	var recordProcessedCallback;
 	
+	
 	var mStorageManager = new TelemetryStorageManager();
 
 	/**
-	 * Function to decode protobuffer message, identify components of message and send it to the storage manager.
+	 * Function to decode protobuffer messages, identify components of message and send it to the storage manager.
 	 *
 	 * @param telemetryDataBuffer: Buffer contaning telemetry data to be processed
 	 */ 
 	this.handleTelemetryData = function(telemetryDataBuffer) {
 		var telemetryRecord = Telemetry.decode(telemetryDataBuffer);
 		
+		//Check if there is either survey data or heart rate measurements data to process
 		var surveyFlag = (telemetryRecord.survey!=null),
 		heartRateFlag = (telemetryRecord.heartRate!=null);
 		
-		//Check if there is either survey data or heart rate measurements data to process
+		//Create sotrage manager to process (add or update) the record
 		if(surveyFlag||heartRateFlag){
 			mStorageManager.processRecord(telemetryRecord, surveyFlag, heartRateFlag, recordProcessedCallback);
 		}
@@ -60,7 +62,7 @@ module.exports = function TelemetryRequestHandler() {
 	 */	
 	recordProcessedCallback = function onRecordProcessed(err, message) {
 		if (err){
-			console.log("Error: " + err);
+			return console.error('error running query', err);
 		}
 		else{
 			console.log("Results: " + message);

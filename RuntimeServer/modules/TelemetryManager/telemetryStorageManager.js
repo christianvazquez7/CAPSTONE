@@ -28,18 +28,18 @@ module.exports = function TelemetryStorageManager() {
 		console.log("Processing record");
 		
 		var surveyID,
-			heartRateID;
+			  heartRateID;
 			
-
+    //Initiate connection to database
 		client.connect(function(err) {
   			if(err) {
-    			return console.error('could not connect to postgres', err);
+    			callback(err, null);
   			}
   			
   			//Checks if there is survey data to process
   			if(surveyFlag){
   				
-          console.log('Processing heart_rate');
+          console.log('Processing survey');
   				
           //Query to insert survey record
   				//Returns survey record's auto-generated id to use it when creating or updating the telemetry record in the database 
@@ -52,8 +52,7 @@ module.exports = function TelemetryStorageManager() {
   					console.log("Query: " + query);
     				
     				if(err) {
-    					console.log(err);
-      				return console.error('error running survey query', err);
+    					callback(err, null);
 	    			}
 	    			
 	    			//Testing
@@ -70,9 +69,9 @@ module.exports = function TelemetryStorageManager() {
             client.query(query2, function(err, result) {
               
               console.log("Query: " + query2);
+              
               if(err) {
-                console.log("Error in query");
-                return console.error('error running record (survey) query', err);
+                callback(err, null);   
               }
 
               //Testing
@@ -80,6 +79,9 @@ module.exports = function TelemetryStorageManager() {
               
               //Close the connection
               client.end();
+              if(!heartRateFlag){
+                callback(null, "Success");
+              }
             }); 
         	});
   			}
@@ -126,6 +128,8 @@ module.exports = function TelemetryStorageManager() {
             
               //Close the connection  
               client.end();
+              
+              callback(null, "Success");   
             });  
           });		
   			}
@@ -157,14 +161,15 @@ module.exports = function TelemetryStorageManager() {
           console.log('Query: ' + query);
 
     			if(err) {
-    				return console.error('error running query', err);
+            callback(err, null);
 	   			}
 	    			
 	   			//Testing
 	   			console.log ('Point added with ID: ' + result.rows[0].movement_id + ' for user: ' + GeoPoint.userID);
           
           //Close the connection  
-          client.end();  			 
+          client.end();
+          callback(null, "Success");    			 
         });	
 		});	
 	};

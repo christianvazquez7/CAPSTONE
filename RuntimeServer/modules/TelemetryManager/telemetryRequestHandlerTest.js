@@ -70,10 +70,11 @@ var handler2 = new TelemetryRequestHandler();
 var handler3 = new TelemetryRequestHandler();
 var handler4 = new TelemetryRequestHandler();
 
-///handler.handleTelemetryData(messagegpb1);
 
-//handler2.handleTelemetryData(messagegpb2);
+handler.handleTelemetryData(messagegpb1);
 
-//handler3.handleTelemetryData(messagegpb3);
+handler2.handleTelemetryData(messagegpb2);
 
-//handler4.handleMovementData(messagegpb4);
+handler3.handleTelemetryData(messagegpb3);
+
+handler4.handleMovementData(messagegpb4);
