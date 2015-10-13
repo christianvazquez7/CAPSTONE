@@ -1,8 +1,8 @@
 package com.nvbyte.kya;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +19,10 @@ public class SurveyOptionFragment extends Fragment {
 
     private TextView mRatingTextView;
     private TextView mDescriptionTextView;
+    private int mRating;
+    private String mDescription;
     private static final HashMap<Integer, String> TAGS = new HashMap<>();
+    private static final String RATING = "RATING";
 
     //Initializes Hashmap that translates a security rating with a security tag.
     static {
@@ -35,9 +38,20 @@ public class SurveyOptionFragment extends Fragment {
         TAGS.put(10, "Hell");
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mRating = getArguments().getInt(RATING);
+        mDescription = TAGS.get(mRating);
+    }
+
     //Creates a new survey option from a particular survey rating.
     public static SurveyOptionFragment forRating(int rating) {
-        return null;
+        SurveyOptionFragment fragment = new SurveyOptionFragment();
+        Bundle args = new Bundle();
+        args.putInt(RATING,rating);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
@@ -47,7 +61,12 @@ public class SurveyOptionFragment extends Fragment {
      * human readable translation (TAG).
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View rootView = inflater.inflate(R.layout.fragment_survey_option, container, false);
+        mRatingTextView = (TextView) rootView.findViewById(R.id.level);
+        mDescriptionTextView = (TextView) rootView.findViewById(R.id.description);
+        mRatingTextView.setText(Integer.toString(mRating));
+        mDescriptionTextView.setText(mDescription);
+        return rootView;
     }
 
     /**
@@ -56,7 +75,7 @@ public class SurveyOptionFragment extends Fragment {
      * @return An integer between 1-10 that represents the safety rating for a particular area.
      */
     public int getSafetyRating() {
-        return 0;
+        return mRating;
     }
 
 }
