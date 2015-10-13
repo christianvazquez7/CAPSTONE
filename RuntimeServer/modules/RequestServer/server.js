@@ -3,13 +3,11 @@
  * the request for its respective handler.
 **/
 module.exports = function Server() {
-
   // Imports
-  var http = require("http");
-  var url = require("url");
-
-  var mRoute;
-  var mHandle;
+  var express = require('express');
+  var routes = require('./route.js');
+  
+  var app = express();
 
   /**
    * Creates and starts the server.
@@ -18,23 +16,9 @@ module.exports = function Server() {
    * @param handle: handlers array
    * @param port  : the port to listen
    */
-  this.start = function(route, handle, port) {
-    mRoute = route;
-    mHandle = handle;
+  this.start = function(handlers, port) {
+  	routes(app, handlers);
     createServer(port);
-  }
-
-  /**
-   * Routes the requests to its handler.
-   *
-   * @param request : request received
-   * @param response: response to request
-   */
-  function onRequest(request, response) {
-    var pathname = url.parse(request.url).pathname;
-    var parsedUrl = url.parse(request.url, true);
-
-    mRoute(mHandle, pathname, parsedUrl, response);
   }
 
   /**
@@ -42,9 +26,11 @@ module.exports = function Server() {
    *
    * @param port: the port to listen
    */
-  function createServer(port) {
-    http.createServer(onRequest).listen(port);
-    console.log("Server has started listening on port " + port);
+  function createServer(mPort) {
+  		
+  		var port = process.env.PORT || mPort;
+  		app.listen(port);
+  	
+		console.log("Express server listening on port %d in %s mode", port, app.settings.env);
   }
-
 };

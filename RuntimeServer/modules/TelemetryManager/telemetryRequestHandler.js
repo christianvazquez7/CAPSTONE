@@ -2,13 +2,17 @@
 *	This module is responsible for receiving telemetry data from the client, extracting 
 *   it from http requests, and storing it in a database.
 **/
-module.exports = function TelemetryRequestHandler(telemetryDataBuffer, currentZoneID) {
+module.exports = function TelemetryRequestHandler() {
 	
 	/**
 	 * Module imports.
 	 */
-	var TelemetryStorageManager = require('./telemetryStorageManager.js');
-	var ProtoBuf = require("../../resources/protobufjs");
+	var ProtoBuf = require("../../node_modules/protobufjs");
+	
+	//Protocol buffer initialization
+	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
+	var KYA = protoBuilder.build("KYA");
+	var Telemetry = KYA.Telemetry;
 	
 	var mUserID;
 	var mNotificationID;
@@ -18,8 +22,11 @@ module.exports = function TelemetryRequestHandler(telemetryDataBuffer, currentZo
 	/**
 	 * Call functions required to schedule the next request	
 	 */
-	this.handleTelemetry = function() {
-
+	this.handleTelemetry = function(telemetryDataBuffer, currentZoneID) {
+		var telemetryRecord = Telemetry.decode(telemetryDataBuffer);
+		console.log('Telemetry record handle:')
+		console.log(telemetryRecord);
+		console.log('Current zone id: ' + currentZoneID);
 	};
 
 	/**

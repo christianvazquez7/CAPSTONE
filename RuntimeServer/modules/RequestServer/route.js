@@ -1,15 +1,33 @@
 /**
  * This module is in charge of routing all requests to its respective handler.
  */
-module.exports = function route(handle, pathname, parsedUrl, response) {
-	console.log("pathname = " + typeof handle[pathname])
-  if (typeof handle[pathname] === 'function') {
-    handle[pathname](parsedUrl, response);
- 	
-  } else {
-    console.log("No request handler found for " + pathname);
-    response.writeHead(404, {"Content-Type": "text/plain"});
-    response.write("404 Not found");
-    response.end();
-  }
+module.exports = function Route(app, handlers) {
+
+	// Imports
+	var bodyParser = require('../../node_modules/body-parser')
+
+	// Initialization
+	var bufferParser = bodyParser.raw()
+
+	/**
+	 *
+	 */	
+	app.get('/stats', handlers.getStats);
+	
+	app.get('/zones/:northWest/:southEast/:area', handlers.getZones);
+	
+	app.get('/zones/current/:lat/:lon', handlers.getCurrentZone);
+	
+	app.get('/location/checkin/:lat/:lon/:velocity/:zoneId', handlers.handleCheckIn);
+	
+	app.post('/telemetry/heartbeat', bufferParser, handlers.handleHeartBeat);
+	
+	app.post('/telemetry/survey', bufferParser, handlers.handleSurvey);
+	
+	app.post('/telemetry/movement', bufferParser, handlers.handleMovement);
+	
+	app.use(function(req, res, next) {
+ 		res.status(404).send('Sorry cant find that!');
+	});
+
 };

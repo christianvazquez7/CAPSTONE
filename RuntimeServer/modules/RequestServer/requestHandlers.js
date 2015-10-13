@@ -4,13 +4,28 @@
 **/
 module.exports = function RequestHandlers() {
 
+	// Imports
+	var TelemetryRequestHandler = require('../TelemetryManager/telemetryRequestHandler.js');
+	var DashboardRequestHandler = require('../../../Dashboard/dashboardRequestHandler.js');
+	
+	// Initialization
+	var mTelemetryHandler = new TelemetryRequestHandler();
+	var mDashboardHandler = new DashboardRequestHandler();
+	var currentZone = 3;
+
 	/**
 	 * Request handle for the crime statistics. Connects with the
 	 * database to fetch the current statistics.
 	 *
 	 * @param response: A Json array with the current statistics.
 	 */
-	this.getStats = function(response) {
+	this.getStats = function(req, res) {
+		console.log('>>> getstats');
+		var result;
+		mDashboardHandler.requestStats(function(err, result) {
+			console.log(result);
+			res.send(result);
+		});
 	}
 
 	/**
@@ -23,8 +38,13 @@ module.exports = function RequestHandlers() {
 	 *   3) area     : Size of area requested.
 	 * @param response: A Json array with the requested zones.
 	 */
-	this.getZones = function(parsedUrl, response) {
-
+	this.getZones = function(req, res) {
+		console.log('>>> getZones');
+		var northWest = req.params.northWest;
+		var southEast = req.params.southEast;
+		var area = req.params.area;
+		res.send('SUCCESS');
+		
 	}
 
 	/**
@@ -37,8 +57,13 @@ module.exports = function RequestHandlers() {
 	 *   4) lon     : Current longitude of the wear device.
 	 * @param response: if it was succesusfull or not in sending the data
 	 */
-	this.handleCheckIn = function(parsedUrl, response) {
-
+	this.handleCheckIn = function(req, res) {
+		console.log('>>> handleCheckIn');
+		var lat = req.params.lat;
+		var lon = req.params.lon;
+		var velocity = req.params.velocity;
+		var zoneId = req.params.zoneId;
+		res.send('SUCCESS');
 	}
 
 	/**
@@ -49,8 +74,13 @@ module.exports = function RequestHandlers() {
 	 *   2) bmp     : Heart beat readings in beats per minute.
 	 * @param response: if it was succesusfull or not in sending the data
 	 */
-	this.handleHeartBeat = function(parsedUrl, response) {
-
+	this.handleHeartBeat = function(req, res) {
+		console.log('>>> handleHeartBeat');
+		
+		var telemetryData = req.body;
+		
+		mTelemetryHandler.handleTelemetry(telemetryData, currentZone);
+		res.send('SUCCESS');
 	}
 
 	/**
@@ -61,8 +91,24 @@ module.exports = function RequestHandlers() {
 	 *   2) survey  : Rating selected by the user in response to a survey.
 	 * @param response: if it was succesusfull or not in sending the data
 	 */
-	this.handleSurvey = function(parsedUrl, response) {
-
+	this.handleSurvey = function(req, res) {
+		console.log('>>> handleHeartSurvey');
+		var telemetryData = req.body;
+		console.log(telemetryData);
+		mTelemetryHandler.handleTelemetry(telemetryData, currentZone);
+	}
+	
+	/**
+	 * Sends the Movement data to the WearRequestHandler.
+	 *
+	 * @param req: Object containing the following parameters:
+	 *   1) 
+	 * @param res: if it was succesusfull or not in sending the data
+	 */
+	this.handleMovement = function(req, res) {
+		console.log('>>> handleMovement');
+		var telemetryData = req.body;
+		mTelemetryHandler.handleTelemetry(telemetryData, currentZone);
 	}
 
 	/**
@@ -73,7 +119,10 @@ module.exports = function RequestHandlers() {
 	 *   2) lon     : Current longitude.
 	 * @param response: the zone matching the given latitude and longitude
 	 */
-	this.getCurrentZone = function(parsedUrl, response) {
-
+	this.getCurrentZone = function(req, res) {
+		console.log('>>> getCurrentZone');
+		var lat = req.params.lat;
+		var lon = req.params.lon;
+		res.send('SUCCESS');
 	}
 };
