@@ -14,35 +14,43 @@ module.exports = function TelemetryRequestHandler() {
 	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
 	var KYA = protoBuilder.build("KYA");
 	var Telemetry = KYA.Telemetry;
+	var GeoPoint = KYA.GeoPoint;
 
 	var recordProcessedCallback;
+	
 	var mStorageManager = new TelemetryStorageManager();
 
 	/**
 	 * Function to decode protobuffer message, identify components of message and send it to the storage manager.
+	 *
+	 * @param telemetryDataBuffer: Buffer contaning telemetry data to be processed
 	 */ 
-	this.handleTelemetry = function(telemetryDataBuffer, currentZoneID) {
+	this.handleTelemetryData = function(telemetryDataBuffer) {
 		var telemetryRecord = Telemetry.decode(telemetryDataBuffer);
 		
 		var surveyFlag = (telemetryRecord.survey!=null),
-		heartRateFlag = (telemetryRecord.heartRate!=null),
-		movementFlag = (telemetryRecord.movement!=null);
+		heartRateFlag = (telemetryRecord.heartRate!=null);
 		
-		//Testing purposes
-		surveyFlag = true;
-
-		if(surveyFlag||heartRateFlag||movementFlag){
-			mStorageManager.processRecord(telemetryRecord, surveyFlag, heartRateFlag, movementFlag, recordProcessedCallback);
+		//Check if there is either survey data or heart rate measurements data to process
+		if(surveyFlag||heartRateFlag){
+			mStorageManager.processRecord(telemetryRecord, surveyFlag, heartRateFlag, recordProcessedCallback);
 		}
 		else{
 			recordProcessedCallback("No data to process",null);
 		}
+	};
+
+	/**
+	 * Function to decode protobuffer message containg location data from the client to track movement
+	 *
+	 * @param GeoPointBuffer: Buffer contaning GeoPoint (lat,lon,timestamp)
+	 */ 
+	this.handleMovementData = function(GeoPointBuffer) {
 		
-		//testing purposes
-		// var mUserID = telemetryRecord.userID;
-		// var mNotificationID = telemetryRecord.notificationID;
-		// var mCurrentZone = 	currentZoneID;
-		// theTest(telemetryRecord,mUserID,mNotificationID,mCurrentZone);
+		var geoPoint = GeoPoint.decode(GeoPointBuffer);
+		
+		mStorageManager.storeMovementData(geoPoint, recordProcessedCallback);
+		
 	};
 
 	/**
@@ -58,17 +66,4 @@ module.exports = function TelemetryRequestHandler() {
 			console.log("Results: " + message);
 		}	
 	};
-
-	/*
-	 * Testing Purposes
-	 */
-		function theTest(telemetryRecord,mUserID,mNotificationID,mCurrentZone){
-		console.log("Test Results: ");
-		console.log("Record: " + telemetryRecord);
-		console.log("UID: " + mUserID);
-		console.log("NID: " + mNotificationID)
-		console.log("ZID: " + mCurrentZone);
-		console.log("success");
-	}
-
 };
