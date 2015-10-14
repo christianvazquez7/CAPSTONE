@@ -26,6 +26,7 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
+
     }
 
     /**
