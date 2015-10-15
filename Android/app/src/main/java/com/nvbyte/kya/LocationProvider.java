@@ -4,17 +4,16 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 
 import java.util.concurrent.Future;
 
 /**
  * Provides location information in latitude and longitude.
  */
-public class LocationProvider {
+public class LocationProvider implements LocationListener{
     private LocationManager mLocationManager;
-    private LocationListener mLocationListener;
     private Context mContext;
-    private static final double ACURRACY_THRESHOLD = 10;
 
     /**
      * Static factory that lazily instantiates a singleton instance of the LocationProvider.
@@ -48,4 +47,23 @@ public class LocationProvider {
     }
 
 
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }

@@ -3,6 +3,8 @@ package com.nvbyte.kya;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Handler;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,15 +16,15 @@ public class ISensor implements SensorEventListener {
     private Sensor mSensor;
     private KYAListener<SensorEvent> mCallback;
     private boolean isStarted = false;
+    private SensorManager mManager;
 
     /**
      * Creates a sensor object for a particular sensor type, and a listener for its manager.
      * @param sensor Sensor that is being interfaced.
-     * @param listener Manager's listener.
      */
-    public ISensor(Sensor sensor, KYAListener<SensorEvent> listener) {
+    public ISensor(SensorManager manager,Sensor sensor) {
         mSensor = sensor;
-        mCallback = listener;
+        mManager = manager;
     }
 
     @Override
@@ -60,14 +62,16 @@ public class ISensor implements SensorEventListener {
     /**
      * Start listening for sensor changes.
      */
-    public void start(){
-
+    public void start(KYAListener<SensorEvent> callback,Handler handle){
+        mCallback = callback;
+        mManager.registerListener(this,mSensor,SensorManager.SENSOR_DELAY_NORMAL,handle);
     }
 
     /**
      * Stop listening for sensor changes.
      */
     public void stop(){
-
+        mCallback = null;
+        mManager.unregisterListener(this);
     }
 }

@@ -3,10 +3,15 @@ package com.nvbyte.kya;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Provides sensor data to application. It internally keeps track on who is listening and also
@@ -15,18 +20,33 @@ import java.util.List;
  */
 public class SensorDataProvider {
     private SensorManager mSensorManager;
-    private List<Sensor> mDeviceSensors;
     private Context mContext;
-    private HashMap<Integer,List<KYAListener<SensorEvent>>> mListenersPerSensorType;
     private static SensorDataProvider mProvider;
     private HashMap<Integer,ISensor> mSensorIByType;
+    private final ExecutorService pool;
+    private static final String TAG = "SensorDataProvider";
+
+    private SensorEventListener accelerationChangeListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            Log.d(TAG,event.values[0]+" "+event.values[1] +" "+event.values[2] + " accel: "+ Math.sqrt(event.values[0]*event.values[0]+event.values[1]*event.values[1]+event.values[2]*event.values[2]));
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 
     /**
      * Get singleton provider. Makes use of lazy initialization to avoid multiple instantiations.
      * @return A singleton instance of the Sensor data provider for universal use.
      */
-    public static SensorDataProvider getInstance() {
-        return null;
+    public static SensorDataProvider getInstance(Context c) {
+        if(mProvider == null) {
+            mProvider = new SensorDataProvider(c);
+        }
+        return mProvider;
     }
 
     /**
@@ -34,72 +54,28 @@ public class SensorDataProvider {
      * @param context Application's context.
      */
     private SensorDataProvider(Context context) {
-
+        mContext = context;
+        mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+        pool = Executors.newFixedThreadPool(3);
+        mSensorIByType = new LinkedHashMap<>();
+        ISensor heartBeatSensor = new ISensor(mSensorManager,mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE));
+        ISensor accelerometer = new ISensor(mSensorManager,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+        mSensorIByType.put(Sensor.TYPE_HEART_RATE,heartBeatSensor);
+        mSensorIByType.put(Sensor.TYPE_ACCELEROMETER,accelerometer);
+        mSensorManager.registerListener(accelerationChangeListener,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),1000000);
     }
 
-    /**
-     * Data provider's internal listener for heartbeat sensor events.
-     */
-    private KYAListener<SensorEvent> mManagerHeartBeatCallback = new KYAListener<SensorEvent>() {
-        @Override
-        public synchronized void callback(SensorEvent value) {
-
-        }
-    };
-
-    /**
-     * Data provider's internal listener for orientation sensor events.
-     */
-    private KYAListener<SensorEvent> mManagerOrientationCallback = new KYAListener<SensorEvent>() {
-        @Override
-        public synchronized void callback(SensorEvent value) {
-
-        }
-    };
-
-    /**
-     * Data provider's internal listener for accelerometer sensor events.
-     */
-    private KYAListener<SensorEvent> mManagerAccelerometerCallback = new KYAListener<SensorEvent>() {
-        @Override
-        public synchronized void callback(SensorEvent value) {
-
-        }
-    };
-
-    /**
-     * Unregister an external listener for a specific sensor type. Stops sensor if it has no other
-     * registered listeners.
-     * @param sensorType Sensor type to detach listener from.
-     * @param listener Listener you intend to unregister.
-     */
-    public void unregisterListener(int sensorType, KYAListener<SensorEvent> listener) {
-
+    public Future<SensorEvent> getAcceleration(long timeout) {
+        ISensor accelerometer = mSensorIByType.get(Sensor.TYPE_ACCELEROMETER);
+        Future<SensorEvent> future = pool.submit(new SensorEventFuture(mContext, accelerometer, timeout));
+        return future;
     }
 
-    /**
-     * Register an external listener for a specific sensor type. Starts sensor if it has not been
-     * started already by a previous call.
-     * @param sensorType Sensor type to attach listener from.
-     * @param listener Listener you intend to register.
-     */
-    public void registerListener(int sensorType,KYAListener<SensorEvent> listener) {
 
-    }
-
-    /**
-     * Start listening internally to a sensor.
-     * @param sensorType Type of sensor you wish to start internally listening on.
-     */
-    private void startListening(int sensorType) {
-
-    }
-
-    /**
-     * Stop listening internally to a sensor.
-     * @param sensorType Type of sensor you wish to stop internally listening on.
-     */
-    private void stopListening(int sensorType) {
-
+    public Future<SensorEvent> getHeartbeat(long timeout) {
+        Log.d(TAG,"Fetching heart beat");
+        ISensor accelerometer = mSensorIByType.get(Sensor.TYPE_HEART_RATE);
+        Future<SensorEvent> future = pool.submit(new SensorEventFuture(mContext,accelerometer,timeout));
+        return future;
     }
 }

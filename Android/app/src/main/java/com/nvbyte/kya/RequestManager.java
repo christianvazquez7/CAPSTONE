@@ -19,7 +19,7 @@ public class RequestManager {
     private static final String SURVEY_ROUTE = "www.projectkya.com/survey";
     private static final String HEART_BEAT_ROUTE = "www.projectkya.com/heartbeat";
     private static final String CHECK_IN_ROUTE = "www.projectkya.com/checkin";
-    private static final String CURRENT_ZONE_ROUTE = "www.projectkya.com/current";
+    private static final String CURRENT_ZONE_ROUTE = "http://192.168.1.146:5000/user/add";
     private Context mContext;
     private static final String TAG = "RequestManager";
 
