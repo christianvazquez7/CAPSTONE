@@ -6,7 +6,8 @@ module.exports = function GeoJSONParser() {
 	/**
 	 * Module imports.
 	 */
-	var GeoZone = require('./geoZone.js');
+	var PATH_GEOZONE = 'C:/Users/LuisR/Documents/GitHub/CAPSTONE/BuildServer/modules/GeozoneManager/';
+	var GeoZone = require(PATH_GEOZONE + 'geoZone.js');
 	
 	var mGeoZone;
 	var mRisk;

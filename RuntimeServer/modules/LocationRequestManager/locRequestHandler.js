@@ -4,25 +4,35 @@
  * risk of the current zone and the time that the client should wait until sending the next
  * request to the server.
 **/
-module.exports = function LocationRequestHandler(latitude,longitude,velocity,clientID) {
+module.exports = function LocationRequestHandler() {
 	
 	/**
 	 * Module imports.
 	 */
 	var RequestScheduler = require('./requestScheduler.js');
-	var Point = require('./point.js');
+	var GeoPoint = require('../../../BuildServer/modules/GeoZoneManager/GeoCoordinate.js');
+	var ProtoBuf = require("../../node_modules/protobufjs");
 	
-	var mClientID = clientID;
-	var mLocation = new Point(latitude,longitude);
-	var mVelocity = velocity;
+
+	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
+	var KYA = protoBuilder.build("KYA");
+	var CheckIn = KYA.CheckIn;
+	var GeoPoint = KYA.GeoPoint;
+
+	
 	var responseCallback;
 
 	/**
 	 * Call functions required to schedule the next request	
 	 */
-	this.handleRequest = function() {
+	this.handleRequest = function(checkInBuffer, callback) {
+		var checkIn = CheckIn.decode(checkInBuffer);
+		var scheduler = new RequestScheduler();
 
+		scheduler.scheduleNextRequest(checkIn, callback);
 	};
+
+
 
 
 
@@ -31,8 +41,9 @@ module.exports = function LocationRequestHandler(latitude,longitude,velocity,cli
 	 *
 	 * @param responseString: String with the response to be sent to the client.
 	 */	
-	this.responseCallback = function onResponseReady(responseString){
+	responseCallback = function onResponseReady(responseString){
 
 	};
+
 
 };

@@ -29,7 +29,8 @@ module.exports = function RequestScheduler(velocity,location) {
 	 *
 	 * @param responseCallback: Callback function to be called when the response is ready to be sent to the client
 	 */
-	this.scheduleNextRequest = function(responseCallback) {
+	this.scheduleNextRequest = function(checkIn, callback) {
+		//
 
 	};
 	
