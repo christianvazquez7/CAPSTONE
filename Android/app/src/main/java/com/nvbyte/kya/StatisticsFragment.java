@@ -32,7 +32,14 @@ public class StatisticsFragment extends Fragment {
      * CLASS_PARAM , and DATE_PARAM.
      */
     public static StatisticsFragment buildStatisticsFragment(double crimeRate, int classification, String date, int color) {
-        return null;
+        Bundle args = new Bundle();
+        args.putDouble(CRIME_PARAM, crimeRate);
+        args.putInt(CLASS_PARAM,classification);
+        args.putInt(BACKGROUND_COLOR_PARAM,color);
+        args.putString(DATE_PARAM, date);
+        StatisticsFragment fragment = new StatisticsFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
@@ -42,6 +49,13 @@ public class StatisticsFragment extends Fragment {
      * according to bundled parameters.
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View rootView = inflater.inflate(R.layout.fragment_statistics, container, false);
+        mBackgroundView = rootView.findViewById(R.id.background);
+        mCrimeRateTextView = (TextView) rootView.findViewById(R.id.crime_rate);
+        mDateTextView = (TextView) rootView.findViewById(R.id.date);
+        mBackgroundView.setBackgroundColor(getResources().getColor(getArguments().getInt(BACKGROUND_COLOR_PARAM)));
+        mCrimeRateTextView.setText(getArguments().getDouble(CRIME_PARAM)+"");
+        mDateTextView.setText(getArguments().getString(DATE_PARAM));
+        return rootView;
     }
 }

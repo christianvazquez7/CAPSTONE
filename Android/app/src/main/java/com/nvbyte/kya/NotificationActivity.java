@@ -30,9 +30,7 @@ public class NotificationActivity extends Activity {
     private long mNotificationId;
 
     static {
-        // Fill map with color scheme. Key is risk zone classification and value is integer value to
-        // color resource.
-        // mColorMap.put(1,1233);
+        mColorMap.put(1,1233);
     }
 
     @Override
