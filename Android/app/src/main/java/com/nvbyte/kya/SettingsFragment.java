@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
@@ -51,5 +54,13 @@ public class SettingsFragment extends PreferenceFragment {
             Log.d("TAG","SELECTED THRESHOLD: "+data.getIntExtra(SELECTED_THRESHOLD,0));
             preferences.edit().putInt(THRESHOLD_PREFERENCE,data.getIntExtra(SELECTED_THRESHOLD,0)).commit();
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(getResources().getColor(R.color.white));
+        view.setPadding(20,25,10,5);
+        return view;
     }
 }

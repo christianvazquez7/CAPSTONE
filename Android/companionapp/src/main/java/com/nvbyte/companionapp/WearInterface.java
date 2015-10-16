@@ -1,9 +1,8 @@
-package com.nvbyte.kya;
+package com.nvbyte.companionapp;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.MessageApi;
@@ -12,44 +11,28 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-public class PhoneInterface implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks {
+public class WearInterface implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks {
     private GoogleApiClient mApiClient;
-    private static PhoneInterface singleton;
+    private static WearInterface singleton;
     private Context mContext;
     private boolean isConnected = false;
-    private static final String SEND_HEARTBEAT = "/SEND_HEARTBEAT";
-    private static final String SEND_CHECK_IN = "/SEND_CHECK_IN";
-    private static final String SEND_SURVEY = "/SEND_SURVEY";
-    private static final String SEND_GET_ZONE = "/SEND_GET_ZONE";
-    private static final String SEND_MOVEMENT = "/SEND_MOVEMENT";
+    private static final String RESPONSE_CHECK_IN = "/RESPONSE_CHECK_IN";
+    private static final String RESPONSE_GET_ZONE = "/RESPONSE_GET_ZONE";
 
 
-
-    public static PhoneInterface getInstance(Context c) {
+    public static WearInterface getInstance(Context c) {
         if(singleton == null) {
-            singleton = new PhoneInterface(c);
+            singleton = new WearInterface(c);
         }
         return singleton;
     }
 
-    public void sendMessageMovement(byte[] message){
-        sendMessage(SEND_MOVEMENT,message);
+    public void sendResponseCheckIn(byte[] message){
+        sendMessage(RESPONSE_CHECK_IN,message);
     }
 
-    public void sendMessageHeartBeat(byte[] message){
-        sendMessage(SEND_HEARTBEAT,message);
-    }
-
-    public void sendMessageSurvey(byte[] message){
-        sendMessage(SEND_SURVEY,message);
-    }
-
-    public void sendMessageCheckIn(byte[] message){
-        sendMessage(SEND_CHECK_IN,message);
-    }
-
-    public void sendMessageGetZone(byte[] message){
-        sendMessage(SEND_GET_ZONE,message);
+    public void sendResponseGetZone(byte[] message){
+        sendMessage(RESPONSE_GET_ZONE,message);
     }
 
     private void sendMessage(final String a,final byte[] b){
@@ -60,12 +43,13 @@ public class PhoneInterface implements MessageApi.MessageListener, GoogleApiClie
                 for(Node node : nodes.getNodes()) {
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
                             mApiClient, node.getId(), a,b).await();
+
                 }
             }
         }).start();
     }
 
-    private PhoneInterface(Context c) {
+    private WearInterface(Context c) {
         mContext = c;
         initGoogleApiClient();
     }

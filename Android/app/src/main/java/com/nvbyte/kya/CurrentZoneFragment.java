@@ -1,6 +1,10 @@
 package com.nvbyte.kya;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.SensorEvent;
 import android.location.Location;
 import android.os.Bundle;
@@ -33,49 +37,46 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
     private TextView mAreaRatingTextView;
     private Handler handler = new Handler(Looper.getMainLooper());
     private static final String TAG = "CurrentZoneFragment";
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBackgroundView.setBackgroundColor(getResources().getColor(R.color.level2));
+                    loading.setVisibility(View.GONE);
+                    content.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+    };
 
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(messageReceiver);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
+        IntentFilter filters = new IntentFilter();
+        filters.addAction("com.nvbyte.kya.CURRENT_ZONE");
+        getActivity().registerReceiver(messageReceiver,filters);
         mBackgroundView.setBackgroundColor(getResources().getColor(R.color.white));
         content.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
-        RequestManager requestManager = RequestManager.getInstance(getActivity());
-        requestManager.getCurrentZone(10,10,new Response.Listener<byte[]>() {
+        HandlerThread handler2 = new HandlerThread("SensorHandlerThread");
+        handler2.start();
+        handler = new Handler(handler2.getLooper());
+        handler.post(new Runnable() {
             @Override
-            public void onResponse(byte[] response) {
-                mBackgroundView.setBackgroundColor(getResources().getColor(R.color.level2));
-                loading.setVisibility(View.GONE);
-                content.setVisibility(View.VISIBLE);
-            }
-        },new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG,"Error fetching request:"+ error.getMessage());
+            public void run() {
+                PhoneInterface myInterface = PhoneInterface.getInstance(getActivity());
+                myInterface.sendMessageGetZone(new byte[1]);
             }
         });
-//        final SensorDataProvider provider = SensorDataProvider.getInstance(getActivity());
-//        HandlerThread handler2 = new HandlerThread("SensorHandlerThread");
-//        handler2.start();
-//        handler = new Handler(handler2.getLooper());
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    final SensorEvent event = provider.getHeartbeat(10000).get();
-//                    getActivity().runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            mAreaRatingTextView.setText(event.values[0] + " bpm");
-//                        }
-//                    });
-//                } catch (Exception e) {
-//
-//                }
-//            }
-//        });
     }
 
     @Nullable

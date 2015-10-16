@@ -1,4 +1,4 @@
-package com.nvbyte.kya;
+package com.nvbyte.companionapp;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
