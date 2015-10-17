@@ -31,6 +31,9 @@ public class SurveyActivity extends FragmentActivity {
     private static final long TIMEOUT = 10000;
     private Timer mInteractionTimer;
     private ProgressBar mTimeout;
+    private final static String NOTIFICATION_ID_EXTRA = "NOTIFICATION_ID";
+    private final static String SELECTED_EXTRA = "SELECTED_ID";
+
     private int timeLeft = 10000;
     private Timer tick;
 
@@ -52,10 +55,14 @@ public class SurveyActivity extends FragmentActivity {
         GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener(){
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                // Your Code here
-                Log.d("TAG", "TAP Detected");
-                Intent resultIntent = new Intent();
+
+                String notificationID = getIntent().getExtras().getString(NOTIFICATION_ID_EXTRA);
                 int selectedThreshold = mSurveyOptions.get(mMainContentPager.getCurrentItem()).getSafetyRating();
+                Intent intent = new Intent();
+                intent.setAction("com.nvbyte.kya.SEND_SURVEY");
+                intent.putExtra(NOTIFICATION_ID_EXTRA,notificationID);
+                intent.putExtra(SELECTED_EXTRA,selectedThreshold);
+                sendBroadcast(intent);
                 finish();
                 return false;
             }

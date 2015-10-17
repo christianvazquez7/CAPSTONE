@@ -62,7 +62,6 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        LocationProvider.getInstance(getActivity());
         IntentFilter filters = new IntentFilter();
         filters.addAction("com.nvbyte.kya.CURRENT_ZONE");
         getActivity().registerReceiver(messageReceiver,filters);

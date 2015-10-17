@@ -2,39 +2,50 @@ package com.nvbyte.kya;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.concurrent.Callable;
 
 /**
  * Created by christianvazquez on 10/17/15.
  */
-public class FutureLocation implements Callable<Location>, LocationListener {
+public class FutureLocation implements Callable<Location> {
 
     private final Context mContext;
-    private final LocationManager mManager;
+    private final GoogleApiClient mManager;
     private Location locationResult;
     private static final long admittedTimeDelta = 30000;
     private static final long significantTime = 60000;
     private long mTimeout;
+    private Looper mLooper;
 
-    public FutureLocation(Context context, LocationManager manager, Looper looper, long timeOut) {
+    public FutureLocation(Context context, GoogleApiClient client, long timeOut) {
         mContext = context;
-        mManager = manager;
+        mManager = client;
         mTimeout = timeOut;
-        mManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,0,0,this,looper);
-        mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this,looper);
-        Location lastPassiveLocation = mManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        Location lastGpsLocation = mManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        locationResult = bestLocation(lastGpsLocation,lastPassiveLocation);
+        HandlerThread handlerThread = new HandlerThread("Thread");
+        handlerThread.start();
+        mLooper = handlerThread.getLooper();
+        Log.d("TAG","Subscribing to locaiton requests");
     }
 
     private Location bestLocation(Location l1,Location l2) {
+        Log.d("HERE","FETCHING BEST LOCATION");
         if (l1 == null && l2 == null) {
+            Log.d("HERE","both are null");
             return null;
         } else if (l1 == null || l2 == null) {
             if (l1 == null) {
@@ -58,35 +69,38 @@ public class FutureLocation implements Callable<Location>, LocationListener {
 
     @Override
     public Location call() throws Exception {
-        if(System.currentTimeMillis() - locationResult.getTime() <= admittedTimeDelta) {
-            return locationResult;
-        } else {
-            Thread.sleep(mTimeout);
-            return locationResult;
-        }
-    }
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("TAG","Starting location reads");
+                LocationRequest locationRequest = LocationRequest.create()
+                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                        .setInterval(0);
+                LocationServices.FusedLocationApi.setMockMode(mManager,true);
+                LocationServices.FusedLocationApi.requestLocationUpdates(mManager, locationRequest, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        Log.d("TAG", "Location changed");
+                        locationResult = location;
+                    }
+                },mLooper);
+                Log.d("TAG", "Locations requested");
+                final Location location = new Location("MockedLocation");
+                // Time is needed to create a valid Location
+                long currentTime = System.currentTimeMillis();
+                long elapsedTimeNanos = SystemClock.elapsedRealtimeNanos();
+                location.setElapsedRealtimeNanos(elapsedTimeNanos);
+                location.setTime(currentTime);
+                location.setLatitude(-121.45);
+                location.setLongitude(46.5);
+                LocationServices.FusedLocationApi.setMockLocation(mManager,location);
+                LocationServices.FusedLocationApi.setMockLocation(mManager,location);
 
-    @Override
-    public void onLocationChanged(Location location) {
-        if (locationResult == null) {
-            locationResult = location;
-        } else {
-            locationResult = bestLocation(location,locationResult);
-        }
-    }
+            }
+        });
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
+        thread.start();
+        Thread.sleep(10000);
+        return locationResult;
     }
 }

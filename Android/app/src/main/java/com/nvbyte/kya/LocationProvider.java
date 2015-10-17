@@ -9,6 +9,11 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -19,10 +24,12 @@ import java.util.concurrent.Future;
 /**
  * Provides location information in latitude and longitude.
  */
-public class LocationProvider {
+public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener{
     private LocationManager mLocationManager;
     private Context mContext;
     private static LocationProvider singleton;
+    private GoogleApiClient mGoogleApiClient;
 
     /**
      * Static factory that lazily instantiates a singleton instance of the LocationProvider.
@@ -44,6 +51,14 @@ public class LocationProvider {
     private LocationProvider(Context context) {
         mContext = context;
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        mGoogleApiClient = new GoogleApiClient.Builder( mContext )
+                .addApi( Wearable.API )
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks( this )
+                .build();
+
+        if( mGoogleApiClient != null && !( mGoogleApiClient.isConnected() || mGoogleApiClient.isConnecting() ) )
+            mGoogleApiClient.blockingConnect();
     }
 
     /**
@@ -57,9 +72,7 @@ public class LocationProvider {
      */
     public Location getLocation(long timeout) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        HandlerThread thread = new HandlerThread("LocationHandler");
-        thread.start();
-        Future<Location> location = executor.submit(new FutureLocation(mContext,mLocationManager,thread.getLooper(),timeout));
+        Future<Location> location = executor.submit(new FutureLocation(mContext, mGoogleApiClient, timeout));
         Location actualLocation = null;
         try {
             actualLocation = location.get();
@@ -67,5 +80,21 @@ public class LocationProvider {
             Log.d("TAG","ERROR WITH THREAD");
         }
         return actualLocation;
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d("TAG","CONECTED!");
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

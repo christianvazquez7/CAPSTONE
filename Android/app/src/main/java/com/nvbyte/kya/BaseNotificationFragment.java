@@ -1,8 +1,9 @@
 package com.nvbyte.kya;
 
-import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,12 @@ public class BaseNotificationFragment extends Fragment {
      * @return BaseNotificationFragment with number and color bundled in arguments.
      */
     public static BaseNotificationFragment build( int classification, int color) {
-        return null;
+        Bundle args = new Bundle();
+        args.putInt(CLASS_PARAM,classification);
+        args.putInt(BACKGROUND_COLOR_PARAM,color);
+        BaseNotificationFragment fragment = new BaseNotificationFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
@@ -35,6 +41,21 @@ public class BaseNotificationFragment extends Fragment {
      * Creates the notification view, with a classification and an associated color.
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_base_notification, container, false);
+        mBackgroundView = rootView.findViewById(R.id.notification_color);
+        mClassificationTextView = (TextView) rootView.findViewById(R.id.notification_level);
+        mBackgroundView.setBackgroundColor(getResources().getColor(getArguments().getInt(BACKGROUND_COLOR_PARAM)));
+        mClassificationTextView.setText(""+getArguments().getInt(CLASS_PARAM));
+
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent orientationActivity = new Intent();
+                orientationActivity.setClass(getActivity(),OrientationActivity.class);
+                startActivity(orientationActivity);
+            }
+        });
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 }
