@@ -16,7 +16,7 @@
             android:layout_gravity="center"
             />
         <TextView
-            android:visibility="gone"
+            android:textColor="@color/level3"
             android:layout_marginTop="10dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -24,6 +24,7 @@
             android:layout_gravity="center"
             android:textSize="10sp"
             android:gravity="center"
+            android:textStyle="bold"
             />
         </LinearLayout>
     <LinearLayout

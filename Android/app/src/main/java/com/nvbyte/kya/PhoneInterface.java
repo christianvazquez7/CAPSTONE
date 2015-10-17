@@ -49,6 +49,7 @@ public class PhoneInterface implements MessageApi.MessageListener, GoogleApiClie
     }
 
     public void sendMessageGetZone(byte[] message){
+        Log.d("TAG","Sending message to phone");
         sendMessage(SEND_GET_ZONE,message);
     }
 

@@ -5,23 +5,35 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.util.Log;
 
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
  * Provides location information in latitude and longitude.
  */
-public class LocationProvider implements LocationListener{
+public class LocationProvider {
     private LocationManager mLocationManager;
     private Context mContext;
+    private static LocationProvider singleton;
 
     /**
      * Static factory that lazily instantiates a singleton instance of the LocationProvider.
      * @param context Application's context.
      * @return A singleton instance of the LocationProvider class.
      */
-    private LocationProvider getInstance(Context context) {
-        return null;
+    public static LocationProvider getInstance(Context context) {
+        if(singleton == null) {
+            singleton = new LocationProvider(context);
+        }
+        return singleton;
     }
 
     /**
@@ -30,7 +42,8 @@ public class LocationProvider implements LocationListener{
      * @param context Application's context.
      */
     private LocationProvider(Context context) {
-
+        mContext = context;
+        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
     /**
@@ -42,28 +55,17 @@ public class LocationProvider implements LocationListener{
      * @return A Future location, which can then be used to wait synchronously in service for
      * a location before fetching a request.
      */
-    public Future<Location> getLocation() {
-        return null;
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
+    public Location getLocation(long timeout) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        HandlerThread thread = new HandlerThread("LocationHandler");
+        thread.start();
+        Future<Location> location = executor.submit(new FutureLocation(mContext,mLocationManager,thread.getLooper(),timeout));
+        Location actualLocation = null;
+        try {
+            actualLocation = location.get();
+        } catch (Exception e) {
+            Log.d("TAG","ERROR WITH THREAD");
+        }
+        return actualLocation;
     }
 }

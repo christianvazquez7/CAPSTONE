@@ -12,7 +12,6 @@ import android.widget.TextView;
  */
 public class OrientationActivity extends Activity {
     private TextView mClassificationTextView;
-    private CompassSurfaceView mCompassSurfaceView;
 
     @Override
     /**
