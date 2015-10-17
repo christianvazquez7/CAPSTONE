@@ -8,11 +8,8 @@ module.exports = function ZoneFetcher() {
 	/**
 	 * Module imports.
 	 */
-	var Point = require('./point.js');
 	var GeoJSONParser = require('./geoJSONParser.js');
-	var GeoZone = require('./geoZone.js');
-
-	var nearbyZonesList;
+	var GeoZone = require('./geoZone.js'); 
 
 	/**
 	 * From a given location it fetches the geo-zone that encloses it.
@@ -21,8 +18,18 @@ module.exports = function ZoneFetcher() {
 	 * @param currentZoneCallback: Callback function called when the geoZone has been fetched.
 	 * @return True if a zone is found and successfully fetched, False otherwise.
 	 */
-	this.fetchByLocation = function(location, currentZoneCallback) {
 
+	this.fetchByLocation = function(mLocation, numRings, currentZoneCallback, callback) {
+		//Variable to store db result
+		var dbResultCursor;
+		
+		var polygonContainer = getPolygon(mLocation, numRings);
+
+		/*----TODO: Methods to fetch from mongo DB------/
+		/ Sort by latitude -1 then longitude -1         /
+		/ 									            /
+		/----------------------------------------------*/ 
+		currentZoneCallback(dbResultCursor);
 	};
 	
 	
@@ -31,11 +38,33 @@ module.exports = function ZoneFetcher() {
 	 *
 	 * @param NWPoint: Point representing coordinates of the upper-left corner of the area.
 	 * @param SEPoint: Point representing coordinates of the lower-right corner of the area.
-	 * @param nearbyZoneCallback: Callback function called when the geoZones have been fetched.
+	 * @param within: Boolean to identify if the caller wants the area fully enclosed by the 
+	 * coordinates provided or the ones it intersects
+	 * @param nearbyZonesCallback: Callback function called when the geoZones have been fetched.
 	 * @return True if a list of zones is found and successfully fetched, False otherwise.
 	 */
-	this.fetchByArea = function(NWPoint, SEPoint, nearbyZonesCallback) {
+	this.fetchByArea = function(NWPoint, SEPoint, within, nearbyZonesCallback) {
+
+		//For fetching zones surroundig certain zone it is recommended to use intersect (within = false)
+		
+		if(!within){
+		/*----TODO: Methods to fetch from mongo DB------/
+		/			Using intersect			            /
+		/----------------------------------------------*/ 
+		}
+		//For fetching zones enclosed by certain area it is recommended to use within
+		else{
+		/*----TODO: Methods to fetch from mongo DB------/
+		/			Using intersect			            /
+		/----------------------------------------------*/ 
+		}
+
+		var zonesList;
+		nearbyZonesCallback(zonesList);
+	};
+	
+	function getPolygon(mLocation, numRings){
 
 	};
-		
+
 };

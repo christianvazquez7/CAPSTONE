@@ -11,18 +11,24 @@ module.exports = function RequestScheduler(velocity,location) {
 	/**
 	 * Module imports.
 	 */
-	var Point = require('./point.js');
+	var GeoPoint = require('../../../BuildServer/modules/GeoZoneManager/GeoCoordinate.js');
 	var ZoneFetcher = require('./zoneFetcher.js');
 	var ZoneAnalyzer = require('./zoneAnalyzer.js');
 	var ResponseBuilder = require('./responseBuilder.js');
 	var GeoZone = require('./geoZone.js');
 
 	var mCurrentGeoZone;
-	var mLocation = location;
-	var mVelocity = velocity;
 	var mResponse;
-	var mCurrentZoneCallback;
-	var mNearbyZonesCallback;
+
+	//Admin provided
+	var numberOfRingsToFetch;
+
+	var currentZoneCallback;
+	var nearbyZonesCallback;
+
+	var mCheckIn;
+	var fetcher = new ZoneFetcher();
+	var analyzer = new ZoneAnalyzer(); 
 
 	/**
 	 * Call the necessary functions to prepare a response to the client about when to request a location check next
@@ -30,17 +36,19 @@ module.exports = function RequestScheduler(velocity,location) {
 	 * @param responseCallback: Callback function to be called when the response is ready to be sent to the client
 	 */
 	this.scheduleNextRequest = function(checkIn, callback) {
-		//
-
+		mCheckIn = checkIn;
+		fetcher.fetchByLocation(mCheckIn.location, numberOfRingsToFetch, currentZoneCallback, callback);
 	};
 	
+
 	/**
 	 * Callback function to be called when the current geo-zone has been fetched from the database
 	 *
 	 * @param currentGeoZone: Object containing the current geo-zone.
 	 */	
-	this.mCurrentZoneCallback = function onCurrentZoneFetched(currentGeoZone) {
-
+	currentZoneCallback = function onCurrentZoneFetched(geoZones) {
+		analyzer.analyzeArea(geoZones);
+		
 	};
 	
 	/**
@@ -51,16 +59,4 @@ module.exports = function RequestScheduler(velocity,location) {
 	this.mNearbyZonesCallback = function onNearbyZonesFetched(nearbyGeoZones) {
 
 	};
-	
-	/**
-	 * Uses the zone fetcher module to find the zones surrounding the current location
-	 * 
-	 * @param 
-	 */	
-	this.findNearbyZones = function() {
-
-	};
-	
-	
-
 };

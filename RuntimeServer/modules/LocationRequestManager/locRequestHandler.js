@@ -10,7 +10,7 @@ module.exports = function LocationRequestHandler() {
 	 * Module imports.
 	 */
 	var RequestScheduler = require('./requestScheduler.js');
-	var GeoPoint = require('../../../BuildServer/modules/GeoZoneManager/GeoCoordinate.js');
+	
 	var ProtoBuf = require("../../node_modules/protobufjs");
 	
 
