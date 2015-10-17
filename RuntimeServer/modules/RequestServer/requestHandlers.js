@@ -5,36 +5,33 @@
 module.exports = function RequestHandlers() {
 
 	// Imports
-	var logger = require('./utils/logger.js');
+	var logger = require('../../resources/utils/logger.js');
 	var TelemetryRequestHandler = require('../TelemetryManager/telemetryRequestHandler.js');
-	var DashboardRequestHandler = require('../../../Dashboard/dashboardRequestHandler.js');
+	var DashboardRequestHandler = require('../DashboardRequestManager/dashboardRequestHandler.js');
 	var LocationRequestHandler = require('../LocationRequestManager/locRequestHandler.js')
 	
 	// Initialization
 	var mTelemetryHandler = new TelemetryRequestHandler();
 	var mLocationHandler = new LocationRequestHandler();
 	var mDashboardHandler = new DashboardRequestHandler();
-	var currentZone = 3;
 
 	/**
 	 * Request handle for the crime statistics. Connects with the
 	 * database to fetch the current statistics.
 	 *
-	 * @param response: A Json array with the current statistics.
+	 * @param response: A protobuffer with the current statistics.
 	 */
 	this.getStats = function(req, res) {
-	logger.debug("in app.getStats()");
-		console.log('>>> getstats');
-		var result;
+		logger.debug("GET --> Get stats handle");
 		mDashboardHandler.requestStats(function(err, result) {
-// 			console.log(result);
-
 			if (err) {
 				res.statusCode = 404;
 				res.send('No stats found');
+				logger.error(err);
 			}
 			else {
-				res.json(result);
+				res.send(result);
+				// logger.info('Stats result --> ', result);
 			}
 		});
 	}
@@ -43,22 +40,19 @@ module.exports = function RequestHandlers() {
 	 * Request handle for the fetching of the zones. Connects with the 
 	 * KYA DB to fetch the zones requested.
 	 *
-	 * @param parsedUrl: Object containing the following parameters:
+	 * @param req: Object containing the following parameters:
 	 *   1) northWest: Farthest north west point of area requested.
-	 *   2) southEast: Farthest sout east point of area requested.
-	 *   3) area     : Size of area requested.
+	 *   2) northEast: Farthest north east point of area requested.
+	 *	 3) southWest: Farthest south west point of area requested.
+	 *   4) southEast: Farthest south east point of area requested.
 	 * @param response: A Json array with the requested zones.
 	 */
 	this.getZones = function(req, res) {
-	logger.debug("in app.getZones()");
-		console.log('>>> getZones');
-		var northWest = req.params.northWest;
-		var southEast = req.params.southEast;
-		var area = req.params.area;
-		
-		mDashboardHandler.requestZones(northWest, southEast, area, function(err, result) {
-// 			console.log(result);
+		// Decode string query to buffer
+		gridBounds =  new Buffer(req.query.code1, 'base64');
+		mDashboardHandler.requestZones(gridBounds, function(err, result) {
 			res.send(result);
+			// logger.info('Zones result --> ', result);
 		});
 	}
 
@@ -73,18 +67,22 @@ module.exports = function RequestHandlers() {
 	 * @param response: if it was succesusfull or not in sending the data
 	 */
 	this.handleCheckIn = function(req, res) {
-		logger.debug("in app.handleCheckIn()");
-		console.log('>>> handleCheckIn');
-		var lat = req.params.lat;
-		var lon = req.params.lon;
-		var velocity = req.params.velocity;
-		var zoneId = req.params.zoneId;
-		mLocationHandler.handleRequest(lat, lon, velocity, zoneId);
-		res.send('SUCCESS');
+		logger.debug("POST --> Checkin handle");
+		var locationData = req.body;
+		mLocationHandler.handleRequest(locationData, function(err, result) {
+			if (err) {
+				res.statusCode = 404;
+				logger.error(err);
+			}
+			else {
+				res.send(result);
+				// logger.info('Checkin result --> ', result);
+			}
+		});
 	}
 
 	/**
-	 * Sends the HearBeat data to the WearRequestHandler.
+	 * Sends the HearBeat data to the TelemetryRequestHandler.
 	 *
 	 * @param req: Object containing the following parameters:
 	 *   1) deviceId: Unique identifier for wear device.
@@ -92,16 +90,14 @@ module.exports = function RequestHandlers() {
 	 * @param response: if it was succesusfull or not in sending the data
 	 */
 	this.handleHeartBeat = function(req, res) {
-		console.log('>>> handleHeartBeat');
-		
+		logger.debug("POST --> Heartbeat handle");
 		var telemetryData = req.body;
-		
-		mTelemetryHandler.handleTelemetry(telemetryData, currentZone);
+		mTelemetryHandler.handleTelemetry(telemetryData);
 		res.send('SUCCESS');
 	}
 
 	/**
-	 * Sends the Survey data to the WearRequestHandler.
+	 * Sends the Survey data to the TelemetryRequestHandler.
 	 *
 	 * @param req: Object containing the following parameters:
 	 *   1) deviceId: Unique identifier for wearer device.
@@ -109,15 +105,14 @@ module.exports = function RequestHandlers() {
 	 * @param response: if it was succesusfull or not in sending the data
 	 */
 	this.handleSurvey = function(req, res) {
-		console.log('>>> handleHeartSurvey');
+		logger.debug("POST --> Survey handle");
 		var telemetryData = req.body;
-// 		console.log(telemetryData);
-		mTelemetryHandler.handleTelemetry(telemetryData, currentZone);
+		mTelemetryHandler.handleTelemetry(telemetryData);
 		res.send('SUCCESS');
 	}
 	
 	/**
-	 * Sends the Movement data to the WearRequestHandler.
+	 * Sends the Movement data to the TelemetryRequestHandler.
 	 *
 	 * @param req: Object containing the following parameters:
 	 *   1) deviceId  : Unique identifier for wear device.
@@ -125,9 +120,10 @@ module.exports = function RequestHandlers() {
 	 * @param res: if it was succesusfull or not in sending the data
 	 */
 	this.handleMovement = function(req, res) {
-		console.log('>>> handleMovement');
+		logger.debug("POST --> Movement handle");
 		var telemetryData = req.body;
-		mTelemetryHandler.handleTelemetry(telemetryData, currentZone);
+		mTelemetryHandler.handleMovement(telemetryData);
+		res.send('SUCCESS');
 	}
 
 	/**
@@ -138,10 +134,8 @@ module.exports = function RequestHandlers() {
 	 *   2) lon     : Current longitude.
 	 * @param response: the zone matching the given latitude and longitude
 	 */
-	this.getCurrentZone = function(req, res) {
-		console.log('>>> getCurrentZone');
-		var lat = req.params.lat;
-		var lon = req.params.lon;
+	this.handleCurrentZone = function(req, res) {
+		logger.debug("POST --> Current zone handle");
 		res.send('SUCCESS');
 	}
 };

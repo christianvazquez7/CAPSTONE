@@ -10,12 +10,24 @@ module.exports = function DashboardRequestHandler() {
 	 */
 	// var GeoZone = require('./geoZone.js');
 	var Stats = require('./stats.js');
-	var mongodb = require('mongodb');
+	var MongoClient = require('mongodb').MongoClient;
+	var ProtoBuf = require("../../node_modules/protobufjs");
+
+	// Protocol buffer initialization
+	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
+	// URL for Mondo db 
+	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/Geozones';
+	// Documents collection
+	var collection = db.collection('GeoZones');
+
+	MongoClient.connect(url, function(err, db) {
+	  assert.equal(null, err);
+	  insertDocument(db, function() {
+	      db.close();
+	  });
+	});
 	
 	var geoZoneList;
-	
-	var MongoClient = mongodb.MongoClient;
-	var url = 'mongodb://localhost:27017/KYA';
 	
 	/**
 	 * Fetch the current crime statistics from KYA DB.
@@ -35,9 +47,6 @@ module.exports = function DashboardRequestHandler() {
 		  else {
 		    // Connected
 		    // console.log('Connection established to', url);
-
-		    // Get the documents collection
-		    var collection = db.collection('GeoZones');
 
 	        collection.find().sort({"totalCrime":-1}).limit(1).toArray(function (err, result)
 	        {
@@ -91,9 +100,14 @@ module.exports = function DashboardRequestHandler() {
 	 * @param area: the size 
 	 * @param callback: Callback function to be called when the zones have been fetched from the database.
 	 */
-	this.requestZones = function(nwPoint, sePoint, area, callback) {
-		var mNwPoint = parseFloat(nwPoint);
-		var mSePoint = parseFloat(sePoint);
+	this.requestZones = function(gridBoundsBuffer, callback) {
+		var gridBounds = GridBounds.decode(gridBoundsBuffer);
+
+		// Get grid bounds
+		var nwPoint = gridBounds.nwPoint;
+		var nePoint = gridBounds.nePoint;
+		var swPoint = gridBounds.swPoint;
+		var sePoint = gridBounds.sePoint;
 		
 		MongoClient.connect(url, function (err, db) {
 			if (err) {
@@ -102,23 +116,35 @@ module.exports = function DashboardRequestHandler() {
 			else {
 			    // Connected
 			    // console.log('Connection established to', url);
-
-			    // Get the documents collection
-			    var collection = db.collection('GeoZones');
 			    
 			    var query = {};
 				query['coordinates'] = [mNwPoint, mSePoint];
 				query['type'] = "Point";
 
-				collection.find({loc:{$geoIntersects: {$geometry: query }}}).toArray(function (err, result) {
-				console.log(result);
-					if (err) {
-				        console.log(err);
-				    }
-				    else {
-				    	callback(err, result);
-				    }
-				});
+				collection.find( { loc : 
+	                  { $geoWithin : 
+	                    { $geometry : 
+	                      { type : "Polygon",
+	                        coordinates : [ [ nwPoint , nePoint , swPoint , sePoint , nwPoint ] ]
+	                } } } } ).toArray(function (err, result) {
+	                	console.log(result);
+	                	if (err) {
+							console.log(err);
+						}
+						else {
+							callback(err, result);
+				    	}
+				    });
+
+				// collection.find({loc:{$geoIntersects: {$geometry: query }}}).toArray(function (err, result) {
+				// console.log(result);
+				// 	if (err) {
+				// 		console.log(err);
+				// 	}
+				// 	else {
+				// 		callback(err, result);
+				//     }
+				// });
 			}
 		});
 	};

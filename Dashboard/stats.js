@@ -36,14 +36,5 @@ module.exports = function Stats(max, min, crimeAverage) {
 	this.getCrimeRate = function() {
 		return crimeRate;
 	};
-	
-	this.toJSON = function() {
-		 return {"maxNumOfCrimes": maxNumOfCrimes, "minNumOfCrimes": minNumOfCrimes, "crimeRate": crimeRate};
-	}
-	
-	this.fromJSON = function(json) {
-		var obj = JSON.parse (json);
-		return new Stats(obj.maxNumOfCrimes, obj.minNumOfCrimes, obj.crimeRate);
-	}
 
 };

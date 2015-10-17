@@ -5,7 +5,7 @@ var logger = new (winston.Logger)({
   transports: [
     new (winston.transports.File)({
       name: 'info-file',
-      filename: 'filelog-info.log',
+      filename: './logs/filelog-info.log',
       level: 'info',
       handleExceptions: true,
       json: true,
@@ -14,7 +14,7 @@ var logger = new (winston.Logger)({
     }),
     new (winston.transports.File)({
       name: 'debug-file',
-      filename: 'filelog-debug.log',
+      filename: './logs/filelog-debug.log',
       level: 'debug',
       handleExceptions: true,
       json: true,
@@ -22,7 +22,7 @@ var logger = new (winston.Logger)({
     }),
     new (winston.transports.File)({
       name: 'error-file',
-      filename: 'filelog-error.log',
+      filename: './logs/filelog-error.log',
       level: 'error',
       handleExceptions: true,
       json: true,

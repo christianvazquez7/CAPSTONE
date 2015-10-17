@@ -5,7 +5,7 @@
 module.exports = function Server() {
   // Imports
   var express = require('express');
-  var routes = require('./route.js');
+  var routes = require('./routes.js');
   var logger = require('./utils/logger.js');
   
   var app = express();

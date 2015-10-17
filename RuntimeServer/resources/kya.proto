@@ -22,3 +22,26 @@ message Telemetry {
     optional  Survey  survey = 4;
 
 }
+
+// Contains the bounds of a grid
+message GridBounds {
+    
+    // LatLng of the north-west corner
+    repeated double nwPoint = 1;
+
+    // LatLng of the north-east corner
+    repeated double nePoint = 2;
+
+    // LatLng of the south-west corner
+    repeated double swPoint = 3;
+
+    // LatLng of the south-east corner
+    repeated double sePoint = 4;
+}
+
+// Stats
+message Stats {
+    required double maxNumOfCrimes = 1;
+    required double minNumOfCrimes = 2;
+    required double crimeAverage = 3;
+}

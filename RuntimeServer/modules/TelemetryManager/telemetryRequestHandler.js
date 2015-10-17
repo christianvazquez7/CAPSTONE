@@ -22,11 +22,23 @@ module.exports = function TelemetryRequestHandler() {
 	/**
 	 * Call functions required to schedule the next request	
 	 */
-	this.handleTelemetry = function(telemetryDataBuffer, currentZoneID) {
+	this.handleTelemetry = function(telemetryDataBuffer) {
 		var telemetryRecord = Telemetry.decode(telemetryDataBuffer);
 		console.log('Telemetry record handle:')
 		console.log(telemetryRecord);
-// 		console.log('Current zone id: ' + currentZoneID);
+	};
+
+	/**
+	 * Function to decode protobuffer message containg location data from the client to track movement
+	 *
+	 * @param GeoPointBuffer: Buffer contaning GeoPoint (lat,lon,timestamp)
+	 */ 
+	this.handleMovementData = function(GeoPointBuffer) {
+		
+		var geoPoint = GeoPoint.decode(GeoPointBuffer);
+		console.log('Telemetry movement record handle:')
+		console.log(geoPoint);
+		
 	};
 
 	/**
