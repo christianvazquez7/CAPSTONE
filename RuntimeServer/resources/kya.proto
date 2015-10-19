@@ -23,10 +23,10 @@ message Telemetry {
     }
 
     //Identifier of the device where the telemetry was captured
-    required  int32  userID  = 1;                 
+    required  string  userID  = 1;                 
     
     //Identifier of a notification
-    required  int32  notificationID = 2;     
+    required  string  notificationID = 2;     
      
     // Zone where the record was captured or obtained
     required  int32  zoneID = 3;     
@@ -42,7 +42,7 @@ message Telemetry {
 message GeoPoint {
     
     //Identifier of the device where the telemetry was captured
-    required int32 userID = 1;
+    required string userID = 1;
 
     // Latitude coordinate in physical space.
     required double latitude = 2;
@@ -58,7 +58,7 @@ message CheckIn {
     
     // Unique Id for the wearable device. This could either be registered or use
     // a particular serial value unique to the physical device.
-    required int32 userId = 1;
+    required string userId = 1;
 
     // Location of wearable device at the time of checkin. This has two purposes
     // (1) to check for changes between areas that the user traverses and (2) to 
