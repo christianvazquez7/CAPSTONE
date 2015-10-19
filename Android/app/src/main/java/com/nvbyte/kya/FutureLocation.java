@@ -31,6 +31,7 @@ public class FutureLocation implements Callable<Location> {
     private static final long significantTime = 60000;
     private long mTimeout;
     private Looper mLooper;
+    private LocationListener mLocationListener;
 
     public FutureLocation(Context context, GoogleApiClient client, long timeOut) {
         mContext = context;
@@ -69,6 +70,10 @@ public class FutureLocation implements Callable<Location> {
 
     @Override
     public Location call() throws Exception {
+        locationResult = LocationServices.FusedLocationApi.getLastLocation(mManager);
+        if(locationResult != null && System.currentTimeMillis() - locationResult.getTime() < admittedTimeDelta) {
+            return locationResult;
+        }
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -76,31 +81,20 @@ public class FutureLocation implements Callable<Location> {
                 LocationRequest locationRequest = LocationRequest.create()
                         .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                         .setInterval(0);
-                LocationServices.FusedLocationApi.setMockMode(mManager,true);
-                LocationServices.FusedLocationApi.requestLocationUpdates(mManager, locationRequest, new LocationListener() {
+                mLocationListener = new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
                         Log.d("TAG", "Location changed");
-                        locationResult = location;
+                        locationResult = bestLocation(location,locationResult);
                     }
-                },mLooper);
+                };
+                LocationServices.FusedLocationApi.requestLocationUpdates(mManager, locationRequest,mLocationListener,mLooper);
                 Log.d("TAG", "Locations requested");
-                final Location location = new Location("MockedLocation");
-                // Time is needed to create a valid Location
-                long currentTime = System.currentTimeMillis();
-                long elapsedTimeNanos = SystemClock.elapsedRealtimeNanos();
-                location.setElapsedRealtimeNanos(elapsedTimeNanos);
-                location.setTime(currentTime);
-                location.setLatitude(-121.45);
-                location.setLongitude(46.5);
-                LocationServices.FusedLocationApi.setMockLocation(mManager,location);
-                LocationServices.FusedLocationApi.setMockLocation(mManager,location);
-
             }
         });
-
         thread.start();
-        Thread.sleep(10000);
+        Thread.sleep(mTimeout);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mManager,mLocationListener);
         return locationResult;
     }
 }
