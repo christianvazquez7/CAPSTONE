@@ -11,6 +11,8 @@ module.exports = function ZoneFetcher() {
 	var GeoJSONParser = require('./geoJSONParser.js');
 	var GeoZone = require('./geoZone.js'); 
 
+	var math = require('../../node_modules/mathjs');
+
 	/**
 	 * From a given location it fetches the geo-zone that encloses it.
 	 *
@@ -19,19 +21,39 @@ module.exports = function ZoneFetcher() {
 	 * @return True if a zone is found and successfully fetched, False otherwise.
 	 */
 
-	this.fetchByLocation = function(mLocation, numRings, currentZoneCallback, callback) {
-		//Variable to store db result
-		var dbResultCursor;
+	this.fetchByLocation = function(location, numRings, zonesCallback) {
 		
-		var polygonContainer = getPolygon(mLocation, numRings);
+		var polygonContainer = getPolygon(location, numRings);
 
-		/*----TODO: Methods to fetch from mongo DB------/
-		/ Sort by latitude -1 then longitude -1         /
-		/ 									            /
-		/----------------------------------------------*/ 
-		currentZoneCallback(dbResultCursor);
+		MongoClient.connect(url, function(err, db) {
+  			assert.equal(null, err);
+  			findZones(db, polygonContainer, zonesCallback);
+		});		
+
+
 	};
 	
+	var findZones = function(db, polygon, callback) {
+  		
+  		// Get the documents collection 
+  		var collection = db.collection('Geozones');
+  		// Find some documents 
+  		
+  		//Variable to store db result
+		var dbZonesCursor = collection.find(
+  		{	
+  			loc: 
+  			{
+     			$geoIntersects: {
+        			$geometry: {polygonContainer}        			
+     			}
+     		}
+  		}).sort({loc.coordinates[0][0][1] : -1, loc.coordinates[0][0][0] : -1});
+  		
+  		var zonesArray = dbZonesCursor.toArray();
+  		db.close();
+  		callback(resultArray);
+  	};
 	
 	/**
 	 * Given two coordinates it fetches the geo-zones enclosed by them.
@@ -63,8 +85,14 @@ module.exports = function ZoneFetcher() {
 		nearbyZonesCallback(zonesList);
 	};
 	
-	function getPolygon(mLocation, numRings){
-
+	function getPolygon(location, numRings){
+		var locationGeoJSON = turf.point([location.longitude, location.latitude]);
+		var distanceFromCenter = math.eval('sqrt(2 * ' + numRings*200 + ' ^ 2)')/1000; // in Km
+		var NW = turf.destination(locationGeoJSON,distanceFromCenter , 135 ,'kilometers').geometry.coordinates,
+			NE = turf.destination(locationGeoJSON,distanceFromCenter , 45 ,'kilometers').geometry.coordinates,
+			SE = turf.destination(locationGeoJSON,distanceFromCenter , -45 ,'kilometers').geometry.coordinates,
+			SW = turf.destination(locationGeoJSON,distanceFromCenter , -135 ,'kilometers').geometry.coordinates;
+		var polygon = turf.polygon([NW,NE,SE,SW,NW]);
+		return polygon;
 	};
-
 };

@@ -28,22 +28,7 @@ module.exports = function LocationRequestHandler() {
 	this.handleRequest = function(checkInBuffer, callback) {
 		var checkIn = CheckIn.decode(checkInBuffer);
 		var scheduler = new RequestScheduler();
-
 		scheduler.scheduleNextRequest(checkIn, callback);
 	};
-
-
-
-
-
-	/**
-	 * Callback function to be called when the nearby geoZones have been fetched from the database
-	 *
-	 * @param responseString: String with the response to be sent to the client.
-	 */	
-	responseCallback = function onResponseReady(responseString){
-
-	};
-
 
 };

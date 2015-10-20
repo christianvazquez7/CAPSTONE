@@ -1,12 +1,12 @@
 /**
  * This module calculates the frequency of location requests from to the Android app to 
  * the server. It assumes that an http request was received from the android app containing 
- * the current location and velocity. With this data it call the necessary functions to 
+ * the current location and speed. With this data it call the necessary functions to 
  * identifies the closest higher risk geo-zone and estimates the distance and time it will require 
  * to reach given zone.
  */
  
-module.exports = function RequestScheduler(velocity,location) {
+module.exports = function RequestScheduler() {
 	
 	/**
 	 * Module imports.
@@ -17,18 +17,27 @@ module.exports = function RequestScheduler(velocity,location) {
 	var ResponseBuilder = require('./responseBuilder.js');
 	var GeoZone = require('./geoZone.js');
 
-	var mCurrentGeoZone;
-	var mResponse;
+	
 
 	//Admin provided
-	var numberOfRingsToFetch;
+	//Default = 1
+	var numberOfRingsToFetch = 1;
 
-	var currentZoneCallback;
-	var nearbyZonesCallback;
+	//TODO: Calculate
+	//Default = true
+	var surveyFlag = true;
 
+	var mCurrentGeoZone;
 	var mCheckIn;
+	var mResponse;
+	var mTimeForNextRequest;
+
+	var zoneFetchingCallback;
+	var responseCallback;
+
 	var fetcher = new ZoneFetcher();
 	var analyzer = new ZoneAnalyzer(); 
+	var responseBuilder = new ResponseBuilder();
 
 	/**
 	 * Call the necessary functions to prepare a response to the client about when to request a location check next
@@ -37,7 +46,8 @@ module.exports = function RequestScheduler(velocity,location) {
 	 */
 	this.scheduleNextRequest = function(checkIn, callback) {
 		mCheckIn = checkIn;
-		fetcher.fetchByLocation(mCheckIn.location, numberOfRingsToFetch, currentZoneCallback, callback);
+		responseCallback = callback;
+		fetcher.fetchByLocation(mCheckIn.location, numberOfRingsToFetch, zonesFetchingCallback);
 	};
 	
 
@@ -46,17 +56,14 @@ module.exports = function RequestScheduler(velocity,location) {
 	 *
 	 * @param currentGeoZone: Object containing the current geo-zone.
 	 */	
-	currentZoneCallback = function onCurrentZoneFetched(geoZones) {
-		analyzer.analyzeArea(geoZones);
-		
-	};
-	
-	/**
-	 * Callback function to be called when the nearby geoZones have been fetched from the database
-	 *
-	 * @param nearbyGeoZones: List of nearby geo-zones fetched from the database.
-	 */	
-	this.mNearbyZonesCallback = function onNearbyZonesFetched(nearbyGeoZones) {
+	zonesFetchingCallback = function onZonesFetched(geoZones) {
+		//Analyze zone to obtain the time to schedule the next location request
+		analyzer.analyzeZones(geoZones);
+		mTimeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,mCheckIn.location);
+		mCurrentGeoZone = analyzer.getCurrentZone();
 
+		mResponse = responseBuilder.build(mCurrentGeoZone, mTimeForNextRequest, surveyFlag); 
+
+		responseCallback(mResponse);
 	};
 };
