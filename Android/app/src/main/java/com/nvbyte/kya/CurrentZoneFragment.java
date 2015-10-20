@@ -75,8 +75,9 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
             @Override
             public void run() {
                 PhoneInterface myInterface = PhoneInterface.getInstance(getActivity());
-                byte[] CDRIVES = hexStringToByteArray("e04fd020ea3a6910a2d808002b30309d"); 
-                myInterface.sendMessageGetZone(CDRIVES);
+                Location location = LocationProvider.getInstance(getActivity()).getLocation(300);
+                KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(getActivity())).build();
+                myInterface.sendMessageGetZone(point.toByteArray());
             }
         });
     }

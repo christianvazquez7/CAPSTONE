@@ -61,9 +61,9 @@ public class KYANotificationService extends Service {
                         mMovementTimer = null;
                     }
                 } else {
-                    Location l = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT);
-                    String userId  = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
-                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageMovement(new byte[1]);
+                    Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT);
+                    KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
+                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageMovement(point.toByteArray());
                 }
             }
         };
@@ -75,7 +75,7 @@ public class KYANotificationService extends Service {
             String action = intent.getAction();
             Log.d(TAG,"GOT ACTION:"+intent.getAction());
             if(action.equals("com.nvbyte.kya.SEND_SURVEY")) {
-                Log.d(TAG,"Got survey response.");
+                Log.d(TAG, "Got survey response.");
                 sendSurveyResult(intent);
             } else if (action.equals("com.nvbyte.kya.SEND_AFTER_BEAT")) {
                 sendHeartbeat(intent);
@@ -153,14 +153,20 @@ public class KYANotificationService extends Service {
                 String id = intent.getExtras().getString(EXTRA_ID);
                 String date = intent.getExtras().getString(LAST_UPDATED);
                 double rate = intent.getExtras().getDouble(CRIME_RATE);
-                PhoneInterface.getInstance(KYANotificationService.this).sendMessageSurvey(new byte[1]);
+
+                KYA.Telemetry.Survey survey = KYA.Telemetry.Survey.newBuilder().setPerceivedRisk(selected).setActualRisk(rating).build();
+                KYA.Telemetry.Builder builder = KYA.Telemetry.newBuilder().setUserID(Utils.getUserId(KYANotificationService.this));
+                builder.setSurvey(survey);
+                builder.setNotificationID(id);
+                builder.setZoneID(1);
+                PhoneInterface.getInstance(KYANotificationService.this).sendMessageSurvey(builder.build().toByteArray());
                 KYANotificationService.this.notify(id, rating, rate, date);
             }
         });
     }
 
 
-    private void sendHeartbeat(Intent intent) {
+    private void sendHeartbeat(final Intent intent) {
         HandlerThread handlerThread = new HandlerThread("hbHandler");
         handlerThread.start();
         Handler heartBeatHandler = new Handler(handlerThread.getLooper());
@@ -170,7 +176,12 @@ public class KYANotificationService extends Service {
                 Future<SensorEvent> futureHeartBeat = SensorDataProvider.getInstance(KYANotificationService.this).getHeartbeat(HEART_BEAT_TIMEOUT);
                 try {
                     SensorEvent heartbeat = futureHeartBeat.get();
-                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageHeartBeat(new byte[1]);
+                    KYA.Telemetry.HeartRate hr = KYA.Telemetry.HeartRate.newBuilder().setAfter((int) heartbeat.values[0]).build();
+                    KYA.Telemetry.Builder builder = KYA.Telemetry.newBuilder().setUserID(Utils.getUserId(KYANotificationService.this));
+                    builder.setHeartRate(hr);
+                    builder.setNotificationID(intent.getExtras().getString(EXTRA_ID));
+                    builder.setZoneID(1);
+                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageHeartBeat(builder.build().toByteArray());
                 } catch (ExecutionException | InterruptedException e) {
                     Log.d(TAG,"Error fetching heartbeat: " + e.getMessage());
                 }
@@ -186,10 +197,11 @@ public class KYANotificationService extends Service {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Location l = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT);
-                double speed = l.getSpeed();
-                double longitude = l.getLongitude();
-                double latitude = l.getLatitude();
+                Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT);
+                KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
+                KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setUserId(Utils.getUserId(KYANotificationService.this));
+                builder.setLocation(point);
+                builder.setSpeed(location.getSpeed());
                 PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(new byte[1], new Runnable() {
                     @Override
                     public void run() {
@@ -267,7 +279,12 @@ public class KYANotificationService extends Service {
                 Future<SensorEvent> futureHeartBeat = SensorDataProvider.getInstance(KYANotificationService.this).getHeartbeat(HEART_BEAT_TIMEOUT);
                 try {
                     SensorEvent heartbeat = futureHeartBeat.get();
-                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageHeartBeat(new byte[1]);
+                    KYA.Telemetry.HeartRate hr = KYA.Telemetry.HeartRate.newBuilder().setBefore((int) heartbeat.values[0]).build();
+                    KYA.Telemetry.Builder builder = KYA.Telemetry.newBuilder().setUserID(Utils.getUserId(KYANotificationService.this));
+                    builder.setHeartRate(hr);
+                    builder.setNotificationID(notificationId);
+                    builder.setZoneID(1);
+                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageHeartBeat(builder.build().toByteArray());
                 } catch (ExecutionException | InterruptedException e) {
                     Log.d(TAG,"Error fetching heartbeat: " + e.getMessage());
                 }
