@@ -82,6 +82,18 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
         return actualLocation;
     }
 
+    public double getSpeed(long timeout) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Location> location = executor.submit(new FutureLocation(mContext, mGoogleApiClient, timeout));
+        Location actualLocation = null;
+        try {
+            actualLocation = location.get();
+        } catch (Exception e) {
+            Log.d("TAG","ERROR WITH THREAD");
+        }
+        return actualLocation.getSpeed();
+    }
+
     @Override
     public void onConnected(Bundle bundle) {
         Log.d("TAG","CONECTED!");

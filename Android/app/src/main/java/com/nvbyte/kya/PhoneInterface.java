@@ -33,34 +33,42 @@ public class PhoneInterface implements MessageApi.MessageListener, GoogleApiClie
     }
 
     public void sendMessageMovement(byte[] message){
-        sendMessage(SEND_MOVEMENT,message);
+        sendMessage(SEND_MOVEMENT,message,null);
     }
 
     public void sendMessageHeartBeat(byte[] message){
-        sendMessage(SEND_HEARTBEAT,message);
+        sendMessage(SEND_HEARTBEAT,message,null);
     }
 
     public void sendMessageSurvey(byte[] message){
-        sendMessage(SEND_SURVEY,message);
+        sendMessage(SEND_SURVEY,message,null);
     }
 
-    public void sendMessageCheckIn(byte[] message){
-        sendMessage(SEND_CHECK_IN,message);
+    public void sendMessageCheckIn(byte[] message, Runnable onError){
+        sendMessage(SEND_CHECK_IN,message,onError);
     }
 
     public void sendMessageGetZone(byte[] message){
         Log.d("TAG","Sending message to phone");
-        sendMessage(SEND_GET_ZONE,message);
+        sendMessage(SEND_GET_ZONE,message,null);
     }
 
-    private void sendMessage(final String a,final byte[] b){
+    private void sendMessage(final String a,final byte[] b, final Runnable onError){
         new Thread( new Runnable() {
             @Override
             public void run() {
                 NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                if (nodes.getNodes() == null || nodes.getNodes().isEmpty()){
+                    if(onError != null)
+                        onError.run();
+                }
                 for(Node node : nodes.getNodes()) {
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
                             mApiClient, node.getId(), a,b).await();
+                    if(!result.getStatus().isSuccess()) {
+                        if(onError != null)
+                            onError.run();
+                    }
                 }
             }
         }).start();

@@ -1,6 +1,7 @@
 package com.nvbyte.kya;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 /**
  * Contains the compass surface view that draws direction to previous safer zone after a
@@ -68,9 +71,15 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                     @Override
                     public void run() {
                         CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(l.getLatitude(), l.getLongitude()));
-                        CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);
+                        CameraUpdate zoom=CameraUpdateFactory.zoomTo(16);
                         map.moveCamera(center);
                         map.animateCamera(zoom);
+                        Polygon polygon = map.addPolygon(new PolygonOptions()
+                                .add(new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 100)), new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), 100)), new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), -100)), new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), -100)))
+                                .fillColor(getResources().getColor(R.color.level10transluscent))
+                                .strokeWidth(0.5f)
+                                .strokeColor(Color.RED));
+                        map.addMarker(new MarkerOptions().title("Zone level 10").position(new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 100))));
                     }
                 });
 
@@ -82,7 +91,7 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
             public void onMyLocationChange(Location location) {
 
                 CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);
+                CameraUpdate zoom=CameraUpdateFactory.zoomTo(16);
                 map.moveCamera(center);
                 map.animateCamera(zoom);
 
@@ -94,5 +103,36 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
     @Override
     public void onMapLongClick(LatLng point) {
         mDismissOverlay.show();
+    }
+
+    private double LatOffset(double lat,double amount){
+        //Position, decimal degrees
+
+
+        //Earth’s radius, sphere
+        double R=6378137;
+
+        //offsets in meters
+        double dn = amount;
+
+        //Coordinate offsets in radians
+        double dLat = dn/R;
+
+        //OffsetPosition, decimal degrees
+        return lat + dLat * 180/Math.PI;
+    }
+
+    private double LongOffset(double lon,double lat,double amount) {
+
+        double R=6378137;
+
+        //offsets in meters
+        double de = amount;
+
+        //Coordinate offsets in radians
+        double dLon = de/(R*Math.cos(Math.PI * lat / 180));
+
+        //OffsetPosition, decimal degrees
+        return lon + dLon * 180/Math.PI;
     }
 }

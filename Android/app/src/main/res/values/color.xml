@@ -11,4 +11,5 @@
     <color name="level9">#F37904</color>
     <color name="level10">#F93324</color>
     <color name="white">#FFFFFF</color>
+    <color name="level10transluscent">#80F93324</color>
 </resources>

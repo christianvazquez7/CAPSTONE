@@ -1,5 +1,7 @@
 package com.nvbyte.companionapp;
 
+import android.util.Log;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -35,6 +37,12 @@ public class ByteArrayRequest extends Request<byte[]> {
 
     @Override
     public byte[] getBody() throws AuthFailureError {
+        Log.d("HERE","get BODY!!!: " + mBody);
         return mBody;
+    }
+
+    @Override
+    public String getBodyContentType() {
+        return "application/octet-stream";
     }
 }

@@ -60,7 +60,15 @@ public class SettingsFragment extends PreferenceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setBackgroundColor(getResources().getColor(R.color.white));
-        view.setPadding(20,25,10,5);
+        float scale = getResources().getDisplayMetrics().density;
+        int dpAsPixels = (int) (25*scale + 0.5f);
+        int dpAsPixelsleft = (int) (20*scale + 0.5f);
+        int dpAsPixelsdown = (int) (10*scale + 0.5f);
+        int dpAsPixelsRight = (int) (5*scale + 0.5f);
+
+
+
+        view.setPadding(dpAsPixelsleft,dpAsPixels,dpAsPixelsdown,dpAsPixelsRight);
         return view;
     }
 }

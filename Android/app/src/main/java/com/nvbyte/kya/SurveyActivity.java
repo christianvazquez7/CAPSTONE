@@ -1,8 +1,12 @@
 package com.nvbyte.kya;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,6 +15,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import com.viewpagerindicator.UnderlinePageIndicator;
@@ -34,6 +39,12 @@ public class SurveyActivity extends FragmentActivity {
     private final static String NOTIFICATION_ID_EXTRA = "NOTIFICATION_ID";
     private final static String SELECTED_EXTRA = "SELECTED_ID";
 
+    private static final String RATING = "RATING";
+    private static final String CRIME_RATE = "CRIME_RATE";
+    private static final String LAST_UPDATED = "LAST_UPDATED";
+    private static final String EXTRA_ID = "NOTIFICATION_ID";
+    private static final int VIBRATION_PERIOD = 1000;
+
     private int timeLeft = 10000;
     private Timer tick;
 
@@ -44,6 +55,13 @@ public class SurveyActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(preferences.getBoolean("vibrate_preference",true)) {
+            Vibrator mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            mVibrator.vibrate(VIBRATION_PERIOD);
+        }
         mMainContentPager = fetchViewPager();
         mMainContentAdapter = buildAdapter();
         mSurveyOptions = buildOptions();
@@ -60,8 +78,9 @@ public class SurveyActivity extends FragmentActivity {
                 int selectedThreshold = mSurveyOptions.get(mMainContentPager.getCurrentItem()).getSafetyRating();
                 Intent intent = new Intent();
                 intent.setAction("com.nvbyte.kya.SEND_SURVEY");
-                intent.putExtra(NOTIFICATION_ID_EXTRA,notificationID);
-                intent.putExtra(SELECTED_EXTRA,selectedThreshold);
+                intent.putExtra(NOTIFICATION_ID_EXTRA, notificationID);
+                intent.putExtra(SELECTED_EXTRA, selectedThreshold);
+                intent = cascadeExtras(intent);
                 sendBroadcast(intent);
                 finish();
                 return false;
@@ -136,10 +155,6 @@ public class SurveyActivity extends FragmentActivity {
         return options;
     }
 
-    private void scheduleTimeout (long timeInSeconds) {
-
-    }
-
     private TimerTask buildTimeoutTask() {
         return new TimerTask() {
             @Override
@@ -150,5 +165,20 @@ public class SurveyActivity extends FragmentActivity {
         };
     }
 
+    private Intent cascadeExtras(Intent intent) {
+        intent.putExtra(EXTRA_ID,this.getIntent().getExtras().getString(EXTRA_ID));
+        intent.putExtra(RATING, this.getIntent().getExtras().getInt(RATING));
+        intent.putExtra(CRIME_RATE,this.getIntent().getExtras().getDouble(CRIME_RATE));
+        intent.putExtra(LAST_UPDATED,this.getIntent().getExtras().getString(LAST_UPDATED));
+        return intent;
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Intent intent = new Intent();
+        intent.setAction("com.nvbyte.kya.SURVEY_CANCELED");
+        intent = cascadeExtras(intent);
+        sendBroadcast(intent);
+    }
 }

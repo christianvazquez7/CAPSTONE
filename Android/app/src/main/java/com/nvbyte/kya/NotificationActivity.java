@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.WindowManager;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -56,6 +57,7 @@ public class NotificationActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         String userId  = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
         mNotificationId = userId + System.currentTimeMillis();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -64,7 +66,7 @@ public class NotificationActivity extends FragmentActivity {
             mVibrator.vibrate(VIBRATION_PERIOD);
         }
         Intent captureBeat = new Intent();
-        captureBeat.setAction("com.nvbyte.kya.GET_AFTER_BEAT");
+        captureBeat.setAction("com.nvbyte.kya.SEND_AFTER_BEAT");
         captureBeat.putExtra(EXTRA_ID,mNotificationId);
         sendBroadcast(captureBeat);
         mMainContentPager = (ViewPager) findViewById(R.id.view_pager);

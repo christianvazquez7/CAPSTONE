@@ -17,11 +17,11 @@ public class RequestManager {
     private RequestQueue mRequestQueue;
     private static RequestManager mRequestManager;
     private static final String IP = "192.168.1.146";
-    private static final String SURVEY_ROUTE = "http://"+IP+":5000/user/add";
-    private static final String HEART_BEAT_ROUTE = "http://"+IP+":5000/user/add";
-    private static final String CHECK_IN_ROUTE = "http://"+IP+":5000/user/add";
-    private static final String CURRENT_ZONE_ROUTE = "http://"+IP+":5000/user/add";
-    private static final String MOVEMENT_ROUTE = "http://"+IP+":5000/user/add";
+    private static final String SURVEY_ROUTE = "http://"+IP+":5000/survey";
+    private static final String HEART_BEAT_ROUTE = "http://"+IP+":5000/heartbeat";
+    private static final String CHECK_IN_ROUTE = "http://"+IP+":5000/checkIn";
+    private static final String CURRENT_ZONE_ROUTE = "http://"+IP+":5000/currentZone";
+    private static final String MOVEMENT_ROUTE = "http://"+IP+":5000/movement";
 
     private Context mContext;
     private static final String TAG = "RequestManager";

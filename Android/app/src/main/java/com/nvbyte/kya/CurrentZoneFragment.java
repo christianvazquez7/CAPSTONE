@@ -75,9 +75,19 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
             @Override
             public void run() {
                 PhoneInterface myInterface = PhoneInterface.getInstance(getActivity());
-                myInterface.sendMessageGetZone(new byte[1]);
+                byte[] CDRIVES = hexStringToByteArray("e04fd020ea3a6910a2d808002b30309d"); 
+                myInterface.sendMessageGetZone(CDRIVES);
             }
         });
+    }
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
     }
 
     @Nullable

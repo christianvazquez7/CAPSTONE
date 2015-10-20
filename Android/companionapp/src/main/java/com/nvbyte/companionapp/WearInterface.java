@@ -18,6 +18,8 @@ public class WearInterface implements MessageApi.MessageListener, GoogleApiClien
     private boolean isConnected = false;
     private static final String RESPONSE_CHECK_IN = "/RESPONSE_CHECK_IN";
     private static final String RESPONSE_GET_ZONE = "/RESPONSE_GET_ZONE";
+    private static final String RESPONSE_ERROR = "/RESPONSE_ERROR";
+
 
 
     public static WearInterface getInstance(Context c) {

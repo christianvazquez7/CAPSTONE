@@ -6,20 +6,19 @@
         android:key="mute_preference"
         android:title="Mute"
         android:defaultValue="false"
-        android:summary="Enable or disable all notifications." ></CheckBoxPreference>
+         ></CheckBoxPreference>
     <CheckBoxPreference
         android:key="lower_preference"
         android:title="Negative Delta"
         android:defaultValue="false"
-        android:summary="Notify me when leaving an area of risk."></CheckBoxPreference>
+       ></CheckBoxPreference>
     <CheckBoxPreference
         android:key="vibrate_preference"
         android:title="Vibration"
         android:defaultValue="true"
-        android:summary="Enable or disable vibration."></CheckBoxPreference>
+       ></CheckBoxPreference>
     <Preference
         android:title="Threshold options"
-        android:summary="Set the base threshold for notifications to occur."
         android:key="threshold_preference" >
     <intent  android:action="com.nvbyte.kya.ThresholdActivity"></intent>
     </Preference>

@@ -62,7 +62,7 @@ public class SensorDataProvider {
         ISensor accelerometer = new ISensor(mSensorManager,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
         mSensorIByType.put(Sensor.TYPE_HEART_RATE,heartBeatSensor);
         mSensorIByType.put(Sensor.TYPE_ACCELEROMETER,accelerometer);
-        mSensorManager.registerListener(accelerationChangeListener,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),1000000);
+        //mSensorManager.registerListener(accelerationChangeListener,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),1000000);
     }
 
     public Future<SensorEvent> getAcceleration(long timeout) {

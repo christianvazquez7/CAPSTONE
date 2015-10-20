@@ -1,7 +1,10 @@
 package com.nvbyte.kya;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -31,6 +34,19 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.round_activity_main);
+        HandlerThread backgroundThread = new HandlerThread("service");
+        backgroundThread.start();
+        Thread newThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent service = new Intent(MainActivity.this,KYANotificationService.class);
+                startService(service);
+            }
+        });
+        newThread.start();
+
+
+
         mMainContentPager = (ViewPager) findViewById(R.id.pager);
         mCurrentZoneFragment = new CurrentZoneFragment();
         mSettingsFragment = new SettingsFragment();

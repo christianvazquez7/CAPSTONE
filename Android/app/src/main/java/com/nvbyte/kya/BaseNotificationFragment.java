@@ -56,6 +56,6 @@ public class BaseNotificationFragment extends Fragment {
             }
         });
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return rootView;
     }
 }
