@@ -8,7 +8,6 @@ module.exports = function ZoneAnalyzer() {
 	/**
 	 * Module imports.
 	 */
-	var GeoZone = require('./geoZone.js');
 	var turf = require('../../node_modules/turf');
 	
 
@@ -32,16 +31,26 @@ module.exports = function ZoneAnalyzer() {
 	 * @return long containing time (in seconds) it will take to reach closest higher risk zone
 	 */
 	this.calculateTimeToHRZone = function(velocity,location) {
-        var locationGeoJSON = turf.point([location.longitude, location.latitude]);
-		var mDistance = getDistance(locationGeoJSON, mZonesToAnalyze);
-		return mDistance/velocity;
+        if(mZonesToAnalyze){
+            var locationGeoJSON = turf.point([location.longitude, location.latitude]);
+            var mDistance = getDistance(locationGeoJSON, mZonesToAnalyze);
+            return mDistance/velocity;
+        }
+        else{
+            //TODO: Error handling
+        }
+        
 	};
 
 	this.getCurrentZone = function(){
-		return mCurrentZone;	
+		if(mCurrentZone)
+            return mCurrentZone;	
+        else
+            //TODO: Error handling
+
 	};
 
-	function getCurrentZoneIndex(locationGeoJSON, mZonesToAnalyze){
+	function getCurrentZoneIndex(locationGeoJSON){
 		mZonesToAnalyze.forEach( function(geoZone,index){
 			if(turf.inside(locationGeoJSON,geoZone)){
 				mCurrentZone = geoZone;
@@ -57,15 +66,19 @@ module.exports = function ZoneAnalyzer() {
 	 * Calculates distance to closest higher risk zone
 	 * 
 	 */
-	function getDistance(locationGeoJSON, mZonesToAnalyze){
-		
+	function getDistance(locationGeoJSON){
+		//TODO: Use assert
+        if(!mZonesToAnalyze || !mCurrentZone){
+            //Error handling with return
+        }
+
 		var nextZoneClosestPoint;
 		var tempDistance;
 
 		//Initialize to 200m
 		var shortestDistance = 200;
 
-		var zoneIndex = getCurrentZoneIndex(location,mZonesToAnalyze);
+		var zoneIndex = getCurrentZoneIndex();
 		var zonesFetchedCount = mZonesToAnalyze.length;
 
 		//TODO: Check actual format to find risk of zone

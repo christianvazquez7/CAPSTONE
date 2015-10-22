@@ -57,13 +57,15 @@ module.exports = function RequestScheduler() {
 	 * @param currentGeoZone: Object containing the current geo-zone.
 	 */	
 	zonesFetchingCallback = function onZonesFetched(geoZones) {
+		console.log("Zones fetched");
+		console.log(geoZones);
 		//Analyze zone to obtain the time to schedule the next location request
-		analyzer.analyzeZones(geoZones);
-		mTimeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,mCheckIn.location);
-		mCurrentGeoZone = analyzer.getCurrentZone();
+	//	analyzer.analyzeZones(geoZones);
+	//	mTimeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,mCheckIn.location);
+	//	mCurrentGeoZone = analyzer.getCurrentZone();
 
-		mResponse = responseBuilder.build(mCurrentGeoZone, mTimeForNextRequest, surveyFlag); 
+	//	mResponse = responseBuilder.build(mCurrentGeoZone, mTimeForNextRequest, surveyFlag); 
 
-		responseCallback(mResponse);
+	//	responseCallback(mResponse);
 	};
 };

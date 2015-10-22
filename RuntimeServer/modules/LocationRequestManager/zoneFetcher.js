@@ -8,11 +8,18 @@ module.exports = function ZoneFetcher() {
 	/**
 	 * Module imports.
 	 */
-	var GeoJSONParser = require('./geoJSONParser.js');
-	var GeoZone = require('./geoZone.js'); 
+	var MongoClient = require('mongodb').MongoClient;
+	var ObjectId = require('mongodb').ObjectID;
+	var assert = require('assert');
+	var math = require('mathjs');
+	var turf = require('turf');
 
-	var math = require('../../node_modules/mathjs');
+	//Database URL
+	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/Geozones';
 
+	// Sets the size of the zones
+	var mZoneSize = 200;
+	
 	/**
 	 * From a given location it fetches the geo-zone that encloses it.
 	 *
@@ -20,39 +27,49 @@ module.exports = function ZoneFetcher() {
 	 * @param currentZoneCallback: Callback function called when the geoZone has been fetched.
 	 * @return True if a zone is found and successfully fetched, False otherwise.
 	 */
-
 	this.fetchByLocation = function(location, numRings, zonesCallback) {
+		var container;
+		//Convert the location message to a GeoJSON for easier opeations on it
+		var locationGeoJSON = turf.point([location.longitude, location.latitude]);
 		
-		var polygonContainer = getPolygon(location, numRings);
+		//It will only return the current zone
+		if(numRings == 0){
+			container = locationGeoJSON;
+		}
+		//It will return the current zone and the zones around it according to the number of rings requested
+		else{
+			container = getPolygon(locationGeoJSON, numRings, mZoneSize);		
+		}
 
 		MongoClient.connect(url, function(err, db) {
   			assert.equal(null, err);
-  			findZones(db, polygonContainer, zonesCallback);
+  			findZones(db, container, zonesCallback);
 		});		
-
-
 	};
 	
-	var findZones = function(db, polygon, callback) {
+	var findZones = function(db, container, callback){
   		
   		// Get the documents collection 
   		var collection = db.collection('Geozones');
   		// Find some documents 
   		
   		//Variable to store db result
-		var dbZonesCursor = collection.find(
+		collection.find(
   		{	
   			loc: 
   			{
      			$geoIntersects: {
-        			$geometry: {polygonContainer}        			
+        			$geometry: {
+        				type: container.geometry.type,
+						coordinates: container.geometry.coordinates
+        			}
      			}
      		}
-  		}).sort({loc.coordinates[0][0][1] : -1, loc.coordinates[0][0][0] : -1});
-  		
-  		var zonesArray = dbZonesCursor.toArray();
-  		db.close();
-  		callback(resultArray);
+  		}).sort({ "loc.geometry.coordinates[0][0][1]" : -1, "loc.geometry.coordinates[0][0][0]" : -1}).toArray(function(err,result){
+				assert.equal(null, err);
+				db.close();
+				callback(result);
+			});
   	};
 	
 	/**
@@ -66,33 +83,28 @@ module.exports = function ZoneFetcher() {
 	 * @return True if a list of zones is found and successfully fetched, False otherwise.
 	 */
 	this.fetchByArea = function(NWPoint, SEPoint, within, nearbyZonesCallback) {
-
-		//For fetching zones surroundig certain zone it is recommended to use intersect (within = false)
-		
-		if(!within){
-		/*----TODO: Methods to fetch from mongo DB------/
-		/			Using intersect			            /
-		/----------------------------------------------*/ 
-		}
-		//For fetching zones enclosed by certain area it is recommended to use within
-		else{
-		/*----TODO: Methods to fetch from mongo DB------/
-		/			Using intersect			            /
-		/----------------------------------------------*/ 
-		}
-
-		var zonesList;
-		nearbyZonesCallback(zonesList);
+		/*
+		* Christian M function
+		*/
 	};
 	
-	function getPolygon(location, numRings){
-		var locationGeoJSON = turf.point([location.longitude, location.latitude]);
-		var distanceFromCenter = math.eval('sqrt(2 * ' + numRings*200 + ' ^ 2)')/1000; // in Km
-		var NW = turf.destination(locationGeoJSON,distanceFromCenter , 135 ,'kilometers').geometry.coordinates,
+	function getPolygon(locationGeoJSON, numRings, zoneSize){
+		
+		console.log('Fetching from location: ' + locationGeoJSON.geometry.coordinates);
+		
+		/*	
+		 *  Calculates hypotenuse to generate polygon depending on number of rings requestd and the size
+		 *	of the grid tiles containging the geozones.
+		 */
+		var	distanceFromCenter = math.eval('sqrt(2 * ' + numRings*zoneSize + ' ^ 2)')/1000; // in Km
+
+		//Finds the for corners of the polygon to be created
+		var NW = turf.destination(locationGeoJSON,distanceFromCenter , -45 ,'kilometers').geometry.coordinates,
 			NE = turf.destination(locationGeoJSON,distanceFromCenter , 45 ,'kilometers').geometry.coordinates,
-			SE = turf.destination(locationGeoJSON,distanceFromCenter , -45 ,'kilometers').geometry.coordinates,
+			SE = turf.destination(locationGeoJSON,distanceFromCenter , 135 ,'kilometers').geometry.coordinates,
 			SW = turf.destination(locationGeoJSON,distanceFromCenter , -135 ,'kilometers').geometry.coordinates;
-		var polygon = turf.polygon([NW,NE,SE,SW,NW]);
+		var polygon = turf.polygon([[SW,NW,NE,SE,SW]]);
+
 		return polygon;
 	};
 };
