@@ -8,7 +8,7 @@ module.exports = function ZoneAnalyzer() {
 	/**
 	 * Module imports.
 	 */
-	var turf = require('../../node_modules/turf');
+	var turf = require('turf');
 	
 
 	var mCurrentZone;
@@ -25,16 +25,16 @@ module.exports = function ZoneAnalyzer() {
 	 * Calculates time for next location request from Client finding an estimate time to reach the closest
 	 * higher risk zone or obtaining a default time in case the are no higher risk zone surrounding the area.
 	 *
-	 * @param velocity: Current Velocity of device
+	 * @param speed: Current speed of device
 	 * @param location: Current location of device
 	 * @param nearbyHigherRiskZones: List of higher risk zones surrounding the current location
 	 * @return long containing time (in seconds) it will take to reach closest higher risk zone
 	 */
-	this.calculateTimeToHRZone = function(velocity,location) {
+	this.calculateTimeToHRZone = function(speed,location) {
         if(mZonesToAnalyze){
             var locationGeoJSON = turf.point([location.longitude, location.latitude]);
             var mDistance = getDistance(locationGeoJSON, mZonesToAnalyze);
-            return mDistance/velocity;
+            return mDistance/speed;
         }
         else{
             //TODO: Error handling
@@ -47,7 +47,6 @@ module.exports = function ZoneAnalyzer() {
             return mCurrentZone;	
         else
             //TODO: Error handling
-
 	};
 
 	function getCurrentZoneIndex(locationGeoJSON){
@@ -75,7 +74,7 @@ module.exports = function ZoneAnalyzer() {
 		var nextZoneClosestPoint;
 		var tempDistance;
 
-		//Initialize to 200m
+		//Initialize to geo zone size
 		var shortestDistance = 200;
 
 		var zoneIndex = getCurrentZoneIndex();
@@ -246,35 +245,35 @@ module.exports = function ZoneAnalyzer() {
 		switch(reference){
 			case reference.NW:
 				//Measure distance to SE corner of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][2][0], [GeoZoneToAnalyze.loc.coordinates[0][2][1]]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][2][0], [GeoZoneToAnalyze.loc.geometry.coordinates[0][2][1]]);
 				break;
 			case reference.N:
 				//Measure distance to S boundary of the zone
-				closestPointInZone = turf.point(locationGeoJSON.coordinates[0], [GeoZoneToAnalyze.loc.coordinates[0][2][1]]);
+				closestPointInZone = turf.point(locationGeoJSON.coordinates[0], [GeoZoneToAnalyze.loc.geometry.coordinates[0][2][1]]);
 				break;
 			case reference.NE:
 				//Measure distance to SE corner of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][3][0]], [GeoZoneToAnalyze.loc.coordinates[0][3][1]]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][3][0]], [GeoZoneToAnalyze.loc.geometry.coordinates[0][3][1]]);
 				break;
 			case reference.W:
 				//Measure distance to E boundary of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][2][0], locationGeoJSON.coordinates[1]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][2][0], locationGeoJSON.coordinates[1]);
 				break;
 			case reference.E:
 				//Measure distance to W boundary of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][0][0], locationGeoJSON.coordinates[1]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][0][0], locationGeoJSON.coordinates[1]);
 				break;
 			case reference.SW:
 				//Measure distance to NE corner of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][1][0],[GeoZoneToAnalyze.loc.coordinates[0][1][1]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][1][0],[GeoZoneToAnalyze.loc.geometry.coordinates[0][1][1]);
 				break;
 			case reference.S:
 				//Measure distance to N boundary of the zone
-				closestPointInZone = turf.point(locationGeoJSON.coordinates[0], [GeoZoneToAnalyze.loc.coordinates[0][0][1]]);
+				closestPointInZone = turf.point(locationGeoJSON.coordinates[0], [GeoZoneToAnalyze.loc.geometry.coordinates[0][0][1]]);
 				break;
 			case reference.SE:
 				//Measure distance to NE corner of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][0][0],[GeoZoneToAnalyze.loc.coordinates[0][0][1]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][0][0],[GeoZoneToAnalyze.loc.geometry.coordinates[0][0][1]);
 				break;
 			default:
 				//TODO: Error
