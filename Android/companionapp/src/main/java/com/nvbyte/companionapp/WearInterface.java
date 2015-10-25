@@ -28,7 +28,9 @@ public class WearInterface implements MessageApi.MessageListener, GoogleApiClien
         }
         return singleton;
     }
-
+    public void sendError() {
+        sendMessage(RESPONSE_ERROR,new byte[1]);
+    }
     public void sendResponseCheckIn(byte[] message){
         sendMessage(RESPONSE_CHECK_IN,message);
     }

@@ -44,6 +44,7 @@ public class SurveyActivity extends FragmentActivity {
     private static final String LAST_UPDATED = "LAST_UPDATED";
     private static final String EXTRA_ID = "NOTIFICATION_ID";
     private static final int VIBRATION_PERIOD = 1000;
+    private boolean sentSurvey = false;
 
     private int timeLeft = 10000;
     private Timer tick;
@@ -73,7 +74,7 @@ public class SurveyActivity extends FragmentActivity {
         GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener(){
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-
+                sentSurvey = true;
                 String notificationID = getIntent().getExtras().getString(NOTIFICATION_ID_EXTRA);
                 int selectedThreshold = mSurveyOptions.get(mMainContentPager.getCurrentItem()).getSafetyRating();
                 Intent intent = new Intent();
@@ -174,11 +175,18 @@ public class SurveyActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        if(!sentSurvey) {
+            Intent intent = new Intent();
+            intent.setAction("com.nvbyte.kya.SURVEY_CANCELED");
+            intent = cascadeExtras(intent);
+            sendBroadcast(intent);
+        }
+        super.onDestroy();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        Intent intent = new Intent();
-        intent.setAction("com.nvbyte.kya.SURVEY_CANCELED");
-        intent = cascadeExtras(intent);
-        sendBroadcast(intent);
     }
 }

@@ -32,7 +32,8 @@ public class ISensor implements SensorEventListener {
      * Called when new sensor data is captured by the sensor.
      */
     public void onSensorChanged(SensorEvent event) {
-        mCallback.callback(event);
+        if(mCallback != null)
+            mCallback.callback(event);
     }
 
     @Override

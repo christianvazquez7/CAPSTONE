@@ -60,6 +60,18 @@ public class MessageService extends WearableListenerService {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG,"Error sending check-in request!");
+                HandlerThread handlerThread = new HandlerThread("ErrorHandlerThread");
+                handlerThread.start();
+                Handler handler = new Handler(handlerThread.getLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG,"Sending error response to wear...");
+                        WearInterface wInterface = WearInterface.getInstance(MessageService.this);
+                        wInterface.sendError();
+                    }
+                });
+
             }
         });
     }

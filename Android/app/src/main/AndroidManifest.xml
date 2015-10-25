@@ -85,6 +85,7 @@
         <receiver android:name="com.nvbyte.kya.BootLoader">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.nvbyte.kya.CHECK_IN" />
             </intent-filter>
         </receiver>
     </application>

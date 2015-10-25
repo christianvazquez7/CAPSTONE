@@ -58,6 +58,7 @@ public class NotificationActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         String userId  = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
         mNotificationId = userId + System.currentTimeMillis();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);

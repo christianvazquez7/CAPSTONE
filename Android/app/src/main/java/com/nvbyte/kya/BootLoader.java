@@ -10,6 +10,9 @@ public class BootLoader extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             Intent startServiceIntent = new Intent(context, KYANotificationService.class);
             context.startService(startServiceIntent);
+        } else if (intent.getAction().equals("com.nvbyte.kya.CHECK_IN")) {
+            Intent startServiceIntent = new Intent(context, KYANotificationService.class);
+            context.startService(startServiceIntent);
         }
     }
 }

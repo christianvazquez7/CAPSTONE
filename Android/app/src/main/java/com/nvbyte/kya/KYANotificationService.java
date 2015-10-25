@@ -42,11 +42,12 @@ public class KYANotificationService extends Service {
     private static final String THRESHOLD_PREFERENCE = "THRESHOLD";
     private static final String CURRENT_ZONE_PREFERENCE = "CURRENT_ZONE";
     private final static String SELECTED_EXTRA = "SELECTED_ID";
-    private static final long LOCATION_TIMEOUT = 1000;
+    private static final long LOCATION_TIMEOUT = 1500;
     private static final long RETRY_CHECKIN_PERIOD_SECONDS = 5; /// 5 seconds
     private static final long RESPONSE_TIMEOUT = 5; /// 5 seconds
     private Timer mMovementTimer;
     private String mCurrentNotificationId = "";
+    private PendingIntent mNextCheckIn;
 
 
     private TimerTask buildMoveTask() {
@@ -79,9 +80,6 @@ public class KYANotificationService extends Service {
                 sendSurveyResult(intent);
             } else if (action.equals("com.nvbyte.kya.SEND_AFTER_BEAT")) {
                 sendHeartbeat(intent);
-            } else if (action.equals("com.nvbyte.kya.CHECK_IN")) {
-                Log.d(TAG,"Triggered by alarm!!!");
-                checkIn();
             } else if (action.equals("com.nvbyte.kya.CHECK_IN_RESPONSE")) {
                 byte[] response = intent.getExtras().getByteArray("PROTO");
                 Log.d(TAG,"Got check in response");
@@ -114,7 +112,6 @@ public class KYANotificationService extends Service {
         surveyHandler.post(new Runnable() {
             @Override
             public void run() {
-                int selected = intent.getExtras().getInt(SELECTED_EXTRA);
                 int rating  = intent.getExtras().getInt(RATING);
                 String id = intent.getExtras().getString(EXTRA_ID);
                 String date = intent.getExtras().getString(LAST_UPDATED);
@@ -131,7 +128,6 @@ public class KYANotificationService extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.nvbyte.kya.SEND_SURVEY");
         filter.addAction("com.nvbyte.kya.SEND_AFTER_BEAT");
-        filter.addAction("com.nvbyte.kya.CHECK_IN");
         filter.addAction("com.nvbyte.kya.CHECK_IN_RESPONSE");
         filter.addAction("com.nvbyte.kya.ACCELERATION_EVENT");
         filter.addAction("com.nvbyte.kya.SURVEY_CANCELED");
@@ -191,6 +187,12 @@ public class KYANotificationService extends Service {
 
     private void checkIn(){
         Log.d(TAG,"Performing check in");
+        synchronized (this) {
+            if(mNextCheckIn != null) {
+                mAlarmManager.cancel(mNextCheckIn);
+                mNextCheckIn = null;
+            }
+        }
         HandlerThread handlerThread = new HandlerThread("checkIn");
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
@@ -202,7 +204,7 @@ public class KYANotificationService extends Service {
                 KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setUserId(Utils.getUserId(KYANotificationService.this));
                 builder.setLocation(point);
                 builder.setSpeed(location.getSpeed());
-                PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(new byte[1], new Runnable() {
+                PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(builder.build().toByteArray(), new Runnable() {
                     @Override
                     public void run() {
                         scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
@@ -249,7 +251,7 @@ public class KYANotificationService extends Service {
      */
     public int onStartCommand(Intent intent, int flags, int startId){
         Log.d(TAG, "OnStartCommand");
-        scheduleCheckIn(1);
+        checkIn();
         return START_STICKY;
     }
 
@@ -258,10 +260,15 @@ public class KYANotificationService extends Service {
      * @param timeInSeconds Time delta in seconds for next check in.
      */
     private void scheduleCheckIn(long timeInSeconds) {
-        Log.d(TAG,"Scheduling check in!");
-        Intent intentAlarm = new Intent();
-        intentAlarm.setAction("com.nvbyte.kya.CHECK_IN");
-        mAlarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000*timeInSeconds, PendingIntent.getBroadcast(this, 0, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+        synchronized (this) {
+            if(mNextCheckIn == null) {
+                Log.d(TAG, "Scheduling check in!");
+                Intent intentAlarm = new Intent();
+                intentAlarm.setAction("com.nvbyte.kya.CHECK_IN");
+                mNextCheckIn = PendingIntent.getBroadcast(this, 0, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
+                mAlarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000 * timeInSeconds,mNextCheckIn);
+            }
+        }
     }
 
     /**
@@ -288,17 +295,18 @@ public class KYANotificationService extends Service {
                 } catch (ExecutionException | InterruptedException e) {
                     Log.d(TAG,"Error fetching heartbeat: " + e.getMessage());
                 }
-                mMovementTimer = new Timer();
                 mTimeStartedCollecting = System.currentTimeMillis();
                 synchronized (KYANotificationService.this) {
                     if (mMovementTimer != null) {
                         mMovementTimer.cancel();
-                        mMovementTimer = new Timer();
                     }
+                    mMovementTimer = new Timer();
                 }
                 mMovementTimer.schedule(buildMoveTask(), 0, SAMPLE_PERIOD);
-                Intent notificationActivity = new Intent(KYANotificationService.this,NotificationActivity.class);
+                Intent notificationActivity = new Intent(getApplicationContext(),NotificationActivity.class);
                 notificationActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                //notificationActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 notificationActivity.putExtra(RATING,classification);
                 notificationActivity.putExtra(CRIME_RATE,crimeRate);
                 notificationActivity.putExtra(LAST_UPDATED,date);
@@ -309,8 +317,9 @@ public class KYANotificationService extends Service {
     }
 
     private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate){
-        Intent surveyActivity = new Intent(this,SurveyActivity.class);
+        Intent surveyActivity = new Intent(getApplicationContext(),SurveyActivity.class);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         surveyActivity.putExtra(EXTRA_ID,notificationId);
         surveyActivity.putExtra(RATING,currentZone);
         surveyActivity.putExtra(CRIME_RATE,crimeRate);

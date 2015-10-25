@@ -27,6 +27,10 @@ public class WearMessageListenerService extends WearableListenerService {
             intent.setAction("com.nvbyte.kya.CHECK_IN_RESPONSE");
             intent.putExtra("PROTO", messageEvent.getData());
             sendBroadcast(intent);
+        } else if (messageEvent.getPath().equals(RESPONSE_ERROR)) {
+            Intent intent = new Intent();
+            intent.setAction("com.nvbyte.kya.ERROR");
+            sendBroadcast(intent);
         }
     }
 }
