@@ -47,7 +47,7 @@ module.exports = function ZoneFetcher() {
 		});		
 	};
 	
-	var findZones = function(db, container, callback){
+	function findZones(db, container, callback){
   		
   		// Get the documents collection 
   		var collection = db.collection('Geozones');
@@ -65,7 +65,7 @@ module.exports = function ZoneFetcher() {
         			}
      			}
      		}
-  		}).sort({ "loc.geometry.coordinates[0][0][1]" : -1, "loc.geometry.coordinates[0][0][0]" : -1}).toArray(function(err,result){
+  		}).sort({ "loc.geometry.coordinates[0][0][1]" : -1, "loc.geometry.coordinates[0][0][0]" : 1}).toArray(function(err,result){
 				assert.equal(null, err);
 				db.close();
 				callback(result);

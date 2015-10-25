@@ -27,10 +27,9 @@ module.exports = function RequestScheduler() {
 	//Default = true
 	var surveyFlag = true;
 
-	var mCurrentGeoZone;
 	var mCheckIn;
 	var mResponse;
-	var mTimeForNextRequest;
+
 
 	var zoneFetchingCallback;
 	var responseCallback;
@@ -59,13 +58,15 @@ module.exports = function RequestScheduler() {
 	zonesFetchingCallback = function onZonesFetched(geoZones) {
 		console.log("Zones fetched");
 		console.log(geoZones);
-		//Analyze zone to obtain the time to schedule the next location request
-	//	analyzer.analyzeZones(geoZones);
-	//	mTimeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,mCheckIn.location);
-	//	mCurrentGeoZone = analyzer.getCurrentZone();
+		
+		/*Analyze zone to obtain the time to schedule the next location request*/
+	 	var locationGeoJSON = turf.point([mCheckIn.location.longitude, mCheckIn.location.latitude]);	
+		
+		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON,geoZones);
+		var currentGeoZone = analyzer.getCurrentZone(locationGeoJSON,geoZones);
 
-	//	mResponse = responseBuilder.build(mCurrentGeoZone, mTimeForNextRequest, surveyFlag); 
+		var response = responseBuilder.build(mCurrentGeoZone, mTimeForNextRequest, surveyFlag); 
 
-	//	responseCallback(mResponse);
+		responseCallback(mResponse);
 	};
 };
