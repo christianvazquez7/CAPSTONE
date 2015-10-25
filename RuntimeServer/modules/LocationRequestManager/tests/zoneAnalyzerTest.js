@@ -63,9 +63,11 @@ var zonesMap = [];
 squareGrid.features.forEach(function(value,index){
 	var geoZone = {
 		level: 0,
+		crimeRate: 0,
 		loc: null
 	};
 	geoZone.level = Math.floor((Math.random() * 10) + 1); 
+	geoZone.crimeRate = Math.floor((Math.random() * 100) + 1); 
 	geoZone.loc = value;
 	zonesMap.push(geoZone);
 }); 

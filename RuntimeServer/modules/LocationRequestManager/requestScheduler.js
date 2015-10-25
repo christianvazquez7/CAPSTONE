@@ -28,11 +28,10 @@ module.exports = function RequestScheduler() {
 	var surveyFlag = true;
 
 	var mCheckIn;
-	var mResponse;
 
 
 	var zoneFetchingCallback;
-	var responseCallback;
+	var mResponseCallback;
 
 	var fetcher = new ZoneFetcher();
 	var analyzer = new ZoneAnalyzer(); 
@@ -41,11 +40,11 @@ module.exports = function RequestScheduler() {
 	/**
 	 * Call the necessary functions to prepare a response to the client about when to request a location check next
 	 *
-	 * @param responseCallback: Callback function to be called when the response is ready to be sent to the client
+	 * @param responseCallbcak: Callback function to be called when the response is ready to be sent to the client
 	 */
-	this.scheduleNextRequest = function(checkIn, callback) {
+	this.scheduleNextRequest = function(checkIn, responseCallback) {
 		mCheckIn = checkIn;
-		responseCallback = callback;
+		mResponseCallback = responseCallback;
 		fetcher.fetchByLocation(mCheckIn.location, numberOfRingsToFetch, zonesFetchingCallback);
 	};
 	
@@ -62,11 +61,11 @@ module.exports = function RequestScheduler() {
 		/*Analyze zone to obtain the time to schedule the next location request*/
 	 	var locationGeoJSON = turf.point([mCheckIn.location.longitude, mCheckIn.location.latitude]);	
 		
-		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON,geoZones);
-		var currentGeoZone = analyzer.getCurrentZone(locationGeoJSON,geoZones);
+		var timeForNextRequest = analyzer.calculateTimeToHRZone(speed,currentLocationGeoJSON,geoZones);
 
-		var response = responseBuilder.build(mCurrentGeoZone, mTimeForNextRequest, surveyFlag); 
-
-		responseCallback(mResponse);
-	};
+		analyzer.getCurrentZone(currentLocationGeoJSON,geoZones, function (currentZone){
+			var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag); 
+			mResponseCallback(response);
+		});
+	};	
 };

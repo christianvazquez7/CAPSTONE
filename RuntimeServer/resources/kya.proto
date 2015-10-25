@@ -16,10 +16,10 @@ message Telemetry {
     //Survey
     message Survey {
         //Risk calculated by KYA
-        required int32 actualRisk = 2;
+        required int32 actualRisk = 1;
 
         //Risk perceived by the user
-        required int32 perceivedRisk = 3;
+        required int32 perceivedRisk = 2;
     }
 
     //Identifier of the device where the telemetry was captured
@@ -41,7 +41,8 @@ message Telemetry {
 // Contains a latitude and longitude that represents a location in space. 
 message GeoPoint {
     
-    //Identifier of the device where the telemetry was captured
+    //Identifier of the device where the telemetry was captured (optional as 
+    //it is only required when working with telemtry)
     required string userID = 1;
 
     // Latitude coordinate in physical space.
@@ -70,4 +71,34 @@ message CheckIn {
     // the closest risk zone increase.
     optional double speed = 3;
 }
-        
+
+      
+message CheckInResponse {
+
+    // New risk zone level classification in which the user is currently in.
+    required GeoZone currentZone = 1;
+
+    // Next suggested time delta for check in.
+    required int32 nextRequestTimeInSeconds = 2;
+
+    // True if feedback should be requested from user. False otherwise.
+    required bool requestFeedback = 3;
+}  
+
+message GeoZone {
+
+    // Identifier of a zone
+    required int32 zoneID = 1;
+
+    // Risk zone classification for this particular area. This number will be
+    // between 1 and 10. 
+    required int32 level = 2;
+
+    // Crime rate for this particular GeoZone, for statistical purposes. This
+    // information can be included as part of info in admin dashboard detail.
+    required double crimeRate = 3;
+
+    // Boundaries of the classified zone. This will always contain exactly 
+    // four GeoPoints.
+    repeated GeoPoint boundaries = 4;
+}
