@@ -1,58 +1,72 @@
 var Socrata = require('node-socrata');
+var unit = require('unit.js');
 var RequestBuilder = require('../modules/DataProvider/requestBuilder.js');
 var MarshallBuilder = require('../modules/DataProvider/marshallBuilder.js');
-var Crime = require('../modules/DataProvider/crime.js');
+var Pager = require('../modules/DataProvider/pager.js');
+
 
 var marshallBuilder = new MarshallBuilder();
 var marshall = marshallBuilder.date('fecha').time('hora').lat('point_x').lon('point_y').type('delitos_code').id('delito').build();
-
 var builder = new RequestBuilder('http://data.pr.gov/','mxH22n8js0toWFnxPSEUDzVKi','3fy3-2bc5',marshall);
-var request = builder.start('2015/02/22').end('2015/03/22').limit(1000).increasing(true).build();
 
 
+function testPagerWithNoData() {
+	var testPager = new Pager();
+	unit.value(testPager.getPages()).isEqualTo(0);
+}
 
-var config = {
-	hostDomain: request.getSource(),
-	resource: request.getResource(),
-	XAppToken: request.getToken()
-};
+function testPagerHasNextWithNoData() {
+	var testPager = new Pager();
+	unit.value(testPager.hasNext()).isEqualTo(false);
+}
 
-var soda = new Socrata(config);
-console.log(request.getOrder());
+function testSetPagerPage() {
+	var testPager = new Pager();
+	testPager.setLastPage(10);
+	unit.value(testPager.getCurrentPage()).isEqualTo(10);
+}
 
-var params = {
-	$where: request.getWhere(),
-	$limit: request.getLimit(),
-	$offset: request.getOffset(),
-	$order: request.getOrder()
-};
-var crimen = new Crime();
-soda.get(params,function(err,response,data){
-	var crimeList = Crime.fromList(data,marshall);
-	for (var i = 0 ; i < crimeList.length ; i ++) {
-			console.log('--------------crime record----------------');
-			console.log('Latitude: ' + crimeList[i].getLongitude());
-			console.log('Longitude: ' + crimeList[i].getLatitude());
-			console.log('Type: ' + crimeList[i].getType());
-			console.log('Date: ' + crimeList[i].getDate());
-			console.log('Time: ' + crimeList[i].getTime());
+function testPagerInitWithNoData(done) {
+	var request = builder.start('2017/02/22').end('2018/03/22').limit(1000).increasing(true).build();
+	var testPager = new Pager();
+	this.timeout(10000);
+	testPager.init(request,function() {
+			unit.value(testPager.getPages()).isEqualTo(0);
+			done();
+	});
+}
 
-	}
+function testPagerInitWithOnePage(done) {
+	var request = builder.start("2015/03/22").limit(1000).increasing(true).build();
+	var testPager = new Pager();
+	this.timeout(10000);
+	testPager.init(request,function() {
+			unit.value(testPager.getPages()).isEqualTo(1);
+			done();
+	});
+}
+
+function testPagerReset(done) {
+	var request = builder.start("2015/03/22").limit(1000).increasing(true).build();
+	var testPager = new Pager();
+	this.timeout(10000);
+	testPager.init(request,function() {
+			testPager.reset();
+			unit.value(testPager.getCurrentPage()).isEqualTo(0);
+			unit.value(testPager.getPages()).isEqualTo(0);
+			done();
+	});
+}
+
+function testPagerReset(done) {
+
+}
+
+suite('Pager', function() {
+  test('Un-initialized pager should has zero pages.', testPagerWithNoData);
+  test('Setting last page. Should return last page set.', testSetPagerPage);
+  test('Initializing pager with zero results. Number of pages should be zero.', testPagerInitWithNoData);
+  test('Initializing pager with one page of results (118 entries) . Number of pages should be one.', testPagerInitWithOnePage);
+  test('Testing reset pager. # pages and current page should both be zero.', testPagerReset);
 });
-
-this.testPagerWithNoData = function() {
-
-};
-
-this.testPagerWithPerfectIntervalData = function(){
-
-};
-
-this.testPagerWithUUnevenData = function (){
-
-};
-
-this.testPagerReset = function() {
-
-};
 

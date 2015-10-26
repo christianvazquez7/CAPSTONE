@@ -56,6 +56,10 @@ module.exports = function Pager() {
 		return numberOfPages;
 	};
 
+	this.getCurrentPage = function() {
+		return currentPage;
+	};
+
 	/**
 	 * Determines if all pages have been processed.
 	 *

@@ -28,7 +28,6 @@ module.exports = function Crime(pLatitude,pLongitude,pType,pDate,pTime,pId,pIsDo
 			var time = crimeJson[marshall.getTimeLabel()];
 			var id = crimeJson[marshall.getIdLabel()];
 			var isDomestic = crimeJson[marshall.getDomesticLabel()];
-
 			crimeList.push(new Crime(latitude,longitude,type,date,time,id,isDomestic));
 		}
 		return crimeList;
