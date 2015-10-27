@@ -2,36 +2,34 @@
  * GridPoint module create point to be access as an object
  */
 
-module.exports = function GridPoint (x, y, area) {
+module.exports = function GridPoint (x, y, z) {
 
 	var xPoint = x;
 	var yPoint = y;
-	var areaPoint = area;
+	var zPoint = z;
 
 	/**
-	 * This method return the value of x.
-	 * @return Return the x point.
+	 * This method return the value of X.
+	 * @return Return the X point.
 	 */
 	this.getX = function() {
-
+		return xPoint;
 
 	}
 
 	/**
-	 * This method return the value of y.
-	 * @return Return the y point.
+	 * This method return the value of Y.
+	 * @return Return the Y point.
 	 */
 	this.getY = function() {
-
-
+		return yPoint;
 	}
 
 	/**
-	 * This method return the area of the tile.
-	 * @return Return the z point.
+	 * This method return the value of Z.
+	 * @return Return the Z point.
 	 */
-	this.getArea = function() {
-
-
+	this.getZ = function() {
+		return zPoint;
 	}
 }

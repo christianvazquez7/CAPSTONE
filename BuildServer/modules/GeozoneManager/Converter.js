@@ -6,8 +6,8 @@
 /**
  * Module Import
  */
-geoPoint = require('./GridPoint.js');
-geoCoordinate = require('./geoCoordinate.js');
+var GridPoint = require('./GridPoint.js');
+var GeoCoordinate = require('./GeoCoordinate.js');
 
 module.exports = function Converter () {
 
@@ -20,7 +20,11 @@ module.exports = function Converter () {
 	 * @return Tile based on the coordinate
 	 */
 	this.coordinateToTile = function(coordinate, area) {
-
+		console.log("Coordinate are: ", coordinate)
+		var x = (Math.floor((coordinate.longitude + 180) / 360 * Math.pow(2, area)));
+		var y = (Math.floor((1 - Math.log(Math.tan(coordinate.latitude * Math.PI / 180) + 1 / Math.cos(coordinate.latitude * Math.PI / 180)) /Math.PI) / 2 * Math.pow(2, area)));
+		var area = area;
+		return new GridPoint(x, y, area);
 
 	}
 
@@ -33,8 +37,12 @@ module.exports = function Converter () {
 	 * of the tile.
 	 */
 	this.tileToCoordinate = function(x, y, area) {
+		
+		conversionFactor = Math.PI - 2 * Math.PI * y / Math.pow(2, area);
+		var latitude = (180 / Math.PI * Math.atan(0.5 * (Math.exp(conversionFactor) - Math.exp(-conversionFactor))));
+		var longitude = (x / Math.pow(2, area) * 360 - 180);
 
-
+		return new GeoCoordinate(latitude, longitude, area);
 	}
 
 	/**
@@ -44,6 +52,7 @@ module.exports = function Converter () {
 	 * @return Return the respective size for the calculation
 	 */
 	this.translateArea = function(area) {
-
+		var edge = Math.sqrt(area)
+		return (-1.442627823) * Math.log(edge) + 25.18
 	}
 }

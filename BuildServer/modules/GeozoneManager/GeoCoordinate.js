@@ -1,8 +1,8 @@
 /**
- * GeoCoordinate module create coordinates to be access as an object
+ * GeoCoordinate class create coordinates to be access as an object
  */
 
-module.exports = function GeoCoordinate (latitude, longitude, area) {
+module.exports = function GeoCoordinate (latitude, longitude) {
 
 	var geoLatitude = latitude;
 	var geoLongitude = longitude;
@@ -12,7 +12,7 @@ module.exports = function GeoCoordinate (latitude, longitude, area) {
 	 * @return Return the latitude coordinate.
 	 */
 	this.getLatitude = function() {
-
+		return geoLatitude;
 
 	}
 
@@ -21,7 +21,7 @@ module.exports = function GeoCoordinate (latitude, longitude, area) {
 	 * @return Return the longitude coordinate.
 	 */
 	this.getLongitude = function() {
-
+		return geoLongitude;
 
 	}
 
@@ -31,7 +31,7 @@ module.exports = function GeoCoordinate (latitude, longitude, area) {
 	 * @return Return the area of the coordinate
 	 */
 	 this.getCoordinate = function() {
-
+	 	return JSON.parse('{"latitude:' + geoLatitude + ', "longitude":' + geoLongitude + '}');
 
 	 }
 }
