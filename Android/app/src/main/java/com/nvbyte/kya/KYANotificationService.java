@@ -63,8 +63,10 @@ public class KYANotificationService extends Service {
                     }
                 } else {
                     Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT);
-                    KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
-                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageMovement(point.toByteArray());
+                    if(location != null) {
+                        KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
+                        PhoneInterface.getInstance(KYANotificationService.this).sendMessageMovement(point.toByteArray());
+                    }
                 }
             }
         };
@@ -200,16 +202,20 @@ public class KYANotificationService extends Service {
             @Override
             public void run() {
                 Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT);
-                KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
-                KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setUserId(Utils.getUserId(KYANotificationService.this));
-                builder.setLocation(point);
-                builder.setSpeed(location.getSpeed());
-                PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(builder.build().toByteArray(), new Runnable() {
-                    @Override
-                    public void run() {
-                        scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
-                    }
-                });
+                if(location != null) {
+                    KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
+                    KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setUserId(Utils.getUserId(KYANotificationService.this));
+                    builder.setLocation(point);
+                    builder.setSpeed(location.getSpeed());
+                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(builder.build().toByteArray(), new Runnable() {
+                        @Override
+                        public void run() {
+                            scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                        }
+                    });
+                } else {
+                    scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                }
             }
         });
     }
@@ -222,12 +228,13 @@ public class KYANotificationService extends Service {
         String currentZoneDate = "19/10/15"; //TODO: Fetch param from proto.
         boolean doSurvey = true; //TODO: Fetch param from proto.
         double crimeRate = 45.4; //TODO: Fetch param from proto.
+        boolean enabled = false;
         int prevZone = 1;
         int threshold = preferences.getInt(THRESHOLD_PREFERENCE,1);
         preferences.edit().putInt(CURRENT_ZONE_PREFERENCE,currentZone).commit();
         mAlarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         scheduleCheckIn(nextCheckInSeconds);
-        if (currentZone > prevZone && currentZone > threshold) {
+        if (currentZone > prevZone && currentZone > threshold && enabled) {
             Log.d(TAG,"Notification Needed!");
             String userId  = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
             mCurrentNotificationId = userId + System.currentTimeMillis();
