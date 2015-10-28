@@ -10,6 +10,8 @@ module.exports = function Crime(pLatitude,pLongitude,pType,pDate,pTime,pId,pIsDo
 	var time = pTime;
 	var id = pId;
 	var isDomestic = pIsDomestic;
+	var page;
+	var offset;
 
 	/**
 	 * Parses a Json list into a structured list of Crime data.
@@ -73,6 +75,22 @@ module.exports = function Crime(pLatitude,pLongitude,pType,pDate,pTime,pId,pIsDo
 	 */
 	this.getId = function() {
 		return id;
+	};
+
+	this.getOffset = function() {
+		return offset;
+	};
+
+	this.getPage = function() {
+		return page;
+	};
+
+	this.setOffset = function(val) {
+		offset = val;
+	};
+
+	this.setPage = function(val) {
+		page = val;
 	};
 
 	/**
