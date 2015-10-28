@@ -18,7 +18,7 @@ module.exports = function Pager() {
 	 * @param callback called when query is succesful.
 	 * @return True if query was successful, false otherwise.
 	 */
-	this.init = function(request,callback) {
+	this.init = function(request,callback,onError) {
 		mChunkSize = request.getLimit();
 		var config = {
 			hostDomain: request.getSource(),
@@ -34,6 +34,10 @@ module.exports = function Pager() {
 		var soda = new Socrata(config);
 		console.log(params);
 		soda.get(params,function(err,response,data){
+			console.log('hereee');
+			if(err !== null) {
+				onError();
+			}
 			console.log(data);
 			numberOfPages = Math.ceil(data[0].count/parseFloat(request.getLimit()));
 			console.log('Number of pages ' +numberOfPages);
@@ -66,7 +70,6 @@ module.exports = function Pager() {
 	 * @return True if more pages are still available. False otherwise.
 	 */
 	this.hasNext = function() {
-		console.log(currentPage);
 		return currentPage < numberOfPages;
 	};
 

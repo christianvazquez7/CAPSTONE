@@ -62,20 +62,25 @@ module.exports = function RequestBuilder(pSource, pToken, pResource, marshall) {
 	this.build =  function() {
 		var where;
 
-		if (end !== undefined && start !== undefined ) {
-			where = marshall.getDateLabel() + " >= " + "'" + start + "'" + " AND " + marshall.getDateLabel() + " <= " + "'" + end + "'";
-		} else if (end === undefined) {
-			where = marshall.getDateLabel() + " >= " + "'" + start + "'";
-		} else if (start === undefined) {
-			where = marshall.getDateLabel() + " <= " + "'" + end + "'";
+		if (end === undefined && start === undefined) {
+
+		} else {
+			if (end !== undefined && start !== undefined ) {
+				where = marshall.getDateLabel() + " >= " + "'" + start + "'" + " AND " + marshall.getDateLabel() + " <= " + "'" + end + "'";
+			} else if (end === undefined) {
+				where = marshall.getDateLabel() + " >= " + "'" + start + "'";
+			} else if (start === undefined) {
+				where = marshall.getDateLabel() + " <= " + "'" + end + "'";
+			}
 		}
 
 		var order;
-
-		if(increasing) {
-			order = marshall.getDateLabel() + " ASC";
-		} else {
-			order = marshall.getDateLabel() + " DESC";
+		if(increasing !== undefined) {
+			if(increasing) {
+				order = marshall.getDateLabel() + " ASC";
+			} else {
+				order = marshall.getDateLabel() + " DESC";
+			}
 		}
 
 		var request = new Request(source, resource, token, where, order, offset, limit);

@@ -32,6 +32,7 @@ module.exports = function RequestHandler() {
 	var mOnRecordProcessed;
 	var mOnLastRecordProcessed;
 	var self = this;
+	var mCurrentPage;
 	
 	/**
 	 * Initializes the module to fetch data from an external source with a predefined schema.
@@ -58,9 +59,8 @@ module.exports = function RequestHandler() {
 			resource: baseRequest.getResource(),
 			XAppToken: baseRequest.getToken()
 		};
-
 		soda = new Socrata(config);
-		mPager.init(baseRequest,onReady);
+		mPager.init(baseRequest,onReady,onError);
 	};
 
 	/**
@@ -73,9 +73,10 @@ module.exports = function RequestHandler() {
 	 * @param lastCrimeDate: Date of last crime processed.
 	 */
 	this.requestData = function() {
-		console.log(mPager.hasNext());
 		if(mPager.hasNext()) {
-			var dataRequest = requestBuilder.start(mStart).end(mEnd).limit(mChunk).offset(mPager.nextPage()).increasing(true).build();
+			var nextPage = mPager.nextPage();
+			mCurrentPage = mPager.getCurrentPage();
+			var dataRequest = requestBuilder.start(mStart).end(mEnd).limit(mChunk).offset(nextPage).increasing(true).build();
 
 			var params = {
 					$where: dataRequest.getWhere(),
@@ -99,27 +100,32 @@ module.exports = function RequestHandler() {
 	}
 
 	function onError(err) {
-		console.log('An error ocurred fetching data from the SODA server');
+		throw new Error('An error ocurred from the SODA server.');
 	}
 
 	/**
 	 * Local callback for when queries are completed.
 	 */
 	function onDataRecieved(data){
-		console.log('Parsing data fetched');
 		var crimeList = Crime.fromList(data,mMarshall);
 		console.log('fetched '+ crimeList.length + ' crimes...');
 		if (mLastOffset !== undefined) {
-			console.log('Removing unwanted elements from list.');
 			var splicedCrimeList = [];
+
 			for (var i = mLastOffset + 1 ; i<crimeList.length ; i++) {
+				crimeList[i].setPage(mCurrentPage);
+				crimeList[i].setOffset(i);
 				splicedCrimeList.push(crimeList[i]);
 			}
-			console.log('Notify subscriber...');
+			
 			mOnRecordProcessed(splicedCrimeList);
 			mLastOffset = undefined;
 		} else {
-			console.log('Notify subscriber...');
+
+			for (var i = 0 ; i < crimeList.length ; i++) {
+				crimeList[i].setPage(mCurrentPage);
+				crimeList[i].setOffset(i);
+			}
 			mOnRecordProcessed(crimeList);
 		}
 	}
