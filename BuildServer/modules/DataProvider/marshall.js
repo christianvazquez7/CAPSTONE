@@ -49,7 +49,7 @@ module.exports = function Marshall(lat,lon,typ,dat,tim,id,dom,ign) {
 	};
 
 	/**
-	 * Get the ID label format (required).
+	 * Get the ID label format (optional).
 	 */
 	this.getIdLabel = function() {
 		return mIdLabel;

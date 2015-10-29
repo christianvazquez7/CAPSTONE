@@ -12,6 +12,12 @@ module.exports = function Scheduler(limit, timeWindow, sleepPeriod) {
 	var mWindow = timeWindow;
 	var totalCount = 0;
 
+	/**
+	 * Adds a request to the count tracking for limit detection. If the count
+	 * exceeds the amount of requests defined by "limit" within the time period
+	 * defined by "timeWindow", the build server will sleep for "sleepPeriod"
+	 * to avoid exceeding the limit defined by the source.
+	 */
 	this.addRequest = function() {
 		if (mLastAnchor === undefined || (Date.now() - mLastAnchor > timeWindow)) {
 			mLastAnchor = Date.now();
@@ -26,6 +32,12 @@ module.exports = function Scheduler(limit, timeWindow, sleepPeriod) {
 		totalCount ++;
 	};
 
+	/**
+	 * Get the request count that have happened within the current time window.
+	 *
+	 * @return: The number of requests that have been tracked for the current
+	 * window frame.
+	 */
 	this.getCount = function() {
 		return totalCount;
 	};

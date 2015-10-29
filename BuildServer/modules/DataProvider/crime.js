@@ -77,18 +77,34 @@ module.exports = function Crime(pLatitude,pLongitude,pType,pDate,pTime,pId,pIsDo
 		return id;
 	};
 
+	/**
+	 * Gets the page offset of this crime within a query.
+	 */
 	this.getOffset = function() {
 		return offset;
 	};
 
+	/**
+	 * Gets the page of this crime within a query.
+	 */
 	this.getPage = function() {
 		return page;
 	};
 
+	/**
+	 * Sets the offset for this crime within a query.
+	 *
+	 * @param val: Offset value to assign to crime object.
+	 */
 	this.setOffset = function(val) {
 		offset = val;
 	};
 
+	/**
+	 * Sets the page of this crime within a query.
+	 *
+	 * @param val: Page value to assign to crime object.
+	 */
 	this.setPage = function(val) {
 		page = val;
 	};

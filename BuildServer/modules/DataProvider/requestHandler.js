@@ -1,6 +1,6 @@
 /**
  * Handles all requests to SODA server, notifies data provider when data
- * is ready. Delegates parsing to Crime class, paging to the Pager, and 
+ * is ready or ended. Delegates parsing to Crime class, paging to the Pager, and 
  * request building to the RequestBuilder.
  */
 module.exports = function RequestHandler() {
@@ -36,6 +36,31 @@ module.exports = function RequestHandler() {
 	
 	/**
 	 * Initializes the module to fetch data from an external source with a predefined schema.
+	 * The request handler is initialized asynchronously. Any method call before onReady is
+	 * triggered will result in undefined behavior. During initialization, the pager fetches
+	 * paging information from the base request.
+	 *
+	 * @param onReady: Callback that will be triggered when the requestHandler is finished
+	 * initialization.
+	 * @param onRecordProcessed: Callback triggered every time a record is processed when
+	 * request data is called.
+	 * @param onLasRecordProcessed: Callback triggered when no records remain.
+	 * @param source: The SODA source from which to obtain data.
+	 * @param token: The SODA application token used for retrieval of data from the source.
+	 * @param resource: The SODA dataset to access within the source.
+	 * @param chunk: The size of the pages fetched from the  source (max 1000).
+	 * @param marshall: The marshall to parse source labels to kya namespace.
+	 * @param lastPage: The last page that was processed. This will be undefined if no pages,
+	 * were processed. If this is not undefined, a previous fetching operation was interrupted
+	 * and its state is being preserved.
+	 * @param lastOffset: The last crime processed within the page. This will be undefined if no crime,
+	 * were processed. If this is not undefined, a previous fetching operation was interrupted
+	 * and its state is being preserved.
+	 * @param start: Start date from where crimes should be fetched from. The format
+	 * for this parameter is a string in the form of yyyy/mm/dd.
+	 * @param end: End date from where crimes should be fetched. The format
+	 * for this parameter is a string in the form of yyyy/mm/dd.
+	 *
 	 */
 	this.init = function(onReady,onRecordProcessed, onLastRecordProcessed,source,token,resource,chunk,marshall,lastPage,lastOffset,start,end) {
 		mMarshall = marshall;
@@ -64,13 +89,9 @@ module.exports = function RequestHandler() {
 	};
 
 	/**
-	 * Queries the SODA service for new data.
-	 *
-	 * @param source: SODA endpoint.
-	 * @param callback: Callback to notify when data is ready.
-	 * @param marshall: Label translator for query.
-	 * @param lastCrimeId: Id of last crime processed.
-	 * @param lastCrimeDate: Date of last crime processed.
+	 * Queries the SODA service for new data. It will fetch data of the next page defined by the pager.
+	 * If no data remains to be fetched, the end callback will be trigerred for the caller, notifying 
+	 * that all criminal data has been fetched.
 	 */
 	this.requestData = function() {
 		if(mPager.hasNext()) {
@@ -91,6 +112,16 @@ module.exports = function RequestHandler() {
 		}
 	};
 
+	/**
+	 * Local callback triggered when the SODA request has finished execution. If the query was succesful,
+	 * the onDataRecieved will be called. Else, the onError will be called.
+	 *
+	 * @param err: Error that occured during request. If no error ocurred,
+	 * this parameter will be null and OnError will be called.
+	 * @param response: The response from the SODA service.
+	 * @param data: The data fetched from the SODA source. This will be in
+	 * JSON format, with labels still in the sources namespace.
+	 */
 	function onSodaResponse(err,response,data) {
 		if(err !== null) {
 			onError(err);
@@ -99,12 +130,21 @@ module.exports = function RequestHandler() {
 		}
 	}
 
+	/**
+	 * Error callback trigered if a SODA query was unsuccessful.
+	 *
+	 * @param err: The error object thrown by SODA request.
+	 */
 	function onError(err) {
 		throw new Error('An error ocurred from the SODA server.');
 	}
 
 	/**
-	 * Local callback for when queries are completed.
+	 * Local callback for when queries are succesful. The dara will
+	 * be parsed into crime objects using the marshall. In this method the translation
+	 * between namespaces occurs. All crimes that have already been processed (defined by
+	 * the persistent state in "lastPagePage" and "lastOffset") will be removed
+	 * from the crime list.
 	 */
 	function onDataRecieved(data){
 		var crimeList = Crime.fromList(data,mMarshall);

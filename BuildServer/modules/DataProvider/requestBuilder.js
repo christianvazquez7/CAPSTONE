@@ -1,5 +1,5 @@
 /**
- * Builds http requests for SODA API.
+ * Builds HTTP requests for SODA API.
  */
 module.exports = function RequestBuilder(pSource, pToken, pResource, marshall) {
 
@@ -44,20 +44,35 @@ module.exports = function RequestBuilder(pSource, pToken, pResource, marshall) {
 		return this;
 	};
 
+	/**
+	 * Defines if fetched data should be ordered by time.
+	 *
+	 * @param isInCreasing: Set to true if crimes should be fetched in
+	 * increased order. Set to False if crimes should be fetched in
+	 * decreasing order.
+	 */
 	this.increasing = function(isIncreasing) {
 		increasing = isIncreasing;
 		return this;
 	};
 
+	/**
+	 * Define the limit of results (rows) that should be fetched from the
+	 * SODA source. *Note* The maximum limit is 1000.
+	 *
+	 * @param pLimit: The number of rows that should be fetched.
+	 */
 	this.limit = function(pLimit) {
 		limit = pLimit;
 		return this;
 	};
 
 	/**
-	 * Creates the query string.
+	 * Creates the request object. Generates the WHERE condition based on the
+	 * start and end parameters. If isIncreasing is set to true, the query contains
+	 * ans ASC element, otherwhise elements will be fetched in DESC order.
 	 *
-	 * @return The query string to the remote SODA service.
+	 * @return The request object to the remote SODA service.
 	 */
 	this.build =  function() {
 		var where;

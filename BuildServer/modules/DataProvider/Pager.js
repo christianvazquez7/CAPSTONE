@@ -13,9 +13,13 @@ module.exports = function Pager() {
 
 	/**
 	 * Initializes the pager module. Determines number of pages from query result.
+	 * Initialization is asynchronous. Any method invoked before the callback is
+	 * triggered will result in undefined behavior.
 	 *
-	 * @param query Query to perform and count results.
-	 * @param callback called when query is succesful.
+	 * @param request: Request object that contains all element to perform the
+	 * desired query for crime objects.
+	 * @param callback: Called when query is succesful.
+	 * @param onError: Callback trigerred if an error occurs during initialization.
 	 * @return True if query was successful, false otherwise.
 	 */
 	this.init = function(request,callback,onError) {
@@ -56,10 +60,20 @@ module.exports = function Pager() {
 		mChunkSize = 0;
 	};
 
+	/**
+	 * Gets the amount of pages for the initialized query. Default value is 0.
+	 *
+	 * @return Number of pages in query.
+	 */
 	this.getPages = function() {
 		return numberOfPages;
 	};
 
+	/**
+	 * Gets the current page that is being processed.
+	 *
+	 * @return Number of page that is currently being processed.
+	 */
 	this.getCurrentPage = function() {
 		return currentPage;
 	};
@@ -81,7 +95,6 @@ module.exports = function Pager() {
 	 * Fetches the index of the next page in query.
 	 *
 	 * @return Index of next page. 
-	 * @throws Error if no more pages exist.
 	 */
 	this.nextPage = function() {
 		return mChunkSize * (currentPage++);
