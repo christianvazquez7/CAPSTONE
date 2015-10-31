@@ -275,10 +275,4 @@ suite('RequestHandler', function() {
   test('Crimes fetched in ascending order.', testCrimesAreFetchedInAscendingOrder);
   test('Start fetching crime after last page processed.', testCrimesAreFetchedAfterLastPageProcessed);
   test('Start fetching crime after last page processed, ignoring last crime processed.', testCrimesAreFetchedAfterLastPageProcessedAfterLastCrimeProcessed);
-
-
-
-
-
-
 });
