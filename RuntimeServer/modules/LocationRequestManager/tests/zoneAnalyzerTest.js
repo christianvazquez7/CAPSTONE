@@ -59,7 +59,6 @@ fs.writeFile('testGrid.geojson', JSON.stringify(squareGrid), function(err) {
 
 var zonesMap = [];
 
-
 squareGrid.features.forEach(function(value,index){
 	var geoZone = {
 		level: 0,
@@ -68,18 +67,22 @@ squareGrid.features.forEach(function(value,index){
 	};
 	geoZone.level = Math.floor((Math.random() * 10) + 1); 
 	geoZone.crimeRate = Math.floor((Math.random() * 100) + 1); 
-	geoZone.loc = value;
+	geoZone.loc = value.geometry;
 	zonesMap.push(geoZone);
 }); 
 
+for(var i = 0; i < zonesMap.length; i++){
+	console.log("Lat: " + zonesMap[i].loc.coordinates[0][0][1] + "   Lon: " + zonesMap[i].loc.coordinates[0][0][0]);
+}
 
-fs.writeFile('testGridObjects.json', JSON.stringify(zonesMap), function(err) {
+/*fs.writeFile('testGridObjects.json', JSON.stringify(zonesMap), function(err) {
     if(err) {
         return console.log(err);
     }
     //console.log("The file was created and saved!");
-});
+});*/
 /*-----------------------Test the zone analyzer with grid generated----------------------------------*/
+
 var currentLocation = 
 {
 	longitude: -67.297,

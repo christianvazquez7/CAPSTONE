@@ -6,8 +6,8 @@ var ZoneFetcher = require('../zoneFetcher.js');
 var fetcherTest = new ZoneFetcher();
 var location = 
 {
-	longitude: -66.7,
-	latitude: 18.09
+	longitude: -67.297,
+	latitude: 18.0025
 };
 var numRings = 1;
 

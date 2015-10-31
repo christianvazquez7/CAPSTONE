@@ -23,11 +23,11 @@ module.exports = function ResponseBuilder() {
 	 */
 	this.build = function(currentZone, nextRequestTime, surveyFlag) {
 		var geoPointsAr = [];
-		for(var i = 0 ; i < currentZone.loc.geometry.coordinates[0].length - 1; i ++){
-			geoPointsAr.push(new GeoPoint('', currentZone.loc.geometry.coordinates[0][i][1], currentZone.loc.geometry.coordinates[0][i][0]));
+		for(var i = 0 ; i < currentZone.loc.coordinates[0].length - 1; i ++){
+			geoPointsAr.push(new GeoPoint('', currentZone.loc.coordinates[0][i][1], currentZone.loc.coordinates[0][i][0]));
 		}
-		var currentZone = new GeoZone(currentZone.zoneID, currentZone.level, currentZone.crimeRate, geoPointsAr);
-		var response = new CheckInResponse(currentZone,nextRequestTime,surveyFlag);
+		var currentZoneMessage = new GeoZone(currentZone._id.toString(), currentZone.level, currentZone.crimeRate, geoPointsAr);
+		var response = new CheckInResponse(currentZoneMessage,nextRequestTime,surveyFlag);
 		var responseBuffer = response.encode();
 		var responseMessage = responseBuffer.toBuffer();
 		return responseMessage;	
