@@ -10,16 +10,15 @@ module.exports = function ZoneFetcher() {
 	 */
 	var MongoClient = require('mongodb').MongoClient;
 	var ObjectId = require('mongodb').ObjectID;
-	var assert = require('assert');
 	var math = require('mathjs');
 	var turf = require('turf');
 
 	//Database URL
-	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/Geozones';
+	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/Geozone';
 
 	// Sets the size of the zones
 	var mZoneSize = 200;
-	
+	 
 	/**
 	 * From a given location it fetches the geo-zone that encloses it.
 	 *
@@ -37,20 +36,30 @@ module.exports = function ZoneFetcher() {
 			container = locationGeoJSON;
 		}
 		//It will return the current zone and the zones around it according to the number of rings requested
-		else{
+		else if (numRings == 1){
 			container = getPolygon(locationGeoJSON, numRings, mZoneSize);		
 		}
+		else{
+			throw "Cannot fetch more than 1 ring";
+		}
 
-		MongoClient.connect(url, function(err, db) {
-  			assert.equal(null, err);
+		connectToDB(url, function(err, db) {			
+  			if(err) throw err;
+  			console.log("Connection successful");
   			findZones(db, container, zonesCallback);
-		});		
+		});
 	};
 	
+	function connectToDB(url, callback){
+		MongoClient.connect(url, function(err, db) {
+  			callback(err,db);
+		});			
+	}
+
 	function findZones(db, container, callback){
   		
   		// Get the documents collection 
-  		var collection = db.collection('Geozones');
+  		var collection = db.collection('Geozone');
   		// Find some documents 
   		
   		//Variable to store db result
@@ -65,32 +74,26 @@ module.exports = function ZoneFetcher() {
         			}
      			}
      		}
-  		}).sort({ "loc.geometry.coordinates[0][0][1]" : -1, "loc.geometry.coordinates[0][0][0]" : 1}).toArray(function(err,result){
-				assert.equal(null, err);
+  		}).toArray(function(err,result){
+				if(err) throw err;
+				result.sort(function(a, b) {
+    				// Sort by latitude decreasing
+    				var dLat = parseFloat(b.loc.coordinates[0][0][1]) - parseFloat(a.loc.coordinates[0][0][1]);
+    				if(dLat) return dLat;
+
+    				// If there is a tie, sort by longitude increasing
+    				var dLon = parseFloat(a.loc.coordinates[0][0][0]) - parseFloat(b.loc.coordinates[0][0][0]);
+    				return dLon;
+					});				
 				db.close();
 				callback(result);
-			});
+				});
   	};
 	
-	/**
-	 * Given two coordinates it fetches the geo-zones enclosed by them.
-	 *
-	 * @param NWPoint: Point representing coordinates of the upper-left corner of the area.
-	 * @param SEPoint: Point representing coordinates of the lower-right corner of the area.
-	 * @param within: Boolean to identify if the caller wants the area fully enclosed by the 
-	 * coordinates provided or the ones it intersects
-	 * @param nearbyZonesCallback: Callback function called when the geoZones have been fetched.
-	 * @return True if a list of zones is found and successfully fetched, False otherwise.
-	 */
-	this.fetchByArea = function(NWPoint, SEPoint, within, nearbyZonesCallback) {
-		/*
-		* Christian M function
-		*/
-	};
 	
 	function getPolygon(locationGeoJSON, numRings, zoneSize){
 		
-		console.log('Fetching from location: ' + locationGeoJSON.geometry.coordinates);
+		//console.log('Fetching from location: ' + locationGeoJSON.geometry.coordinates);
 		
 		/*	
 		 *  Calculates hypotenuse to generate polygon depending on number of rings requestd and the size

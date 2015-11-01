@@ -1,7 +1,8 @@
 var ResponseBuilder = require('../responseBuilder.js');
 
 var ProtoBuf = require("../../../node_modules/protobufjs");
-var assert = require('assert');
+var assert = require('chai').assert;
+
 //TODO: Check path 
 var builder = ProtoBuf.loadProtoFile('C:/Users/LuisR/Documents/GitHub/CAPSTONE/RuntimeServer/resources/kya.proto');
 
@@ -13,7 +14,7 @@ var CheckInResponse = KYA.CheckInResponse,
 //Mock data
 var currentZone = {
 	_id: 10,
-	level: 6,
+	level: 6,	
 	crimeRate: 190,
 	loc: 
 	{	
@@ -36,14 +37,14 @@ var mockGeoPointsAr =
 var currentZoneMessage = new GeoZone("10", 6, 190, mockGeoPointsAr);
 var response = new CheckInResponse(currentZoneMessage,nextRequestTime,surveyFlag);
 var responseMessage = response.encode().toBuffer();
+
+var resBuilder = new ResponseBuilder();
 /*----------------------------------------------------------------------------------------------------------------------------------------*/
 //Module test
-var resBuilder = new ResponseBuilder();
 
 describe('Response Builder', function() {
   describe('#build()', function () {
     it('should return encoded message', function () {
-		//assert.equal(CheckInResponse.decode(responseMessage), CheckInResponse.decode(resBuilder.build(currentZone, nextRequestTime, surveyFlag)));
 		assert.deepEqual(responseMessage, resBuilder.build(currentZone, nextRequestTime, surveyFlag));
     });
   });

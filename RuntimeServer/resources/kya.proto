@@ -69,7 +69,7 @@ message CheckIn {
     // Speed at which user is moving. This can be used to determine the what is 
     // the most efficient request interval, along with the user distance from 
     // the closest risk zone increase.
-    optional double speed = 3;
+    required double speed = 3;
 }
 
       
@@ -79,7 +79,7 @@ message CheckInResponse {
     required GeoZone currentZone = 1;
 
     // Next suggested time delta for check in.
-    required int32 nextRequestTimeInSeconds = 2;
+    required double nextRequestTimeInSeconds = 2;
 
     // True if feedback should be requested from user. False otherwise.
     required bool requestFeedback = 3;
@@ -88,7 +88,7 @@ message CheckInResponse {
 message GeoZone {
 
     // Identifier of a zone
-    required int32 zoneID = 1;
+    required string zoneID = 1;
 
     // Risk zone classification for this particular area. This number will be
     // between 1 and 10. 

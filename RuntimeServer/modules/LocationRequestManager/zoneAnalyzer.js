@@ -30,29 +30,34 @@ module.exports = function ZoneAnalyzer() {
 	};
 
 	this.getCurrentZone = function(locationGeoJSON, zonesToAnalyze, callback) {
-       /* console.log("--------------------------------------------------");
-        console.log("Loc: " + JSON.stringify(locationGeoJSON));
+/*      console.log("--------------------------------------------------");
+        console.log("Location for index: " + JSON.stringify(locationGeoJSON));
         console.log("--------------------------------------------------");
-        console.log("Zones: "); 
-        console.log(zonesToAnalyze);
-        console.log("--------------------------------------------------");
-        */
+*/        
         zonesToAnalyze.forEach(function(geoZone){
-            if(turf.inside(locationGeoJSON,geoZone.loc)){
+//            console.log("Alternative for current zone: ");
+            var poly = turf.polygon([geoZone.loc.coordinates[0]]); 
+//            console.log(geoZone);
+//            console.log("--------------------------------------------------");
+            if(turf.inside(locationGeoJSON,poly)) {
+                console.log("Zone found!");
                 callback(geoZone);
             }
         });
 	};
 
 	 function getCurrentZoneIndex(locationGeoJSON, zonesToAnalyze, callback){
-        /*console.log("--------------------------------------------------");
-        console.log("Loc: " + JSON.stringify(locationGeoJSON));
+/*        console.log("--------------------------------------------------");
+        console.log("Location for index: " + JSON.stringify(locationGeoJSON));
         console.log("--------------------------------------------------");
-        console.log("Zones: "); 
-        console.log(zonesToAnalyze);
-        console.log("--------------------------------------------------");*/
+*/
         zonesToAnalyze.forEach( function(geoZone,index){
-            if(turf.inside(locationGeoJSON,geoZone.loc)){
+//            console.log("Zone for index: ");
+            var poly = turf.polygon([geoZone.loc.coordinates[0]]); 
+//            console.log(poly);
+//            console.log("--------------------------------------------------");
+            if(turf.inside(locationGeoJSON,turf.polygon([geoZone.loc.coordinates[0]]))) {
+                console.log("Index found!");
                 callback(index);
 		    }
 		});
@@ -84,6 +89,7 @@ module.exports = function ZoneAnalyzer() {
         });
 
         while(!zoneIndex || !currentZone);
+        console.log("Index and zone found!");
 
 		var zonesFetchedCount = zonesToAnalyze.length;
 
@@ -260,42 +266,42 @@ module.exports = function ZoneAnalyzer() {
 		switch(zoneReference){
 			case reference.NW:
 				//Measure distance to SE corner of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][3][0], GeoZoneToAnalyze.loc.geometry.coordinates[0][3][1]]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][3][0], GeoZoneToAnalyze.loc.coordinates[0][3][1]]);
                 console.log("\nRef NW");
 				break;
 			case reference.N:
 				//Measure distance to S boundary of the zone
-				closestPointInZone = turf.point([locationGeoJSON.geometry.coordinates[0], GeoZoneToAnalyze.loc.geometry.coordinates[0][0][1]]);
+				closestPointInZone = turf.point([locationGeoJSON.geometry.coordinates[0], GeoZoneToAnalyze.loc.coordinates[0][0][1]]);
                 console.log("\nRef N");
 				break;
 			case reference.NE:
 				//Measure distance to SE corner of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][0][0], GeoZoneToAnalyze.loc.geometry.coordinates[0][0][1]]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][0][0], GeoZoneToAnalyze.loc.coordinates[0][0][1]]);
                 console.log("\nRef NE");
 				break;
 			case reference.W:
 				//Measure distance to E boundary of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][2][0], locationGeoJSON.geometry.coordinates[1]]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][2][0], locationGeoJSON.geometry.coordinates[1]]);
                 console.log("\nRef W");
 				break;
 			case reference.E:
 				//Measure distance to W boundary of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][0][0], locationGeoJSON.geometry.coordinates[1]]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][0][0], locationGeoJSON.geometry.coordinates[1]]);
                 console.log("\nRef E");
 				break;
 			case reference.SW:
 				//Measure distance to NE corner of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][2][0], GeoZoneToAnalyze.loc.geometry.coordinates[0][2][1]]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][2][0], GeoZoneToAnalyze.loc.coordinates[0][2][1]]);
 				console.log("\nRef SW");
                 break;
 			case reference.S:
 				//Measure distance to N boundary of the zone
-				closestPointInZone = turf.point([locationGeoJSON.geometry.coordinates[0], GeoZoneToAnalyze.loc.geometry.coordinates[0][1][1]]);
+				closestPointInZone = turf.point([locationGeoJSON.geometry.coordinates[0], GeoZoneToAnalyze.loc.coordinates[0][1][1]]);
 				console.log("\nRef S");
                 break;
 			case reference.SE:
 				//Measure distance to NE corner of the zone
-				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.geometry.coordinates[0][1][0],GeoZoneToAnalyze.loc.geometry.coordinates[0][1][1]]);
+				closestPointInZone = turf.point([GeoZoneToAnalyze.loc.coordinates[0][1][0],GeoZoneToAnalyze.loc.coordinates[0][1][1]]);
 				console.log("Ref SE");
                 break;
 			default:

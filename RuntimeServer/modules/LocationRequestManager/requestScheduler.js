@@ -11,11 +11,10 @@ module.exports = function RequestScheduler() {
 	/**
 	 * Module imports.
 	 */
-	var GeoPoint = require('../../../BuildServer/modules/GeoZoneManager/GeoCoordinate.js');
+	var turf = require('turf');
 	var ZoneFetcher = require('./zoneFetcher.js');
 	var ZoneAnalyzer = require('./zoneAnalyzer.js');
 	var ResponseBuilder = require('./responseBuilder.js');
-	var GeoZone = require('./geoZone.js');
 
 	
 
@@ -57,13 +56,16 @@ module.exports = function RequestScheduler() {
 	zonesFetchingCallback = function onZonesFetched(geoZones) {
 		console.log("Zones fetched");
 		console.log(geoZones);
-		
+		console.log("Zones fetched latitudes");
+		for(var i = 0; i < geoZones.length; i++){
+			console.log("Lat: " + geoZones[i].loc.coordinates[0][0][1] + "   Lon: " + geoZones[i].loc.coordinates[0][0][0]);
+		}
 		/*Analyze zone to obtain the time to schedule the next location request*/
 	 	var locationGeoJSON = turf.point([mCheckIn.location.longitude, mCheckIn.location.latitude]);	
 		
-		var timeForNextRequest = analyzer.calculateTimeToHRZone(speed,currentLocationGeoJSON,geoZones);
+		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON,geoZones);
 
-		analyzer.getCurrentZone(currentLocationGeoJSON,geoZones, function (currentZone){
+		analyzer.getCurrentZone(locationGeoJSON,geoZones, function (currentZone){
 			var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag); 
 			mResponseCallback(response);
 		});
