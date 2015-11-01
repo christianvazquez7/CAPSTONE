@@ -25,7 +25,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Activity launched to collect information about user's perception on a particular area.
+ * Activity launched to collect information about user's perception on a particular area. This
+ * survey has a timeout component. If the user does not interact with the survey for 10 seconds
+ * since the time it was launched, the activity will exit on its own. The user can interact by
+ * swiping to see the alternate options or tapping to select one.
  */
 public class SurveyActivity extends FragmentActivity {
 
@@ -51,7 +54,8 @@ public class SurveyActivity extends FragmentActivity {
 
     @Override
     /**
-     * Creates view pager and adapter.
+     * Creates view pager and adapte, vibrates the device to notify user, and starts the timeout
+     * Timer task.
      */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +135,7 @@ public class SurveyActivity extends FragmentActivity {
     }
 
     /**
-     * Create a new FragmentPagerAdapter to
+     * Create a new FragmentPagerAdapter to display the option fragments.
      *
      * @return
      */

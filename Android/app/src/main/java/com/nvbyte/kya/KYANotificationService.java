@@ -18,6 +18,8 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
@@ -40,15 +42,31 @@ public class KYANotificationService extends Service {
     private static final long SAMPLE_PERIOD = 1000 * 10; // 10 seconds.
     private long mTimeStartedCollecting = 0;
     private static final String THRESHOLD_PREFERENCE = "THRESHOLD";
+    private static final String MUTE_PREFERENCE = "mute_preference";
     private static final String CURRENT_ZONE_PREFERENCE = "CURRENT_ZONE";
     private final static String SELECTED_EXTRA = "SELECTED_ID";
     private static final long LOCATION_TIMEOUT = 1500;
     private static final long RETRY_CHECKIN_PERIOD_SECONDS = 5; /// 5 seconds
-    private static final long RESPONSE_TIMEOUT = 5; /// 5 seconds
+    private static final long RESPONSE_TIMEOUT = 10000; /// 5 seconds
     private Timer mMovementTimer;
     private String mCurrentNotificationId = "";
     private PendingIntent mNextCheckIn;
+    private Timer timeoutTimer;
+    private double mLastSpeed = 0;
 
+    private Timer  speedTracker;
+
+    private TimerTask buildSpeedTask() {
+        return new TimerTask(){
+            @Override
+            public void run() {
+                Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
+                if(location != null) {
+                    Log.d(TAG,"LOCATION SPEEDL: "+location.getSpeed());
+                }
+            }
+        };
+    }
 
     private TimerTask buildMoveTask() {
         return new TimerTask(){
@@ -62,13 +80,27 @@ public class KYANotificationService extends Service {
                         mMovementTimer = null;
                     }
                 } else {
-                    Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT);
+                    Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
                     if(location != null) {
                         KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
                         PhoneInterface.getInstance(KYANotificationService.this).sendMessageMovement(point.toByteArray());
                     }
                 }
             }
+        };
+    }
+
+    private TimerTask buildTimeoutTask() {
+        return new TimerTask(){
+            @Override
+            public void run() {
+                    synchronized (KYANotificationService.this) {
+                        if(timeoutTimer != null)
+                            timeoutTimer.cancel();
+                        timeoutTimer = null;
+                        scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                    }
+                }
         };
     }
 
@@ -94,16 +126,6 @@ public class KYANotificationService extends Service {
             } else if (action.equals("com.nvbyte.kya.ERROR")) {
                 scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
             }
-        }
-    };
-
-    /**
-     * Listens for accelerometer data (velocity and acceleration).
-     */
-    private KYAListener<SensorEvent> mAccelerometerSensorCallback = new KYAListener<SensorEvent>() {
-        @Override
-        public synchronized void callback(SensorEvent value) {
-
         }
     };
 
@@ -201,15 +223,32 @@ public class KYANotificationService extends Service {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT);
+                Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
                 if(location != null) {
+                    if(location.hasSpeed()) {
+                        mLastSpeed = location.getSpeed();
+                    }
                     KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
                     KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setUserId(Utils.getUserId(KYANotificationService.this));
                     builder.setLocation(point);
                     builder.setSpeed(location.getSpeed());
+
+                    synchronized (KYANotificationService.this) {
+                        if (timeoutTimer != null) {
+                            timeoutTimer.cancel();
+                        }
+                        timeoutTimer = new Timer();
+                    }
+                    timeoutTimer.schedule(buildTimeoutTask(), RESPONSE_TIMEOUT);
+
                     PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(builder.build().toByteArray(), new Runnable() {
                         @Override
                         public void run() {
+                            synchronized (KYANotificationService.this) {
+                                if(timeoutTimer != null)
+                                    timeoutTimer.cancel();
+                                timeoutTimer = null;
+                            }
                             scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
                         }
                     });
@@ -222,14 +261,25 @@ public class KYANotificationService extends Service {
 
     private void onCheckInResponse(byte[] proto) {
         Log.d(TAG,"Handling response");
+        synchronized (KYANotificationService.this) {
+            if(timeoutTimer != null)
+                timeoutTimer.cancel();
+            timeoutTimer = null;
+        }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        long nextCheckInSeconds = 60; //TODO: Fetch param from proto.
-        int currentZone = 10; // TODO: Fetch param from proto.
+        KYA.KYAResponse response = null;
+        try {
+            response = KYA.KYAResponse.parseFrom(proto);
+        } catch (InvalidProtocolBufferException e) {
+            Log.e(TAG,e.getMessage());
+        }
+        long nextCheckInSeconds = response.getNextRequestTimeInSeconds();
+        int currentZone = response.getNewLevel();
         String currentZoneDate = "19/10/15"; //TODO: Fetch param from proto.
-        boolean doSurvey = true; //TODO: Fetch param from proto.
+        boolean doSurvey = response.getRequestFeedback();
         double crimeRate = 45.4; //TODO: Fetch param from proto.
-        boolean enabled = false;
-        int prevZone = 1;
+        boolean enabled = preferences.getBoolean(MUTE_PREFERENCE,true);
+        int prevZone = response.getLastLevel();
         int threshold = preferences.getInt(THRESHOLD_PREFERENCE,1);
         preferences.edit().putInt(CURRENT_ZONE_PREFERENCE,currentZone).commit();
         mAlarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -268,6 +318,10 @@ public class KYANotificationService extends Service {
      */
     private void scheduleCheckIn(long timeInSeconds) {
         synchronized (this) {
+            if(speedTracker == null) {
+                speedTracker = new Timer();
+                speedTracker.schedule(buildSpeedTask(),5000,10000);
+            }
             if(mNextCheckIn == null) {
                 Log.d(TAG, "Scheduling check in!");
                 Intent intentAlarm = new Intent();
@@ -312,7 +366,6 @@ public class KYANotificationService extends Service {
                 mMovementTimer.schedule(buildMoveTask(), 0, SAMPLE_PERIOD);
                 Intent notificationActivity = new Intent(getApplicationContext(),NotificationActivity.class);
                 notificationActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
                 //notificationActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 notificationActivity.putExtra(RATING,classification);
                 notificationActivity.putExtra(CRIME_RATE,crimeRate);
@@ -326,7 +379,7 @@ public class KYANotificationService extends Service {
     private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate){
         Intent surveyActivity = new Intent(getApplicationContext(),SurveyActivity.class);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         surveyActivity.putExtra(EXTRA_ID,notificationId);
         surveyActivity.putExtra(RATING,currentZone);
         surveyActivity.putExtra(CRIME_RATE,crimeRate);

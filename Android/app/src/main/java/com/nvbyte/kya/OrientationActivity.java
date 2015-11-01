@@ -25,8 +25,10 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 /**
- * Contains the compass surface view that draws direction to previous safer zone after a
- * notification occurs.
+ * Shows a way for the user to orient themselves in the landscape. Shows a map that displays:
+ * (1) The users position on the map.
+ * (2) A polygon depicting the newly entered higher risk zone.
+ * (3) A polygon depicting the previous lower lever zone.
  */
 public class OrientationActivity extends Activity implements OnMapReadyCallback,GoogleMap.OnMapLongClickListener {
     private DismissOverlayView mDismissOverlay;
@@ -52,6 +54,9 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
     }
 
     @Override
+    /**
+     * Paints user location, lower level area, and higher level area on the google map fragent.
+     */
     public void onMapReady(final GoogleMap map) {
         Log.d("TAG","MAP DISPLAYED");
         map.setMyLocationEnabled(true);
@@ -66,7 +71,7 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
             public void run() {
 
                 LocationProvider lp =  LocationProvider.getInstance(OrientationActivity.this);
-                final Location l = lp.getLocation(5000);
+                final Location l = lp.getLocation(5000,true);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -101,6 +106,9 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
     }
 
     @Override
+    /**
+     * On long click, show an option to dismiss the map.
+     */
     public void onMapLongClick(LatLng point) {
         mDismissOverlay.show();
     }

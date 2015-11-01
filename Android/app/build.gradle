@@ -22,6 +22,11 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    androidTestCompile 'com.android.support.test:runner:0.3'
+    androidTestCompile 'com.android.support.test:rules:0.3'
+    androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
+
     compile 'com.google.android.support:wearable:1.1.0'
     compile 'com.google.protobuf:protobuf-java:2.4.1'
     compile 'com.google.android.gms:play-services-wearable:8.1.0'

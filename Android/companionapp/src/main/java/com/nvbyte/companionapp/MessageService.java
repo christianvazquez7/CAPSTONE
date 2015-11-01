@@ -18,6 +18,7 @@ public class MessageService extends WearableListenerService {
     private static final String SEND_SURVEY = "/SEND_SURVEY";
     private static final String SEND_GET_ZONE = "/SEND_GET_ZONE";
     private static final String SEND_MOVEMENT = "/SEND_MOVEMENT";
+    private static final String SEND_RETRY = "/SEND_RETRY";
     private static final String TAG = "MessageService";
 
     @Override
@@ -35,6 +36,8 @@ public class MessageService extends WearableListenerService {
                 sendSurvey(manager,content);
             } else if(messageEvent.getPath().equals(SEND_MOVEMENT)) {
                 sendMovement(manager,content);
+            } else if(messageEvent.getPath().equals(SEND_RETRY)) {
+                handleRetry(manager,content);
             }
     }
 
@@ -75,6 +78,46 @@ public class MessageService extends WearableListenerService {
             }
         });
     }
+
+
+    private void handleRetry(RequestManager manager,byte[] body) {
+        manager.retry(body, new Response.Listener<byte[]>() {
+            @Override
+            public void onResponse(final byte[] response) {
+                Log.d(TAG,"Got server response for check-in...");
+                HandlerThread handlerThread = new HandlerThread("SensorHandlerThread");
+                handlerThread.start();
+                Handler handler = new Handler(handlerThread.getLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG,"Sending check-in response to wear...");
+                        WearInterface wInterface = WearInterface.getInstance(MessageService.this);
+                        wInterface.sendResponseCheckIn(response);
+                        Log.d(TAG,"Sent check-in response to wear.");
+                    }
+                });
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG,"Error sending check-in request!");
+                HandlerThread handlerThread = new HandlerThread("ErrorHandlerThread");
+                handlerThread.start();
+                Handler handler = new Handler(handlerThread.getLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG,"Sending error response to wear...");
+                        WearInterface wInterface = WearInterface.getInstance(MessageService.this);
+                        wInterface.sendError();
+                    }
+                });
+
+            }
+        });
+    }
+
 
     private void sendMovement(RequestManager manager,byte[] body) {
         manager.sendMovement(body);

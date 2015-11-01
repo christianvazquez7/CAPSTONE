@@ -44,9 +44,6 @@ public class MainActivity extends FragmentActivity {
             }
         });
         newThread.start();
-
-
-
         mMainContentPager = (ViewPager) findViewById(R.id.pager);
         mCurrentZoneFragment = new CurrentZoneFragment();
         mSettingsFragment = new SettingsFragment();

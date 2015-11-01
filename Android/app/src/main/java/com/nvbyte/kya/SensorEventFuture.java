@@ -8,6 +8,9 @@ import android.util.Log;
 
 import java.util.concurrent.Callable;
 
+/**
+ * Async task that returns a sensor reading in the future.
+ */
 public class SensorEventFuture implements Callable<SensorEvent> {
 
     private final Context mContext;
@@ -18,6 +21,13 @@ public class SensorEventFuture implements Callable<SensorEvent> {
     private int mAccuracy;
     public static final String TAG = "SensorEventFuture";
 
+    /**
+     * Creates a sensor event future that obtains data from a specific sensor in a window of time
+     * defined by the timeout.
+     * @param context The application context.
+     * @param iSensor The sensor you want to access.
+     * @param timeout The time window for which you want to collect data from the sensor.
+     */
     public SensorEventFuture(Context context, ISensor iSensor, long timeout) {
         mContext = context;
         mSensor = iSensor;
@@ -26,6 +36,11 @@ public class SensorEventFuture implements Callable<SensorEvent> {
 
 
     @Override
+    /**
+     * Starts a thread that subscribes to a sensor on the device. The main thread sleeps for
+     * the timeout specified and then returns the latest sensor value after sleep. This value can
+     * be null.
+     */
     public SensorEvent call() throws Exception {
         handler.start();
         Log.d(TAG, "Fetching heart beat");

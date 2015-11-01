@@ -20,7 +20,8 @@ import java.util.TimerTask;
 
 /**
  * Activity that notifies user that they are moving in the direction of danger. This includes
- * the display of information about the area they have moved into.
+ * the display of information about the area they have moved into. The color of the background is
+ * associated with the risk classification.
  */
 public class NotificationActivity extends FragmentActivity {
 

@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+/**
+ * Receiver in charge of starting KYA Notification service when device boots.
+ */
 public class BootLoader extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

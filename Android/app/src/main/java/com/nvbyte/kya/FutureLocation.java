@@ -20,7 +20,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.concurrent.Callable;
 
 /**
- * Created by christianvazquez on 10/17/15.
+ * Async task that returns a location future.
  */
 public class FutureLocation implements Callable<Location> {
 
@@ -32,8 +32,15 @@ public class FutureLocation implements Callable<Location> {
     private long mTimeout;
     private Looper mLooper;
     private LocationListener mLocationListener;
+    private boolean mTryHard = false;
 
-    public FutureLocation(Context context, GoogleApiClient client, long timeOut) {
+    /**
+     * Create a future location task to obtain location data from wearable.
+     * @param context The application's context.
+     * @param client The Google api client to obtain location services from (must be initialized).
+     * @param timeOut The amount of time to wait for a valid response.
+     */
+    public FutureLocation(Context context, GoogleApiClient client, long timeOut, boolean tryHard) {
         mContext = context;
         mManager = client;
         mTimeout = timeOut;
@@ -41,8 +48,21 @@ public class FutureLocation implements Callable<Location> {
         handlerThread.start();
         mLooper = handlerThread.getLooper();
         Log.d("TAG","Subscribing to locaiton requests");
+        mTryHard = tryHard;
     }
 
+    /**
+     * Determines the best location based on the following criteria:
+     * (1) The amount of time that has passed since the location object was created.
+     * (2) The accuracy of the location estimate.
+     * If the amount of time of an estimate from the current time is too big then the location with
+     * the smallest delta is given priority. Otherwise, the accuracy of each estimate is evaluated
+     * and the highest accuracy location is selected.
+     * @param l1 Location object to compare.
+     * @param l2 Location object to compare.
+     * @return A location object which is the best estimate of the user's current location based
+     * on accuracy and delta criteria.
+     */
     private Location bestLocation(Location l1,Location l2) {
         Log.d("HERE","FETCHING BEST LOCATION");
         if (l1 == null && l2 == null) {
@@ -69,6 +89,12 @@ public class FutureLocation implements Callable<Location> {
         }
 
     @Override
+    /**
+     * Starts a thread that subscribes to the location google api service. If the cached location
+     * satisfies the delta criteria, then returns immediately. Otherwise, the thread sleeps for
+     * the timeout specified and then returns the latest location value after sleep. This value can
+     * be null.
+     */
     public Location call() throws Exception {
         locationResult = LocationServices.FusedLocationApi.getLastLocation(mManager);
         if(locationResult != null && System.currentTimeMillis() - locationResult.getTime() < admittedTimeDelta) {
@@ -94,6 +120,12 @@ public class FutureLocation implements Callable<Location> {
         });
         thread.start();
         Thread.sleep(mTimeout);
+
+        if(mTryHard && locationResult == null) {
+            do {
+                Thread.sleep(mTimeout);
+            } while(locationResult == null);
+        }
         LocationServices.FusedLocationApi.removeLocationUpdates(mManager,mLocationListener);
         return locationResult;
     }

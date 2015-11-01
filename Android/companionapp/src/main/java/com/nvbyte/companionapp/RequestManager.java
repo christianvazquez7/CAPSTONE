@@ -16,12 +16,14 @@ import com.android.volley.toolbox.Volley;
 public class RequestManager {
     private RequestQueue mRequestQueue;
     private static RequestManager mRequestManager;
-    private static final String IP = "192.168.1.112";
+    private static final String IP = "192.168.1.100";
     private static final String SURVEY_ROUTE = "http://"+IP+":5000/survey";
     private static final String HEART_BEAT_ROUTE = "http://"+IP+":5000/heartbeat";
     private static final String CHECK_IN_ROUTE = "http://"+IP+":5000/checkIn";
     private static final String CURRENT_ZONE_ROUTE = "http://"+IP+":5000/currentZone";
     private static final String MOVEMENT_ROUTE = "http://"+IP+":5000/movement";
+    private static final String RETRY_ROUTE = "http://"+IP+":5000/retry";
+
 
     private Context mContext;
     private static final String TAG = "RequestManager";
@@ -114,6 +116,18 @@ public class RequestManager {
     public void checkIn(byte[] message, Response.Listener<byte[]> onSuccess, Response.ErrorListener onFailure) {
         byte[] body = message;
         ByteArrayRequest request = new ByteArrayRequest(Request.Method.POST,CHECK_IN_ROUTE,body,onSuccess, onFailure);
+        mRequestQueue.add(request);
+    }
+
+    /**
+     * Sends a checkin from the wearer to the remote service.
+     *
+     * @param onSuccess Success callback, called when request is serviced.
+     * @param onFailure Error callback, called when a request does not fall through.
+     */
+    public void retry(byte[] message, Response.Listener<byte[]> onSuccess, Response.ErrorListener onFailure) {
+        byte[] body = message;
+        ByteArrayRequest request = new ByteArrayRequest(Request.Method.POST,RETRY_ROUTE,body,onSuccess, onFailure);
         mRequestQueue.add(request);
     }
 

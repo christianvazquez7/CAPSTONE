@@ -24,7 +24,8 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Override
     /**
-     * Loads preferences into fragment. These include: vibration controls, mute controls,
+     * Loads preferences into fragment. These include: vibration controls, mute controls,lower
+     * delta notification, and threshold selection.
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +58,9 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     @Override
+    /**
+     * Creates fragment view. Adds padding for circular watch face.
+     */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setBackgroundColor(getResources().getColor(R.color.white));
@@ -65,9 +69,6 @@ public class SettingsFragment extends PreferenceFragment {
         int dpAsPixelsleft = (int) (20*scale + 0.5f);
         int dpAsPixelsdown = (int) (10*scale + 0.5f);
         int dpAsPixelsRight = (int) (5*scale + 0.5f);
-
-
-
         view.setPadding(dpAsPixelsleft,dpAsPixels,dpAsPixelsdown,dpAsPixelsRight);
         return view;
     }

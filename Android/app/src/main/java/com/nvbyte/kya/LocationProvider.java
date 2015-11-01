@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * Provides location information in latitude and longitude.
+ * Provides location services to components in KYA application.
  */
 public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
@@ -67,12 +67,11 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
      * network provider. Finally, it uses the GPS of the device to collect location data. If any of
      * these passes the threshold for accuracy determined by ACCURACY_THRESHOLD, it is returned.
      * Otherwise, a new reading is waited for.
-     * @return A Future location, which can then be used to wait synchronously in service for
-     * a location before fetching a request.
+     * @return Best estimate of user's current location.
      */
-    public Location getLocation(long timeout) {
+    public Location getLocation(long timeout,boolean tryHard) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<Location> location = executor.submit(new FutureLocation(mContext, mGoogleApiClient, timeout));
+        Future<Location> location = executor.submit(new FutureLocation(mContext, mGoogleApiClient, timeout,tryHard));
         Location actualLocation = null;
         try {
             actualLocation = location.get();
@@ -82,9 +81,14 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
         return actualLocation;
     }
 
+    /**
+     * Fetches the user speed using location services from Google and Gps.
+     * @param timeout The amount of time to wait for accurate speed estimate.
+     * @return The speed at which the device is traveling. Can be null.
+     */
     public double getSpeed(long timeout) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<Location> location = executor.submit(new FutureLocation(mContext, mGoogleApiClient, timeout));
+        Future<Location> location = executor.submit(new FutureLocation(mContext, mGoogleApiClient, timeout, false));
         Location actualLocation = null;
         try {
             actualLocation = location.get();
@@ -97,7 +101,6 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onConnected(Bundle bundle) {
         Log.d("TAG","CONECTED!");
-
     }
 
     @Override
