@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+		<title>KYA</title>
+		
+		<!-- Google Fonts integration: http://www.google.com/fonts -->
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700' rel='stylesheet' type='text/css'>
+		
+		<!-- Normalize to clean up & standardize the browser default styles: http://necolas.github.io/normalize.css -->
+		<link rel="stylesheet" href="css/normalize.css">
+		
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="../css/fonts.css">
+		<link rel="stylesheet" href="../css/styles.css">
+		<link rel="stylesheet" href="../css/parallax.css">
+		
+		<!-- Scripts -->
+		<script language="javascript" type="text/javascript" src="../scripts/ByteBufferAB.min.js"></script>
+		<script language="javascript" type="text/javascript" src="../scripts/ProtoBuf.min.js"></script>
+		
+		
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6TwfRnIG2oaUKUb65MBW6R66OQHYRRsM&libraries=geometry&sensor=false"></script>
+		<script src="../scripts/gjutils.js"></script>
+		<script language="javascript" type="text/javascript" src="../scripts/jquery-1.11.3.js"></script>
+<!-- 		<script src="../scripts/maps.js"></script> -->
+		<script src="../scripts/dashboard.js"></script>
+		<script src="../scripts/mapController.js"></script>
+
+	</head>
+
+	<body>
+		<header class="main header">
+			<div class="container clearfix">
+				<nav>
+					<ul >
+						<li><a class="link-logo " href="index.html"><img alt="KYA logo" src="images/kya-logo2.png"></a></li>
+						<li class="header-title header-first"><a href="#map-section">Map</a>
+						<li class="header-title "><a href="#stats-section">Statistics</a>
+						<li class="header-title "><a href="https://projectkya.wordpress.com">Blog</a></li>
+						<li class="header-title" id="header-last"><a href="contactus.html">Contact Us</a>
+					</ul>
+				</nav>
+			</div>
+		</header><!-- end header -->
+		
+		
+		<!-- - - - - - - Parallax Section 1 - - - - - - -->
+		<section class="module parallax parallax-1">
+			<div class="container clearfix">
+				<div class="header-fixed">
+				
+				<div id="kya-story-text">
+					<h1 id="kya-title"><em class="kya-red">K</em>now <em class="kya-orange">Y</em>our<em class="kya-green"> A</em><span id="kya-name-area">rea</span></h1>
+					<p class="center kya-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut 
+					</p>
+				</div>
+			</div>
+			</div>
+		</section>
+		<div class="cc-map-wrapper">
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - MAP SECTION - - - - - - - - - - - - - - - - - - - - - - - - - - -->	
+		<section id="map-section">
+			<div id="loading-img"></div>
+			<div id="googleMap" style="height: 450px"></div>
+		</section>
+		</div> 
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - LEGEND SECTION - - - - - - - - - - - - - - - - - - - - - - - - - - -->		
+		<div id="kya-legend">
+			<div class="container clearfix">
+				<div id="legend-kya" class="clearfix legend">
+					<h3 class="center">Danger Color Legend</h3>
+					<div id="legend-top" class="clearfix">
+						<div class="clearfix legend-box">
+							<div title="Level 1" class="legend-hover legend-circle tooltip legend-box-level1">1</div>
+						</div>
+						<div class="clearfix legend-box">
+							<div title="Level 2" class="legend-hover legend-circle legend-box-level2">2</div>
+						</div>
+						
+						<div class="clearfix legend-box">
+							<div title="Level 3" class="legend-hover legend-circle legend-box-level3">3</div>
+						</div>	
+						
+						<div class="clearfix legend-box">
+							<div title="Level 4" class="legend-hover legend-circle legend-box-level4">4</div>
+						</div>
+						
+						<div class="clearfix legend-box">
+							<div title="Level 5" class="legend-hover legend-circle legend-box-level5">5</div>
+						</div>	
+					</div>
+	
+					<div id="legend-bottom" class="clearfix">
+						<div class="clearfix legend-box">
+							<div title="Level 6" class="legend-hover legend-circle legend-box-level6">6</div>
+						</div>
+							
+						<div class="clearfix legend-box">
+							<div title="Level 7" class="legend-hover legend-circle legend-box-level7">7</div>
+						</div>
+						
+						<div class="clearfix legend-box">
+							<div title="Level 8" class="legend-hover legend-circle legend-box-level8">8</div>
+						</div>	
+						
+						<div class="clearfix legend-box">
+							<div title="Level 9" class="legend-hover legend-circle legend-box-level9">9</div>
+						</div>	
+						
+						<div class="clearfix legend-box">
+							<div title="Level 10" class="legend-hover legend-circle legend-box-level10">10</div>
+						</div>	
+					</div>
+				</div>				
+			</div><!-- end container -->
+		</div>
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - STATISTICS SECTION - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<section id="stats-section">
+		<div id="kya-stats">	
+			<div class="clearfix container">
+				<h2 class="center">Statistics</h2>
+				<div id="kya-stats-text" class="clearfix">
+					<section class="kya-stats-headers" id="kya-stats-left">
+							<p>Maximum Incidents:</p>
+							<p>Minimum Incidents:</p>
+							<p>Incident average:</p>
+					</section>
+					
+					<section class="kya-stats-res" id="kya-stats-right">
+							<p><span id="max-crimes">0</span> incidents</p>
+							<p><span id="min-crimes">0</span> incidents</p>
+							<p><span id="crime-rate">0</span> incidents per zone</p>
+					</section>
+				</div>
+			</div><!-- end kya-stats section -->
+		</div>
+		</section>
+
+				
+		<!-- - - - - - - Parallax Section 3 - - - - - - -->
+<!--
+		<section class="module parallax parallax-3">
+	        <div class="container">
+	        </div>
+		</section>
+-->
+
+      		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - FOOTER SECTION - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<footer class="main" style="position: absolute; left: 0; right: 0;">
+			<div class="container clearfix" style=" position: relative;">
+				<div id="footer-logo">
+					<img alt="KYA logo" src="images/kya-logo-footer.png">
+				</div>
+				
+				
+				<div id="footer-the-team">
+
+					<h4>KYA <em>Team</em></h4>
+					<ul>
+						<li>Christian D. Vazquez</li>
+						<li>Luis R. Escobar</li>
+						<li>Joel R. Corporan</li>
+						<li>Christian O. Montes</li>
+					</ul>
+				</div>
+				<div id="footer-about-us">
+					<h4>More <em>Information</em></h4>
+					<ul>
+						<li><a href="https://projectkya.wordpress.com">Blog</a></li>
+						<li><a href="contactus.html">Contact Us</a></li>
+					</ul>
+				</div>
+				<div id="footer-hours">
+
+				</div>
+			</div>
+			<div id="footer-copyright" class="container clearfix">
+				<hr>
+				<p>Copyright KYA &copy;2015. All rights reserved.</p>
+			</div>
+		</footer>
+		
+	</body>
+	
+</html>

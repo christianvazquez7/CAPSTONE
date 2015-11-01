@@ -6,3 +6,6 @@ RuntimeServer/modules/RequestServer/test
 
 # mongo data directory
 RuntimeServer/modules/RequestServer/data
+
+# Joel classes
+Class_Skeletons/

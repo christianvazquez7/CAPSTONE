@@ -9,6 +9,7 @@ module.exports = function RequestHandlers() {
 	var TelemetryRequestHandler = require('../TelemetryManager/telemetryRequestHandler.js');
 	var DashboardRequestHandler = require('../DashboardRequestManager/dashboardRequestHandler.js');
 	var LocationRequestHandler = require('../LocationRequestManager/locRequestHandler.js')
+	var fs = require('fs');
 	
 	// Initialization
 	var mTelemetryHandler = new TelemetryRequestHandler();
@@ -48,11 +49,13 @@ module.exports = function RequestHandlers() {
 	 * @param response: A Json array with the requested zones.
 	 */
 	this.getZones = function(req, res) {
-		// Decode string query to buffer
-		gridBounds =  new Buffer(req.query.code1, 'base64');
+		logger.debug("POST --> Zones handle");
+
+		gridBounds = req.body;
+
 		mDashboardHandler.requestZones(gridBounds, function(err, result) {
 			res.send(result);
-			// logger.info('Zones result --> ', result);
+			// logger.info(result);
 		});
 	}
 
@@ -129,7 +132,7 @@ module.exports = function RequestHandlers() {
 	/**
 	 * Gets the zone that matchs the given latitude and longitude.
 	 *
-	 * @param parsedUrl: Object containing the following parameters:
+	 * @param req: Object containing the following parameters:
 	 *   1) lat     : Current latitude.
 	 *   2) lon     : Current longitude.
 	 * @param response: the zone matching the given latitude and longitude
@@ -137,5 +140,53 @@ module.exports = function RequestHandlers() {
 	this.handleCurrentZone = function(req, res) {
 		logger.debug("POST --> Current zone handle");
 		res.send('SUCCESS');
+	}
+
+	/**
+	 * Communicates with teh Grid Controller to construct the grids.
+	 *
+	 * @param req: Object containing the following parameter:
+	 *   1) swLat	: south west latitude of current grid
+	 *   2) swLng	: south west longitude of current grid
+	 *   3) neLat	: north east latitude of current grid
+	 *   4) neLng	: north east longitude of current grid
+	 *	 5) area    : size of the next grids
+	 * @param response: a GeoJSON with the new grids
+	 */
+	this.getGrids = function(req, res) {
+		logger.debug("GET --> Grids handle");
+		swLat = req.query.swLat;
+		swLng = req.query.swLng;
+		neLat = req.query.neLat;
+		neLng = req.query.neLng;
+		gridArea = req.query.area;
+		mDashboardHandler.requestGrids(swLat, swLng, neLat, neLng, gridArea, function(result){
+			res.send(result);
+				// logger.info('Checkin result --> ', result);
+		});
+	}
+
+	this.setThreshold = function(req, res) {
+		logger.debug("POST --> Threshold handle");
+		threshold = req.query.threshold;
+		mDashboardHandler.setThreshold(threshold, function(result){
+			res.send(result);
+				// logger.info('Threshold result --> ', result);
+		});
+	}
+
+	/**
+	 * Communicates with the GridController to verify if it is time to fethc the zones.
+	 *
+	 * @param req: Object containing the following parameter:
+	 *   1) area    : Current grid's area.
+	 * @param response: true, if it is ready to fetch zones, or false, otherwise
+	 */
+	this.isReady = function(req, res) {
+		logger.debug("GET --> Is ready handle");
+		gridArea = req.query.gridArea;
+		mDashboardHandler.isReady(gridArea, function(result){
+			res.send(result);
+		});
 	}
 };

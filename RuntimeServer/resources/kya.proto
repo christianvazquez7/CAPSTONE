@@ -24,19 +24,40 @@ message Telemetry {
 }
 
 // Contains the bounds of a grid
+//message GridBounds {
+    
+    // LatLng of the north-west corner
+    //repeated double swPoint = 1;
+
+    // LatLng of the north-east corner
+   // repeated double nwPoint = 2;
+
+    // LatLng of the south-west corner
+    //repeated double nePoint = 3;
+
+    // LatLng of the south-east corner
+   // repeated double sePoint = 4;
+//}
+
+// Contains a latitude and longitude that represents a location in space. 
+message GeoPoint {
+    
+    //Identifier of the device where the telemetry was captured (optional as 
+    //it is only required when working with telemtry)
+    optional string userID = 1;
+
+    // Latitude coordinate in physical space.
+    required double latitude = 2;
+
+    // Longitude coordinate in physical space.
+    required double longitude = 3;
+}
+
+// Contains the bounds of a grid
 message GridBounds {
     
     // LatLng of the north-west corner
-    repeated double nwPoint = 1;
-
-    // LatLng of the north-east corner
-    repeated double nePoint = 2;
-
-    // LatLng of the south-west corner
-    repeated double swPoint = 3;
-
-    // LatLng of the south-east corner
-    repeated double sePoint = 4;
+    repeated GeoPoint boundaries = 1;
 }
 
 // Stats

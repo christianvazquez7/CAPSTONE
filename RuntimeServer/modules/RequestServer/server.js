@@ -7,9 +7,18 @@ module.exports = function Server() {
   var express = require('express');
   var routes = require('./routes.js');
   var logger = require('./utils/logger.js');
+  var path    = require("path");
   
   var app = express();
+  var __dirname = '/Users/omar91/Development/CAPSTONE/Dashboard';
+  // Store all HTML files in view folder.
+  // app.use(express.static('/Users/omar91/Development/CAPSTONE/Dashboard/public'));
 
+  // set static directories
+  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static('/Users/omar91/Development/CAPSTONE/RuntimeServer/resources'));
+
+//Store all JS and CSS in Scripts folder.
   /**
    * Creates and starts the server.
    *
