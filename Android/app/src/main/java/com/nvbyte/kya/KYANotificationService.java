@@ -366,7 +366,7 @@ public class KYANotificationService extends Service {
                 mMovementTimer.schedule(buildMoveTask(), 0, SAMPLE_PERIOD);
                 Intent notificationActivity = new Intent(getApplicationContext(),NotificationActivity.class);
                 notificationActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                //notificationActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                notificationActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 notificationActivity.putExtra(RATING,classification);
                 notificationActivity.putExtra(CRIME_RATE,crimeRate);
                 notificationActivity.putExtra(LAST_UPDATED,date);
@@ -379,7 +379,7 @@ public class KYANotificationService extends Service {
     private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate){
         Intent surveyActivity = new Intent(getApplicationContext(),SurveyActivity.class);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        surveyActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         surveyActivity.putExtra(EXTRA_ID,notificationId);
         surveyActivity.putExtra(RATING,currentZone);
         surveyActivity.putExtra(CRIME_RATE,crimeRate);

@@ -180,6 +180,8 @@ public class SurveyActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if(!sentSurvey) {
             Intent intent = new Intent();
             intent.setAction("com.nvbyte.kya.SURVEY_CANCELED");
