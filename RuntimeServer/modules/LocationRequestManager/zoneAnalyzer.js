@@ -71,10 +71,9 @@ module.exports = function ZoneAnalyzer() {
 	 */
 	function getDistance(locationGeoJSON,zonesToAnalyze){
 
-		var nextZoneClosestPoint;
 		var tempDistance;
 
-		//Initialize to geo zone size
+		//Initialize default distance to geo zone size 
 		var shortestDistance = 200;
 
 		var zoneIndex;
@@ -180,8 +179,8 @@ module.exports = function ZoneAnalyzer() {
         			}
         			break;
         		default:
-        			//TODO: Error fetching zones
-					//Incorrect sorting of zones
+        			throw "Error: current zone not found";
+					
  			}
  			return shortestDistance; 
 		}
@@ -233,8 +232,7 @@ module.exports = function ZoneAnalyzer() {
         			}
         			break;
         		default:
-        			//TODO: Error fetching zones
-					//Incorrect sorting of zones
+        			throw "Error: Incorrect sorting of zones";
  			}
             return shortestDistance; 
 		}
@@ -247,9 +245,7 @@ module.exports = function ZoneAnalyzer() {
         	}
 		}
 		else{
-			//TODO
-			//Error fetching zones
-			//Incorrect number of zones fetched
+			throw "Error: Zones fetched incorrectly";
 		}
         return shortestDistance;
 	};
