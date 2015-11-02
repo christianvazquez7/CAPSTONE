@@ -422,7 +422,7 @@ this.zoomButtonControl = function() {
 	zoomControl(zoomInButton, zoomOutButton);
 
 	zoomControlDiv.index = 1;
-	map.controls[google.maps.ControlPosition.TOP_LEFT].push(zoomControlDiv);
+	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(zoomControlDiv);
 }
 
 /**

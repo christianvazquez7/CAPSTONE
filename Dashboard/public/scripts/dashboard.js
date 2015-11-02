@@ -87,7 +87,8 @@ this.setThreshold = function() {
 this.onMapDrag = function() {
 	if (currentArea > thresholdArea && currentArea < initArea) {
 		clearGrids();
-		requestNewGrid(gridArea);
+		// requestNewGrid(gridArea);
+		drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
     }
     else if (currentArea == thresholdArea) {
     	map.setZoom(map.getZoom() - 1);
