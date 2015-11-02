@@ -185,6 +185,7 @@ module.exports = function RequestHandlers() {
 	this.isReady = function(req, res) {
 		logger.debug("GET --> Is ready handle");
 		gridArea = req.query.gridArea;
+		console.log(gridArea);
 		mDashboardHandler.isReady(gridArea, function(result){
 			res.send(result);
 		});

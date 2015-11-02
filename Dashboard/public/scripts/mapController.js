@@ -5,9 +5,12 @@
 
 var map,
 	mapLoc,			// Map location latitude and longitude
-	infoWindow;
+	infoWindow,
+	initialZoom,
+	minimumZoom;
 
-var backControlDiv;
+var backControlDiv,
+	zoomControlDiv;
 
 // Initial grid coordinates
 var swPoint, nePoint;
@@ -36,9 +39,10 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 	// Reference to the initial boundaries
 	swPoint = swPoint_;
 	nePoint = nePoint_;
+	initialZoom = minimumZoom = 9;
 
 	map = new google.maps.Map(document.getElementById('googleMap'), {
-		zoom: 9,
+		zoom: initialZoom,
 		zoomControl: false,
 		mapTypeControl: false,
 		streetViewControl: false,
@@ -54,6 +58,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
   	onDrag(dragCallback);	// Listen for hover events
 	styleMap(); // Add some style to the map
 	backButtonControl(backButtonCallback);
+	zoomButtonControl();
 };
 
 /**
@@ -64,6 +69,9 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
  * @param callback: Callback function to be called when a grid is clicked.
  */
 this.drawGrid = function(swPoint, nePoint, areaOfGrid, onGridClickedCallback) {
+	// Save the current zoom
+	minimumZoom = map.getZoom();
+
 	// Get the southwest and northeast latitude and longitude
 	swLat = swPoint.lat();
 	swLng = swPoint.lng();
@@ -139,10 +147,27 @@ this.getCurrentSwPoint = function() {
  * @param area: (int) the area of 
  * @param callback: Callback function to be called when the map is zoomed.
  */
-this.zoomIn = function(lat, lgt, area, callback) {
+this.zoomControl = function(zoomInButton, zoomOutButton) {
 
+	// Listener for zoomIn
+	google.maps.event.addDomListener(zoomInButton, 'click', function() {
+		map.setZoom(map.getZoom() + 1);
+	});
+
+	// Listener for zoomOut
+	google.maps.event.addDomListener(zoomOutButton, 'click', function() {
+		var currentZoom = map.getZoom();
+		if (currentZoom <= minimumZoom)
+			map.setZoom(minimumZoom);
+		else
+			map.setZoom(map.getZoom() - 1);
+	});  
 };
 
+/**
+ * Function to be called when the user hovers over the grids.
+ *
+ */
 this.onHover = function() {
 	// When the user hovers, outline the grids.
 	map.data.addListener('mouseover', function(event) {
@@ -157,6 +182,10 @@ this.onHover = function() {
 	});
 };
 
+/**
+ * Function to be called when the user drags the map.
+ *
+ */
 this.onDrag = function(callback) {
 	map.addListener('dragend', function() {
 		infoWindow.close();
@@ -171,6 +200,9 @@ this.onDrag = function(callback) {
  * @param geozones: (GeoJson)  the GeoJsin with the zones to draw
  */
 this.drawZones = function(geozones) {
+	// Save current zoom
+	minimumZoom = map.getZoom();
+
 	map.data.addGeoJson(geozones);
 	onZoneClicked();
 	styleZones();
@@ -281,15 +313,29 @@ this.styleZones = function() {
 	});
 };
 
+/**
+ * Resets map to the initial location and initial grids.
+ *
+ * @param swPpint: (double) the south-west point
+ * @param nePoint: (double) the north-east point
+ * @param area: (int) the area of initial grids
+ * @param callback: Callback function to be called when a grid is clicked.
+ */
 this.resetMap = function(swPoint, nePoint, area, onGridClickedCallback) {
 	clear();
-	map.setZoom(9);
+	map.setZoom(initialZoom);
 	map.setCenter(mapLoc);
 
 	// Load new GeoJSON with initial grids
 	drawGrid(swPoint, nePoint, area, onGridClickedCallback);
 };
 
+/**
+ * Draw grids in the map.
+ *
+ * @param area: (int) the size of the grids
+ * @param callback: Callback function to be called when a grid is clicked.
+ */
 this.goBackToGrids = function(area, onGridClickedCallback) {
 	clearZones();
 	newZoom = 4;
@@ -297,6 +343,11 @@ this.goBackToGrids = function(area, onGridClickedCallback) {
 	drawGrid(getCurrentSwPoint(), getCurrentNePoint(), area, onGridClickedCallback);
 };
 
+/**
+ * Creates the back button and adds listener.
+ *
+ * @param callback: Callback function to be called when the button is clicked.
+ */
 this.backButtonControl = function(callback) {
 
 	// Create div to hold back button
@@ -330,10 +381,62 @@ this.backButtonControl = function(callback) {
 	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(backControlDiv);
 };
 
+/**
+ * Creates the zoom button and adds listener.
+ *
+ */
+this.zoomButtonControl = function() {
+	// Create div to hold zoom buttons
+	zoomControlDiv = document.createElement('div');
+
+	// Creating divs & styles for custom zoom control
+	zoomControlDiv.style.padding = '5px';
+
+	// Set CSS for the control wrapper
+	var controlWrapper = document.createElement('div');
+	controlWrapper.style.backgroundColor = 'white';
+	controlWrapper.style.borderStyle = 'solid';
+	controlWrapper.style.borderColor = 'gray';
+	controlWrapper.style.borderWidth = '1px';
+	controlWrapper.style.cursor = 'pointer';
+	controlWrapper.style.textAlign = 'center';
+	controlWrapper.style.width = '32px'; 
+	controlWrapper.style.height = '64px';
+	zoomControlDiv.appendChild(controlWrapper);
+
+	// Set CSS for the zoomIn
+	var zoomInButton = document.createElement('div');
+	zoomInButton.style.width = '32px'; 
+	zoomInButton.style.height = '32px';
+	zoomInButton.style.backgroundImage = 'url("../images/zoomIn.png")';
+	controlWrapper.appendChild(zoomInButton);
+
+	// Set CSS for the zoomOut
+	var zoomOutButton = document.createElement('div');
+	zoomOutButton.style.width = '32px'; 
+	zoomOutButton.style.height = '32px';
+	zoomOutButton.style.backgroundImage = 'url("../images/zoomOut.png")';
+	controlWrapper.appendChild(zoomOutButton);
+
+	// Add listener for zoom buttons
+	zoomControl(zoomInButton, zoomOutButton);
+
+	zoomControlDiv.index = 1;
+	map.controls[google.maps.ControlPosition.TOP_LEFT].push(zoomControlDiv);
+}
+
+/**
+ * Shows the back button.
+ *
+ */
 this.showBackButton = function() {
 	backControlDiv.style.display =  'initial';
 };
 
+/**
+ * Hides the back button.
+ *
+ */
 this.hideBackButton = function() {
 	backControlDiv.style.display =  'none';
 };

@@ -65,6 +65,10 @@ module.exports = function ZoneManager() {
 		return color;
 	};
 
+	this.getLevelColor_ = function(level) {
+		return getLevelColor(level);
+	}
+
 	this.getGeoJson = function(zonesJson) {
 		var features = [];
 		for(var i = 0; i < zonesJson.length; i++) {

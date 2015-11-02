@@ -145,6 +145,7 @@ module.exports = function DashboardRequestHandler() {
 	};
 
 	this.isReady = function(area, callback) {
+		console.log(area);
 		result = gridController.isReadyToFetch(area);
 		callback(result);
 	};

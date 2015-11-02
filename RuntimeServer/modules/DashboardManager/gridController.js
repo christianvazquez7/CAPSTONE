@@ -12,7 +12,6 @@ module.exports = function GridController(threshold) {
 
 	// Minimun area to fetch zone in kilometers
 	var areaThreshold = threshold;
-	console.log('>------', threshold);
 	
 	/**
 	 * Given the north west latitude/longitude and the south east 
@@ -62,7 +61,6 @@ module.exports = function GridController(threshold) {
 	 * @return boolean: True is the zones are ready to be fetched, False otherwise
 	 */
 	this.isReadyToFetch = function(gridArea) {
-		console.log(gridArea);
 		if (parseFloat(gridArea) <= areaThreshold) {
 			// ready
 			// fetch zones
