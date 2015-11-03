@@ -11,8 +11,6 @@
 /************************************************************************
  *								GENERAL									*
  ************************************************************************/
-
-
 body {
 
 /* 	background: #ffffff url('../images/paper-bg.jpg') top center repeat; */
@@ -439,15 +437,6 @@ em {
  ************************************************************************/
 
 #googleMap {
-/*
-	width: 100%;
-	height: 400px;
-	margin-top: 20px;
-	margin-bottom: 20px;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-*/
 	background: transparent url(../images/loading3.gif) no-repeat center center;
 	
 }
@@ -457,6 +446,16 @@ em {
 /* 	background: #DDDDD5 url(../images/loading2.gif) no-repeat center center; */
 /* 	background: #DDDDD5 url(../images/loading3.gif) no-repeat center center; */
 
+}
+
+#mapViewer
+{
+  position:absolute;
+  width: 200px;
+  height: 120px;
+  top:10px;  /* adjust value accordingly */
+  left: 10px;  /* adjust value accordingly */
+  border: solid 6px #FFFFFF;
 }
 
 

@@ -28,12 +28,14 @@ var ProtoBuf = dcodeIO.ProtoBuf,
  */
 $(document).ready(function() {
 	// Specify bounds for the initial position of the grid
+	// Change this to indicate the location for the grids
 	var swLat = 17.918636,
 		swLng = -67.299500,
 		neLat = 18.536909,
 		neLng = -65.176392;
 
 	// Specify the map's location
+	// Change this to indicate the location of the area of study
 	var mapLocLat = 18.210952,
 		mapLocLng = -66.492914;
 

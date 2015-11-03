@@ -4,8 +4,11 @@
  */
 
 var map,
+	mapViewer,
 	mapLoc,			// Map location latitude and longitude
+	mapMarker,
 	infoWindow,
+	instrWindow,
 	initialZoom,
 	minimumZoom;
 
@@ -54,6 +57,8 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 	drawGrid(swPoint, nePoint, area, onGridClickedCallback);
 	// Instantiate the info window for the zones statistics
 	infoWindow = new google.maps.InfoWindow({});
+	showInstructions();
+	addMapViewer();
   	onHover();	// Listen for hover events
   	onDrag(dragCallback);	// Listen for hover events
 	styleMap(); // Add some style to the map
@@ -97,6 +102,7 @@ this.drawGrid = function(swPoint, nePoint, areaOfGrid, onGridClickedCallback) {
 
 		// Callback
 		onGridClickedCallback(swCoord, neCoord, areaOfGrid);
+		mapMarker.setPosition(map.getCenter());
     });
 };
 
@@ -190,6 +196,7 @@ this.onDrag = function(callback) {
 	map.addListener('dragend', function() {
 		infoWindow.close();
 		callback();
+		mapMarker.setPosition(map.getCenter());
 	});
 };
 
@@ -206,6 +213,7 @@ this.drawZones = function(geozones) {
 	map.data.addGeoJson(geozones);
 	onZoneClicked();
 	styleZones();
+	mapMarker.setPosition(map.getCenter());
 };
 
 /**
@@ -232,6 +240,48 @@ this.onZoneClicked = function() {
 		drawZoneStats(event);
 	});
 };
+
+/**
+ * Shows an info window when the dashboard loads.
+ *
+ */
+this.showInstructions = function() {
+	var contentString = '<div id="instrWindow">'+
+	'Click on a grid to expand the area.' +
+	'</div>';
+
+	instrWindow = new google.maps.InfoWindow({
+		content: contentString,
+		maxWidth: 200
+	});
+
+	instrWindow.setPosition(map.getCenter());
+	instrWindow.open(map);
+	// After 5 seconds the info window closes itself
+	setTimeout(function(){instrWindow.close();}, '5000');
+};
+
+/**
+ * Adds map to visualize where a grid or zone is located.
+ *
+ */
+this.addMapViewer = function() {
+
+	mapViewer = new google.maps.Map(document.getElementById('mapViewer'), {
+		zoom: 7,
+		zoomControl: false,
+		mapTypeControl: false,
+		streetViewControl: false,
+		scrollwheel: false,
+		center: mapLoc
+	});
+	mapMarker = new google.maps.Marker({
+	    position: mapLoc,
+	    map: mapViewer,
+	    title: 'You are here'
+  	});
+};
+
 
 /**
  * Removes all grids and zones from the map.
@@ -328,6 +378,7 @@ this.resetMap = function(swPoint, nePoint, area, onGridClickedCallback) {
 
 	// Load new GeoJSON with initial grids
 	drawGrid(swPoint, nePoint, area, onGridClickedCallback);
+	mapMarker.setPosition(map.getCenter());
 };
 
 /**
