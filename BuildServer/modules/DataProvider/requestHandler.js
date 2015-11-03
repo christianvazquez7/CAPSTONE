@@ -149,7 +149,8 @@ module.exports = function RequestHandler() {
 	function onDataRecieved(data){
 		var crimeList = Crime.fromList(data,mMarshall);
 		console.log('fetched '+ crimeList.length + ' crimes...');
-		if (mLastOffset !== undefined) {
+		if (mLastOffset !== undefined && mLastOffset !== null) {
+			console.log('last OFFFSETTT: '+mLastOffset)
 			var splicedCrimeList = [];
 
 			for (var i = mLastOffset + 1 ; i<crimeList.length ; i++) {
@@ -161,11 +162,11 @@ module.exports = function RequestHandler() {
 			mOnRecordProcessed(splicedCrimeList);
 			mLastOffset = undefined;
 		} else {
-
 			for (var i = 0 ; i < crimeList.length ; i++) {
 				crimeList[i].setPage(mCurrentPage);
 				crimeList[i].setOffset(i);
 			}
+			console.log(crimeList.length + ' THIS IS');
 			mOnRecordProcessed(crimeList);
 		}
 	}
