@@ -36,15 +36,11 @@ module.exports = function Pager() {
 		};
 
 		var soda = new Socrata(config);
-		console.log(params);
 		soda.get(params,function(err,response,data){
-			console.log('hereee');
 			if(err !== null) {
 				onError();
 			}
-			console.log(data);
 			numberOfPages = Math.ceil(data[0].count/parseFloat(request.getLimit()));
-			console.log('Number of pages ' +numberOfPages);
 			mCurrentOffset = 0;
 			callback();
 		});

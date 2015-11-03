@@ -14,7 +14,6 @@ var pg = require('pg');
 var conString = "postgres://postgres:Aguaseka7!@localhost/KYAUtility";
 
 function testSignalEndForNoData(done) {
-	console.log('jajaja');
 	this.timeout(10000);
 	var start = '2016-02-27';
 	var end = '2016-02-28';
@@ -51,9 +50,7 @@ function testSignalEndForDataButAllProcessed(done) {
 	var end;
 	var dataProvider = new DataProvider(marshall);
 	mPgClient.connect(function(err) {
-		console.log(err);
 		mPgClient.query('UPDATE utility SET lastpage = 100, lastoffset = null', function(err,result){
-			console.log(err);
 			dataProvider.init(onProviderReady,source,appToken,resource,start,undefined);
 		});
 	});
@@ -80,9 +77,7 @@ function testSignalEndForDataButSomeProcessed(done) {
 	var dataProvider = new DataProvider(marshall);
 	dataProvider.setChunkSize(59);
 	mPgClient.connect(function(err) {
-		console.log(err);
 		mPgClient.query('UPDATE utility SET lastpage = 1, lastoffset = null', function(err,result){
-			console.log(err);
 			dataProvider.init(onProviderReady,source,appToken,resource,start,undefined);
 		});
 	});
@@ -113,9 +108,7 @@ function testSignalEndForNormalOperation(done) {
 	var dataProvider = new DataProvider(marshall);
 	dataProvider.setChunkSize(59);
 	mPgClient.connect(function(err) {
-		console.log(err);
 		mPgClient.query('UPDATE utility SET lastpage = null, lastoffset = null', function(err,result){
-			console.log(err);
 			dataProvider.init(onProviderReady,source,appToken,resource,start,undefined);
 		});
 	});
@@ -141,9 +134,7 @@ function testRightChunkSize(done) {
 	var end = '2014/08/22';
 	var dataProvider = new DataProvider(marshall);
 	mPgClient.connect(function(err) {
-		console.log(err);
 		mPgClient.query('UPDATE utility SET lastpage = null, lastoffset = null', function(err,result){
-			console.log(err);
 			dataProvider.init(onProviderReady,source,appToken,resource,start,end);
 		});
 	});
@@ -153,7 +144,6 @@ function testRightChunkSize(done) {
 	}
 
 	function onRecords(data) {
-		console.log('data sizeeee:' + data.length);
 		unit.value(data.length).isEqualTo(1000);
 		mPgClient.end();
 		done();
@@ -173,9 +163,7 @@ function testSetChunkSize(done) {
 	var dataProvider = new DataProvider(marshall);
 	dataProvider.setChunkSize(chunk);
 	mPgClient.connect(function(err) {
-		console.log(err);
 		mPgClient.query('UPDATE utility SET lastpage = null, lastoffset = null', function(err,result){
-			console.log(err);
 			dataProvider.init(onProviderReady,source,appToken,resource,start,undefined);
 		});
 	});
@@ -202,9 +190,7 @@ function testCrimesAreFetchedAfterLastPageProcessed(done) {
 	var end = '2014/08/22';
 	var dataProvider = new DataProvider(marshall);
 	mPgClient.connect(function(err) {
-		console.log(err);
 		mPgClient.query('UPDATE utility SET lastpage = 20, lastoffset = null', function(err,result){
-			console.log(err);
 			dataProvider.init(onProviderReady,source,appToken,resource,start,end);
 		});
 	});
@@ -234,9 +220,7 @@ function testCrimesAreFetchedAfterLastPageProcessedAfterLastCrimeProcessed(done)
 	var dataProvider = new DataProvider(marshall);
 	var page = 21;
 	mPgClient.connect(function(err) {
-		console.log(err);
 		mPgClient.query('UPDATE utility SET lastpage = 20, lastoffset = 20', function(err,result){
-			console.log(err);
 			dataProvider.init(onProviderReady,source,appToken,resource,start,end);
 		});
 	});
@@ -269,9 +253,7 @@ function testCrimesAreFetchedAfterLastCrimeProcessed(done) {
 	var dataProvider = new DataProvider(marshall);
 	var page = 1;
 	mPgClient.connect(function(err) {
-		console.log(err);
 		mPgClient.query('UPDATE utility SET lastpage = null, lastoffset = 27', function(err,result){
-			console.log(err);
 			dataProvider.init(onProviderReady,source,appToken,resource,start,undefined);
 		});
 	});

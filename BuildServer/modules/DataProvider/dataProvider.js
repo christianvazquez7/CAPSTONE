@@ -60,23 +60,16 @@ module.exports = function DataProvider(marshall) {
 	 */
 	this.init = function(onProviderReady,source,appToken,resource,start,end) {
 		mPgClient.connect(function(err) {
-			console.log('CONNECTED TO DB');
-			console.log('err IS:' + err);
-
 			if(err) {
 				return console.error('could not connect to postgres', err);
 			}
 			mPgClient.query('SELECT * FROM utility', function(err, result) {
-				console.log('result IS:' + result.rows[0].lastpage);
 				if(err) {
 					return console.error('error running query', err);
 				}
 				if(result.rows.length > 0) {
-					console.log('closing');
-					console.log(result.rows[0]);
 					mLastPage = result.rows[0].lastpage;
 					mLastOffset = result.rows[0].lastoffset;
-					console.log(mLastPage);
 				}
 				mPgClient.end();
 
