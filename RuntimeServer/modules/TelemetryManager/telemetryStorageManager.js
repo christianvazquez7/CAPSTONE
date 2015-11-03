@@ -25,21 +25,19 @@ module.exports = function TelemetryStorageManager() {
 	 */	
 	this.processRecord = function(telemetryRecord, surveyFlag, heartRateFlag, callback) {
 		
-		console.log("Processing record");
-		
 		var surveyID,
 			  heartRateID;
-			
+		if(!surveyFlag && !heartRateFlag){
+      callback(new Error('No telemetry data to process'));
+    }
     //Initiate connection to database
 		client.connect(function(err) {
   			if(err) {
-    			callback(err, null);
+    			callback(err);
   			}
   			
   			//Checks if there is survey data to process
   			if(surveyFlag){
-  				
-          console.log('Processing survey');
   				
           //Query to insert survey record
   				//Returns survey record's auto-generated id to use it when creating or updating the telemetry record in the database 
@@ -49,15 +47,10 @@ module.exports = function TelemetryStorageManager() {
   				
   				client.query(query, function(err, result) {
   					
-  					console.log("Query: " + query);
-    				
     				if(err) {
-    					callback(err, null);
+    					callback(err);
 	    			}
 	    			
-	    			//Testing
-	    			console.log ("Result: Survey added with ID " + result.rows[0].survey_id);
-
    					surveyID = result.rows[0].survey_id;
 
             //Query to insert or update telemetry record with survey ID
@@ -68,14 +61,12 @@ module.exports = function TelemetryStorageManager() {
           
             client.query(query2, function(err, result) {
               
-              console.log("Query: " + query2);
-              
               if(err) {
-                callback(err, null);   
+                callback(err);   
               }
 
               //Testing
-              console.log ("Result: Record added for user " + telemetryRecord.userID);
+              //console.log ("Result: Record added for user " + telemetryRecord.userID);
               
               //Close the connection
               client.end();
@@ -88,8 +79,6 @@ module.exports = function TelemetryStorageManager() {
 
   			//Checks if there is heart rate data to process
   			if(heartRateFlag){
-
-          console.log('Processing heart_rate');
   				
           //Query to insert heart rate measurement record
   				//Returns heart reate record's auto-generated id to use it when creating or updating the telemetry record in the database 
@@ -97,17 +86,13 @@ module.exports = function TelemetryStorageManager() {
           telemetryRecord.heartRate.after +') RETURNING heart_rate_id';
 
           client.query(query3, function(err, result) {
-
-            console.log('Query: ' + query3);
     				
             if(err) {
-      					return console.error('error running heart rate query', err);
+      					callback(err);
 	    			}
 
 	    			heartRateID = result.rows[0].heart_rate_id;
-            //Testing
-	    			console.log ("Result: Heart rate entry added with ID " + heartRateID);
-
+        
             //Query to insert or update telemetry record with heart rate ID
             var query4 = 'INSERT INTO telemetry_record (user_id, heart_rate_id, tel_timestamp, notification_id, zone_id) ' +
                          'VALUES (' + telemetryRecord.userID +', ' + heartRateID + ', NOW(),' + telemetryRecord.notificationID + ', ' + telemetryRecord.zoneID + ') ' +
@@ -116,15 +101,10 @@ module.exports = function TelemetryStorageManager() {
           
             client.query(query4, function(err, result) {
 
-              console.log('Query: ' + query4);
             
               if(err) {
-                console.log("Error in query");
-                return console.error('error running record (heart rate) query', err);
+                callback(err);
               }
-
-              //Testing
-              console.log ("Record added for user: " + telemetryRecord.userID);
             
               //Close the connection  
               client.end();
@@ -145,10 +125,9 @@ module.exports = function TelemetryStorageManager() {
 	this.storeMovementData = function(GeoPoint, callback) {
 
 		client.connect(function(err) {
-        console.log ("Processing Location Data for Telemetry");
         
         if(err) {
-    			return console.error('could not connect to postgres', err);
+    			callback(err);
   			}
   				
   			//Query to insert survey record
@@ -158,17 +137,13 @@ module.exports = function TelemetryStorageManager() {
         
         client.query(query, function(err, result) {
 
-          console.log('Query: ' + query);
-
     			if(err) {
-            callback(err, null);
+            callback(err);
 	   			}
-	    			
-	   			//Testing
-	   			console.log ('Point added with ID: ' + result.rows[0].movement_id + ' for user: ' + GeoPoint.userID);
-          
+	    			          
           //Close the connection  
           client.end();
+
           callback(null, "Success");    			 
         });	
 		});	

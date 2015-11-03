@@ -26,7 +26,7 @@ module.exports = function TelemetryRequestHandler() {
 	 *
 	 * @param telemetryDataBuffer: Buffer contaning telemetry data to be processed
 	 */ 
-	this.handleTelemetryData = function(telemetryDataBuffer) {
+	this.handleTelemetryData = function(telemetryDataBuffer, callback) {
 		var telemetryRecord = Telemetry.decode(telemetryDataBuffer);
 		
 		//Check if there is either survey data or heart rate measurements data to process
@@ -35,10 +35,10 @@ module.exports = function TelemetryRequestHandler() {
 		
 		//Create sotrage manager to process (add or update) the record
 		if(surveyFlag||heartRateFlag){
-			mStorageManager.processRecord(telemetryRecord, surveyFlag, heartRateFlag, recordProcessedCallback);
+			mStorageManager.processRecord(telemetryRecord, surveyFlag, heartRateFlag, callback);
 		}
 		else{
-			recordProcessedCallback("No data to process",null);
+			callback(new Error('No data in record to process'));
 		}
 	};
 
@@ -47,25 +47,11 @@ module.exports = function TelemetryRequestHandler() {
 	 *
 	 * @param GeoPointBuffer: Buffer contaning GeoPoint (lat,lon,timestamp)
 	 */ 
-	this.handleMovementData = function(GeoPointBuffer) {
+	this.handleMovementData = function(GeoPointBuffer, callback) {
 		
 		var geoPoint = GeoPoint.decode(GeoPointBuffer);
 		
-		mStorageManager.storeMovementData(geoPoint, recordProcessedCallback);
+		mStorageManager.storeMovementData(geoPoint, callback);
 		
-	};
-
-	/**
-	 * Callback function to be called when the record has been processed in the databae
-	 *
-	 * @param responseString: String with the response to be sent to the client.
-	 */	
-	recordProcessedCallback = function onRecordProcessed(err, message) {
-		if (err){
-			return console.error('error running query', err);
-		}
-		else{
-			console.log("Results: " + message);
-		}	
 	};
 };
