@@ -25,13 +25,21 @@ public class ThresholdOptionFragment extends android.support.v4.app.Fragment {
 
 
     @Override
+    /**
+     * Obtain bundled parameters for initialization.
+     */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mThreshold = getArguments().getInt(THRESHOLD);
         mIsSelected = getArguments().getBoolean(SELECTED);
     }
 
-    //Creates a new threshold fragment for a particular threshold option.
+    /**
+     * Create a new threshold option fragment from a threshold level and its selection status.
+     * @param threshold The threshold for this option (number between 1-10).
+     * @param isSelected True if this option fragment is the selected preference.
+     * @return An option fragment with the threshold and selection status bundled in its arguments.
+     */
     public static ThresholdOptionFragment forThreshold(int threshold, boolean isSelected) {
         ThresholdOptionFragment fragment = new ThresholdOptionFragment();
         Bundle args = new Bundle();
@@ -44,7 +52,8 @@ public class ThresholdOptionFragment extends android.support.v4.app.Fragment {
     @Nullable
     @Override
     /**
-     * Creates the view for the threshold option.
+     * Creates the view for the threshold option. Makes the selected marker appear if and only if
+     * this is the selected user preference.
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_threshold, container, false);

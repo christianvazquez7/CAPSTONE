@@ -47,10 +47,6 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
 
         MapFragment fm = (MapFragment)  getFragmentManager().findFragmentById(R.id.map);
         fm.getMapAsync(this);
-
-
-
-
     }
 
     @Override

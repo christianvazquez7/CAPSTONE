@@ -42,7 +42,10 @@ public class ThresholdActivity extends FragmentActivity {
 
     @Override
     /**
-     * Creates the activity and sets up view pager for threshold selection.
+     * Creates the activity and sets up view pager for threshold selection. The gesture detector is
+     * also initialized to detect TAP gestures on the view pager. When a tap is detected, the
+     * currently displayed fragment is queried to determine the threshold level detected. This level
+     * is then returned to the MainActivity as a result.
      */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +87,6 @@ public class ThresholdActivity extends FragmentActivity {
 
     /**
      * Builds pager adapter that manages a list of threshold fragments.
-     *
      * @return Adapter set to manage list of threshold options.
      */
     private FragmentPagerAdapter buildAdapter() {
@@ -102,7 +104,6 @@ public class ThresholdActivity extends FragmentActivity {
 
     /**
      * Creates a list of threshold options for display in viewPager.
-     *
      * @return A list of option fragments in incremental order of threshold from 1-9.
      */
     private ArrayList<ThresholdOptionFragment> buildThresholdOptions() {

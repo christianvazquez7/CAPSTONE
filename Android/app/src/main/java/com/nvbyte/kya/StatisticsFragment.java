@@ -26,7 +26,7 @@ public class StatisticsFragment extends Fragment {
      * Creates a statistic fragment for a specific zone from a server response.
      * @param crimeRate Crime rate associated with this zone.
      * @param classification Classification for the zone (between 1-10).
-     * @param date Date for la update of this zone.
+     * @param date Date for last update of this zone.
      * @param color Resource id for this level's color.
      * @return A Statistics fragment with all the parameters bundled in arguments CRIME_PARAM,
      * CLASS_PARAM , and DATE_PARAM.

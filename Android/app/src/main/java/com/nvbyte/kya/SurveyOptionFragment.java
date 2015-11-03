@@ -45,7 +45,11 @@ public class SurveyOptionFragment extends Fragment {
         mDescription = TAGS.get(mRating);
     }
 
-    //Creates a new survey option from a particular survey rating.
+    /**
+     * Creates a SurveyOptionFragment for a specific risk rating.
+     * @param rating The risk level for this option.
+     * @return A SurveyOptionFragment with the rating bundled in its arguments.
+     */
     public static SurveyOptionFragment forRating(int rating) {
         SurveyOptionFragment fragment = new SurveyOptionFragment();
         Bundle args = new Bundle();

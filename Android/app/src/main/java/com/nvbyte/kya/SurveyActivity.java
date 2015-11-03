@@ -54,7 +54,7 @@ public class SurveyActivity extends FragmentActivity {
 
     @Override
     /**
-     * Creates view pager and adapte, vibrates the device to notify user, and starts the timeout
+     * Creates view pager and adapter, vibrates the device to notify user, and starts the timeout
      * Timer task.
      */
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +127,6 @@ public class SurveyActivity extends FragmentActivity {
 
     /**
      * Fetches view pager from xml.
-     *
      * @return View pager instantiated from the xml view activity_survey.
      */
     private ViewPager fetchViewPager() {
@@ -136,8 +135,7 @@ public class SurveyActivity extends FragmentActivity {
 
     /**
      * Create a new FragmentPagerAdapter to display the option fragments.
-     *
-     * @return
+     * @return An adapter that displays options from 1-10.
      */
     private FragmentPagerAdapter buildAdapter() {
         return new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -152,6 +150,10 @@ public class SurveyActivity extends FragmentActivity {
         };
     }
 
+    /**
+     * Creates Survey Option fragments with their level and labels.
+     * @return
+     */
     private ArrayList<SurveyOptionFragment> buildOptions() {
         ArrayList<SurveyOptionFragment> options = new ArrayList<>();
         for(int i =0 ; i<NUM_OF_OPTIONS; i++) {
@@ -160,6 +162,11 @@ public class SurveyActivity extends FragmentActivity {
         return options;
     }
 
+    /**
+     * Creates a timer task for the timeout timer. IF no interaction occurs, the task will be
+     * triggered and the activity will finish.
+     * @return A Timer Task that finishes the activity and stops the progressbar update task.
+     */
     private TimerTask buildTimeoutTask() {
         return new TimerTask() {
             @Override
@@ -170,6 +177,12 @@ public class SurveyActivity extends FragmentActivity {
         };
     }
 
+    /**
+     * Write all notification extras to an intent.
+     * @param intent An intent that you wish to broadcast with all notification parameters.
+     * @return An intent that contains extras for id,rating,crime rate ,and update date for the
+     * current notification added to its bundle.
+     */
     private Intent cascadeExtras(Intent intent) {
         intent.putExtra(EXTRA_ID,this.getIntent().getExtras().getString(EXTRA_ID));
         intent.putExtra(RATING, this.getIntent().getExtras().getInt(RATING));
@@ -179,6 +192,11 @@ public class SurveyActivity extends FragmentActivity {
     }
 
     @Override
+    /**
+     * Called when the survey is exited (either by calling finish() or user dismissing the app
+     * screen). This stops the timeout and tick timer and if the the survey was not sent, notifies
+     * the service.
+     */
     protected void onDestroy() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

@@ -141,6 +141,9 @@ public class PhoneInterface implements MessageApi.MessageListener, GoogleApiClie
     }
 
     @Override
+    /**
+     * Notifies when client is connected to service.
+     */
     public void onConnected(Bundle bundle) {
         Wearable.MessageApi.addListener( mApiClient, this );
         isConnected = true;
@@ -148,11 +151,17 @@ public class PhoneInterface implements MessageApi.MessageListener, GoogleApiClie
     }
 
     @Override
+    /**
+     * Notifies when client is disconnected from service.
+     */
     public void onConnectionSuspended(int i) {
         isConnected = false;
     }
 
     @Override
+    /**
+     * Notifies when a message is received.
+     */
     public void onMessageReceived (MessageEvent messageEvent) {
         final MessageEvent e = messageEvent;
 

@@ -10,7 +10,17 @@ import com.android.volley.VolleyError;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
-
+/**
+ * Message service analogous to the WearMessageServiceListener on the wear application. Listens
+ * for messages sent from the watch to the phone. The sent messages type define rpc-like methods to
+ * be invoked on the phone (given the lack of wifi on the watch). The following rpc are serviced:
+ * (1) SEND_HEARTBEAT: Send heart beat telemetry to the remote service.
+ * (2) SEND_CHECK_IN: Send position and velocity of user to remote service in order to determine if
+ * notification is needed.
+ * (3) SEND_SURVEY: Send survey telemetry to the remote service.
+ * (4) SEND_GET_ZONE: Request the current zone from the remote service.
+ * (5) SEND_MOVEMENT: Send movement telemetry to the remote service.
+ */
 public class MessageService extends WearableListenerService {
 
     private static final String SEND_HEARTBEAT = "/SEND_HEARTBEAT";
@@ -22,6 +32,9 @@ public class MessageService extends WearableListenerService {
     private static final String TAG = "MessageService";
 
     @Override
+    /**
+     * Triggered when a message is received from the Android wear device.
+     */
     public void onMessageReceived(MessageEvent messageEvent) {
             super.onMessageReceived( messageEvent );
             RequestManager manager = RequestManager.getInstance(this);
@@ -41,6 +54,13 @@ public class MessageService extends WearableListenerService {
             }
     }
 
+    /**
+     * Check-In with the remote service. The servers response is then forwarded to the paired watch.
+     * If an error occurs during check-in, notify the watch for it to re-schedule a subsequent
+     * check-in.
+     * @param manager Manager of HTTP requests.
+     * @param body Serialized CheckIn protobuffer.
+     */
     private void handleCheckIn(RequestManager manager,byte[] body) {
         manager.checkIn(body, new Response.Listener<byte[]>() {
             @Override
@@ -118,19 +138,41 @@ public class MessageService extends WearableListenerService {
         });
     }
 
-
+    /**
+     * Send movement telemetry data. This is fire and forget. If the data is lost, no retry will
+     * happen. The success or failure of the operation is obscure to the Android wear device.
+     * @param manager Manager of HTTP requests.
+     * @param body Serialized Geopoint protobuffer.
+     */
     private void sendMovement(RequestManager manager,byte[] body) {
         manager.sendMovement(body);
     }
 
+    /**
+     * Send heartbeat telemetry data. This is fire and forget. If the data is lost, no retry will
+     * happen. The success or failure of the operation is obscure to the Android wear device.
+     * @param manager Manager of HTTP requests.
+     * @param body Serialized Telemetry protobuffer.
+     */
     private void sendHeartbeat(RequestManager manager,byte[] body) {
         manager.sendHeartBeatReading(body);
     }
 
+    /**
+     * Send survey telemetry data. This is fire and forget. If the data is lost, no retry will
+     * happen. The success or failure of the operation is obscure to the Android wear device.
+     * @param manager Manager of HTTP requests.
+     * @param body Serialized Telemetry protobuffer.
+     */
     private void sendSurvey(RequestManager manager, byte[] body) {
         manager.sendSurveyResponse(body);
     }
 
+    /**
+     * Fetch the user's current zone from the remote service.
+     * @param manager Manager of HTTP requests.
+     * @param body Serialized Geopoint protobuffer.
+     */
     private void fetchZone(RequestManager manager, byte[] body) {
         manager.getCurrentZone(body, new Response.Listener<byte[]>() {
             @Override

@@ -45,22 +45,6 @@ public class ISensor implements SensorEventListener {
     }
 
     /**
-     * Get the current sensor accuracy.
-     * @return Sensor accuracy.
-     */
-    public int getAccuracy() {
-        return mAccuracy.get();
-    }
-
-    /**
-     * Checks if the sensor is sending data to a registered listener.
-     * @return True if sensor is collecting data. False otherwise.
-     */
-    public boolean isStarted(){
-        return isStarted;
-    }
-
-    /**
      * Start listening for sensor changes.
      */
     public void start(KYAListener<SensorEvent> callback,Handler handle){

@@ -20,7 +20,9 @@ import com.google.android.gms.location.LocationServices;
 import java.util.concurrent.Callable;
 
 /**
- * Async task that returns a location future.
+ * Async task that returns a location future. This location future can then be invoked in a sync
+ * manner, blocking the calling thread if the result has not been fetched by the time they are
+ * required.
  */
 public class FutureLocation implements Callable<Location> {
 
