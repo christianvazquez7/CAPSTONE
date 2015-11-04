@@ -228,7 +228,7 @@ function toClassify() {
  * Method use when the building get completed.
  */
 function geozoneComplete() {
-	client.close();
+	mClient.close();
 	pgClient.end();
 	log.notice('KYA Building Completed');
 	console.log("----------------------------------------------------------------------------| Geozone Building Complete |----------------------------------------------------------------------------");

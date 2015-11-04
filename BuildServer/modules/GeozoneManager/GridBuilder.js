@@ -15,8 +15,7 @@ module.exports = function GridBuilder (log) {
 	var gridLog = log;
 	var converter = new Converter(gridLog);
 	var result = [];
-	var geojsonGrid = [];
-
+	
 	var zoneID;
 	var edge
 

@@ -6,8 +6,6 @@
 module.exports = function DataClassificationStorage(client, log) {
 
 	classificationLog = log;
-	var crimeCount
-	var storage
 	var zoneLength;
 	var zoneCount;
 	var onInsertComplete;

@@ -26,7 +26,6 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	var onClassifierSet;
 
 	var strategy = new Strategy();
-	var isCreated = false;
 
 	var crimeCount
 	var classificationCount = 0;
@@ -42,8 +41,6 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	var maxZone;
 	var minZone;
 
-	var mapZone;
-
 	var onClassification;
 
 	classifierLog.info('Initializing variables for Geozone Classifier');
@@ -54,7 +51,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	function onPinpoint() {
 		currentCrimeIndex ++;
 		if(currentCrimeIndex < crimeLength) {
-			that.pinpoint(new GeoCoordinate(currentBatch[currentCrimeIndex].getLatitude(), currentBatch[currentCrimeIndex].getLongitude()), onPinpoint);
+			pinpoint(new GeoCoordinate(currentBatch[currentCrimeIndex].getLatitude(), currentBatch[currentCrimeIndex].getLongitude()), onPinpoint);
 		} 
 		else {
 			classifierLog.debug('');
@@ -75,7 +72,6 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 		onClassifierSet = callback;
 
 		classificationLength = unclassifiedZone.length;
-		currentBatch;
 		notPinpointed = 0;
 		pinpointCount = 0;
 
@@ -127,7 +123,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 			classifierLog.notice("There were " + crimeLength + " filtered from ", crime.length);
 			console.log("There were " + crimeLength + " filtered from ", crime.length);
 			classifierLog.notice('Begining of Pinpoint');
-			this.pinpoint(new GeoCoordinate(filtered[0].getLatitude(), filtered[0].getLongitude()), onPinpoint);
+			pinpoint(new GeoCoordinate(filtered[0].getLatitude(), filtered[0].getLongitude()), onPinpoint);
 	}
 	
 	/**
@@ -144,7 +140,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	 * @param coodinate: Location of the crime.
 	 * @param pinpoint_callback: Callback function when pinpoint is done.
 	 */
-	this.pinpoint = function(coordinate, pinpoint_callback) {
+	var pinpoint = function(coordinate, pinpoint_callback) {
 		if(coordinate.getLongitude() != null || coordinate.getLatitude() != null) {
 			var location = {
 				latitude : parseFloat(coordinate.getLatitude()),
