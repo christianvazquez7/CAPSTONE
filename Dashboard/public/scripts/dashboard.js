@@ -21,6 +21,7 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 	KYA = builder.build("KYA"),
 	GridBounds = KYA.GridBounds,
 	GeoPoint = KYA.GeoPoint;
+	Threshold = KYA.Threshold;
 
 /**
  * Gets the current crime statistics when the HTML
@@ -70,10 +71,18 @@ this.buildMap = function(locLat, locLng, swLat, swLng, neLat, neLng, area) {
 };
 
 this.setThreshold = function() {
+
+	// Preparing buffer for HTTP request 
+	var threshold = new Threshold(thresholdArea);
+	var buffer = threshold.encode();
+	var message = buffer.toArrayBuffer();
+
 	$.ajax({
-		url:  'http://localhost:3000/threshold?threshold=' + thresholdArea,
+		url:  'http://localhost:3000/threshold',
 		type: 'POST',
-		data: '{"data": "TEST"}',
+		data: message,
+		contentType: 'application/octet-stream',
+		processData: false,
 		success: function(res) {
 			
 		}
