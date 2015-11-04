@@ -54,8 +54,8 @@ public class StatisticsFragment extends Fragment {
         mCrimeRateTextView = (TextView) rootView.findViewById(R.id.crime_rate);
         mDateTextView = (TextView) rootView.findViewById(R.id.date);
         mBackgroundView.setBackgroundColor(getResources().getColor(getArguments().getInt(BACKGROUND_COLOR_PARAM)));
-        mCrimeRateTextView.setText(getArguments().getDouble(CRIME_PARAM)+"");
-        mDateTextView.setText(getArguments().getString(DATE_PARAM));
+        mCrimeRateTextView.setText(((int)getArguments().getDouble(CRIME_PARAM))+"");
+        mDateTextView.setText("Updated on "+ getArguments().getString(DATE_PARAM));
         return rootView;
     }
 }

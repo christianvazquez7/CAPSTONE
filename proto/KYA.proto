@@ -18,6 +18,9 @@ message KYAResponse {
 
 	// True if feedback should be requested from user. False otherwise.
 	required bool requestFeedback = 4;
+
+	// The current geozone on which the user is.
+	required GeoZone currentZone = 5;
 }
 
 // Telemetry
@@ -100,13 +103,16 @@ message GeoZone {
 	// between 1 and 10. 
 	required int32 classification = 1;
 
-	// Crime rate for this particular GeoZone, for statistical purposes. This
+	// Crime level for this particular GeoZone, for statistical purposes. This
 	// information can be included as part of info in admin dashboard detail.
-	required double crimeRate = 2;
+	required double numberOfCrimes = 2;
 
 	// Boundaries of the classified zone. This will always contain exactly 
 	// four GeoPoints.
 	repeated GeoPoint boundaries = 3;
+
+	// Date of last update.
+	optional string updated = 4;
 }
 
 // Grid of zones requested by the admin dashboard. This grid should contain 

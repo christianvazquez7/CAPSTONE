@@ -26,10 +26,11 @@ public class BaseNotificationFragment extends Fragment {
      * @param color Color of the background for this classification.
      * @return BaseNotificationFragment with number and color bundled in arguments.
      */
-    public static BaseNotificationFragment build( int classification, int color) {
+    public static BaseNotificationFragment build( int classification, int color, boolean higher) {
         Bundle args = new Bundle();
         args.putInt(CLASS_PARAM,classification);
         args.putInt(BACKGROUND_COLOR_PARAM,color);
+        args.putBoolean("HIGHER",higher);
         BaseNotificationFragment fragment = new BaseNotificationFragment();
         fragment.setArguments(args);
         return fragment;
@@ -46,12 +47,18 @@ public class BaseNotificationFragment extends Fragment {
         mClassificationTextView = (TextView) rootView.findViewById(R.id.notification_level);
         mBackgroundView.setBackgroundColor(getResources().getColor(getArguments().getInt(BACKGROUND_COLOR_PARAM)));
         mClassificationTextView.setText(""+getArguments().getInt(CLASS_PARAM));
+        boolean higher = getArguments().getBoolean("HIGHER",true);
+        if(!higher) {
+            TextView tv = (TextView) rootView.findViewById(R.id.notification_message);
+            tv.setText("Entering lower risk area.");
+        }
 
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent orientationActivity = new Intent();
                 orientationActivity.setClass(getActivity(),OrientationActivity.class);
+                //TODO: PUT SHIT
                 startActivity(orientationActivity);
             }
         });

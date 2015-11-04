@@ -75,12 +75,17 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                         CameraUpdate zoom=CameraUpdateFactory.zoomTo(16);
                         map.moveCamera(center);
                         map.animateCamera(zoom);
+                        LatLng nw = new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 100));
+                        LatLng ne = new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), 100));
+                        LatLng se =  new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), -100));
+                        LatLng sw =new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), -100));
+
                         Polygon polygon = map.addPolygon(new PolygonOptions()
-                                .add(new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 100)), new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), 100)), new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), -100)), new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), -100)))
+                                .add(nw, ne, se, sw)
                                 .fillColor(getResources().getColor(R.color.level10transluscent))
                                 .strokeWidth(0.5f)
                                 .strokeColor(Color.RED));
-                        map.addMarker(new MarkerOptions().title("Zone level 10").position(new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 100))));
+
                     }
                 });
 

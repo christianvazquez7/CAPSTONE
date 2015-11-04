@@ -58,6 +58,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Entering higher risk area."
+            android:id="@+id/notification_message"
             android:layout_marginLeft="25dp"
             android:textSize="12sp"
             />

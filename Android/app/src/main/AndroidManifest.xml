@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.ALLOW_MOCK_LOCATIONS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
 
     <permission
         android:name="com.ecs.google.maps.v2.actionbarsherlock.permission.MAPS_RECEIVE"

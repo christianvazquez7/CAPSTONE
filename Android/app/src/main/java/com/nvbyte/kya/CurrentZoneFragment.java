@@ -53,7 +53,7 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
                         Log.e(TAG,e.getMessage());
                     }
                     if(zone != null) {
-                        mBackgroundView.setBackgroundColor(getResources().getColor(getColorByLevel(zone.getClassification())));
+                        mBackgroundView.setBackgroundColor(getResources().getColor(Utils.getColorByLevel(zone.getClassification())));
                         mAreaRatingTextView.setText(""+ zone.getClassification());
                         loading.setVisibility(View.GONE);
                         content.setVisibility(View.VISIBLE);
@@ -62,23 +62,6 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
             });
         }
     };
-
-    public static int getColorByLevel(int level) {
-        switch (level) {
-            case 1: return R.color.level1;
-            case 2: return R.color.level2;
-            case 3: return R.color.level3;
-            case 4: return R.color.level4;
-            case 5: return R.color.level5;
-            case 6: return R.color.level6;
-            case 7: return R.color.level7;
-            case 8: return R.color.level8;
-            case 9: return R.color.level9;
-            case 10: return R.color.level10;
-            default: return R.color.level1;
-        }
-    }
-
 
     @Override
     public void onPause() {

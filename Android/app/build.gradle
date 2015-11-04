@@ -28,7 +28,7 @@ dependencies {
     androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
 
     compile 'com.google.android.support:wearable:1.1.0'
-    compile 'com.google.protobuf:protobuf-java:2.4.1'
+    compile 'com.google.protobuf:protobuf-java:2.5.0'
     compile 'com.google.android.gms:play-services-wearable:8.1.0'
     compile 'com.google.android.gms:play-services-location:8.1.0'
     compile 'com.mcxiaoke.volley:library:1.0.17'

@@ -67,10 +67,15 @@ public class NotificationActivity extends FragmentActivity {
             mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             mVibrator.vibrate(VIBRATION_PERIOD);
         }
-        Intent captureBeat = new Intent();
-        captureBeat.setAction("com.nvbyte.kya.SEND_AFTER_BEAT");
-        captureBeat.putExtra(EXTRA_ID,mNotificationId);
-        sendBroadcast(captureBeat);
+        final boolean isHigher = getIntent().getExtras().getBoolean("HIGHER");
+
+        if(isHigher) {
+            Intent captureBeat = new Intent();
+            captureBeat.setAction("com.nvbyte.kya.SEND_AFTER_BEAT");
+            captureBeat.putExtra(EXTRA_ID, mNotificationId);
+            sendBroadcast(captureBeat);
+        }
+
         mMainContentPager = (ViewPager) findViewById(R.id.view_pager);
         final int classification = getIntent().getExtras().getInt(RATING);
         final double crimeRate = getIntent().getExtras().getDouble(CRIME_RATE);
@@ -80,7 +85,7 @@ public class NotificationActivity extends FragmentActivity {
             @Override
             public Fragment getItem(int position) {
                 switch (position) {
-                    case 0: return BaseNotificationFragment.build(classification,color);
+                    case 0: return BaseNotificationFragment.build(classification,color,isHigher);
                     case 1: return StatisticsFragment.buildStatisticsFragment(crimeRate,classification,date,color);
                 }
                 return null;
@@ -91,5 +96,11 @@ public class NotificationActivity extends FragmentActivity {
             }
         };
         mMainContentPager.setAdapter(mMainContentAdapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        Utils.release(this);
+        super.onDestroy();
     }
 }

@@ -8,421 +8,163 @@ public final class KYA {
   }
   public interface KYAResponseOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
-    
+
     // required int32 lastLevel = 1;
+    /**
+     * <code>required int32 lastLevel = 1;</code>
+     *
+     * <pre>
+     * Last risk zone level classification in which the user was present.
+     * </pre>
+     */
     boolean hasLastLevel();
+    /**
+     * <code>required int32 lastLevel = 1;</code>
+     *
+     * <pre>
+     * Last risk zone level classification in which the user was present.
+     * </pre>
+     */
     int getLastLevel();
-    
+
     // required int32 newLevel = 2;
+    /**
+     * <code>required int32 newLevel = 2;</code>
+     *
+     * <pre>
+     * New risk zone level classification in which the user is currently in.
+     * </pre>
+     */
     boolean hasNewLevel();
+    /**
+     * <code>required int32 newLevel = 2;</code>
+     *
+     * <pre>
+     * New risk zone level classification in which the user is currently in.
+     * </pre>
+     */
     int getNewLevel();
-    
+
     // required int32 nextRequestTimeInSeconds = 3;
+    /**
+     * <code>required int32 nextRequestTimeInSeconds = 3;</code>
+     *
+     * <pre>
+     * Next suggested time delta for check in.
+     * </pre>
+     */
     boolean hasNextRequestTimeInSeconds();
+    /**
+     * <code>required int32 nextRequestTimeInSeconds = 3;</code>
+     *
+     * <pre>
+     * Next suggested time delta for check in.
+     * </pre>
+     */
     int getNextRequestTimeInSeconds();
-    
+
     // required bool requestFeedback = 4;
+    /**
+     * <code>required bool requestFeedback = 4;</code>
+     *
+     * <pre>
+     * True if feedback should be requested from user. False otherwise.
+     * </pre>
+     */
     boolean hasRequestFeedback();
+    /**
+     * <code>required bool requestFeedback = 4;</code>
+     *
+     * <pre>
+     * True if feedback should be requested from user. False otherwise.
+     * </pre>
+     */
     boolean getRequestFeedback();
+
+    // required .GeoZone currentZone = 5;
+    /**
+     * <code>required .GeoZone currentZone = 5;</code>
+     *
+     * <pre>
+     * The current geozone on which the user is.
+     * </pre>
+     */
+    boolean hasCurrentZone();
+    /**
+     * <code>required .GeoZone currentZone = 5;</code>
+     *
+     * <pre>
+     * The current geozone on which the user is.
+     * </pre>
+     */
+    GeoZone getCurrentZone();
+    /**
+     * <code>required .GeoZone currentZone = 5;</code>
+     *
+     * <pre>
+     * The current geozone on which the user is.
+     * </pre>
+     */
+    GeoZoneOrBuilder getCurrentZoneOrBuilder();
   }
+  /**
+   * Protobuf type {@code KYAResponse}
+   *
+   * <pre>
+   * Message sent from server to wear device, when a check in occurs.
+   * The notification logic is deferred to the Android device. The folloing
+   * scenarios can occur during the application's runtime:
+   *  (i)   lastLevel = newLevel : User has not moved, or has moved between
+   *        areas of the same risk level.
+   *  (ii)  lastLevel &lt; newLevel : User moving in the direciton of risk!
+   *  (iii) lastLevel &gt; newLevel : User moving away from risk.
+   * </pre>
+   */
   public static final class KYAResponse extends
       com.google.protobuf.GeneratedMessage
       implements KYAResponseOrBuilder {
     // Use KYAResponse.newBuilder() to construct.
-    private KYAResponse(Builder builder) {
+    private KYAResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private KYAResponse(boolean noInit) {}
-    
+    private KYAResponse(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
     private static final KYAResponse defaultInstance;
     public static KYAResponse getDefaultInstance() {
       return defaultInstance;
     }
-    
+
     public KYAResponse getDefaultInstanceForType() {
       return defaultInstance;
     }
-    
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return KYA.internal_static_KYAResponse_descriptor;
-    }
-    
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return KYA.internal_static_KYAResponse_fieldAccessorTable;
-    }
-    
-    private int bitField0_;
-    // required int32 lastLevel = 1;
-    public static final int LASTLEVEL_FIELD_NUMBER = 1;
-    private int lastLevel_;
-    public boolean hasLastLevel() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    public int getLastLevel() {
-      return lastLevel_;
-    }
-    
-    // required int32 newLevel = 2;
-    public static final int NEWLEVEL_FIELD_NUMBER = 2;
-    private int newLevel_;
-    public boolean hasNewLevel() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    public int getNewLevel() {
-      return newLevel_;
-    }
-    
-    // required int32 nextRequestTimeInSeconds = 3;
-    public static final int NEXTREQUESTTIMEINSECONDS_FIELD_NUMBER = 3;
-    private int nextRequestTimeInSeconds_;
-    public boolean hasNextRequestTimeInSeconds() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    public int getNextRequestTimeInSeconds() {
-      return nextRequestTimeInSeconds_;
-    }
-    
-    // required bool requestFeedback = 4;
-    public static final int REQUESTFEEDBACK_FIELD_NUMBER = 4;
-    private boolean requestFeedback_;
-    public boolean hasRequestFeedback() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    public boolean getRequestFeedback() {
-      return requestFeedback_;
-    }
-    
-    private void initFields() {
-      lastLevel_ = 0;
-      newLevel_ = 0;
-      nextRequestTimeInSeconds_ = 0;
-      requestFeedback_ = false;
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
-      
-      if (!hasLastLevel()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasNewLevel()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasNextRequestTimeInSeconds()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasRequestFeedback()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-    
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, lastLevel_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(2, newLevel_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(3, nextRequestTimeInSeconds_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBool(4, requestFeedback_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-    
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-    
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, lastLevel_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, newLevel_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, nextRequestTimeInSeconds_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(4, requestFeedback_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
-      return size;
-    }
-    
-    private static final long serialVersionUID = 0L;
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @Override
-    protected Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
     }
-    
-    public static KYAResponse parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
-    }
-    public static KYAResponse parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
-    }
-    public static KYAResponse parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
-    }
-    public static KYAResponse parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
-    }
-    public static KYAResponse parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
-    }
-    public static KYAResponse parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
-    }
-    public static KYAResponse parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
-    }
-    public static KYAResponse parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
-    }
-    public static KYAResponse parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
-    }
-    public static KYAResponse parseFrom(
+    private KYAResponse(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
-    }
-    
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(KYAResponse prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-    
-    @Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements KYAResponseOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return KYA.internal_static_KYAResponse_descriptor;
-      }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return KYA.internal_static_KYAResponse_fieldAccessorTable;
-      }
-      
-      // Construct using KYA.KYAResponse.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-      
-      private Builder(BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-        }
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-      
-      public Builder clear() {
-        super.clear();
-        lastLevel_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        newLevel_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000002);
-        nextRequestTimeInSeconds_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        requestFeedback_ = false;
-        bitField0_ = (bitField0_ & ~0x00000008);
-        return this;
-      }
-      
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-      
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return KYAResponse.getDescriptor();
-      }
-      
-      public KYAResponse getDefaultInstanceForType() {
-        return KYAResponse.getDefaultInstance();
-      }
-      
-      public KYAResponse build() {
-        KYAResponse result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-      
-      private KYAResponse buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        KYAResponse result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return result;
-      }
-      
-      public KYAResponse buildPartial() {
-        KYAResponse result = new KYAResponse(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
-        result.lastLevel_ = lastLevel_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.newLevel_ = newLevel_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.nextRequestTimeInSeconds_ = nextRequestTimeInSeconds_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        result.requestFeedback_ = requestFeedback_;
-        result.bitField0_ = to_bitField0_;
-        onBuilt();
-        return result;
-      }
-      
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof KYAResponse) {
-          return mergeFrom((KYAResponse)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-      
-      public Builder mergeFrom(KYAResponse other) {
-        if (other == KYAResponse.getDefaultInstance()) return this;
-        if (other.hasLastLevel()) {
-          setLastLevel(other.getLastLevel());
-        }
-        if (other.hasNewLevel()) {
-          setNewLevel(other.getNewLevel());
-        }
-        if (other.hasNextRequestTimeInSeconds()) {
-          setNextRequestTimeInSeconds(other.getNextRequestTimeInSeconds());
-        }
-        if (other.hasRequestFeedback()) {
-          setRequestFeedback(other.getRequestFeedback());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        return this;
-      }
-      
-      public final boolean isInitialized() {
-        if (!hasLastLevel()) {
-          
-          return false;
-        }
-        if (!hasNewLevel()) {
-          
-          return false;
-        }
-        if (!hasNextRequestTimeInSeconds()) {
-          
-          return false;
-        }
-        if (!hasRequestFeedback()) {
-          
-          return false;
-        }
-        return true;
-      }
-      
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder(
-            this.getUnknownFields());
-        while (true) {
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
           int tag = input.readTag();
           switch (tag) {
             case 0:
-              this.setUnknownFields(unknownFields.build());
-              onChanged();
-              return this;
+              done = true;
+              break;
             default: {
               if (!parseUnknownField(input, unknownFields,
                                      extensionRegistry, tag)) {
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
+                done = true;
               }
               break;
             }
@@ -446,220 +188,1365 @@ public final class KYA {
               requestFeedback_ = input.readBool();
               break;
             }
+            case 42: {
+              GeoZone.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                subBuilder = currentZone_.toBuilder();
+              }
+              currentZone_ = input.readMessage(GeoZone.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(currentZone_);
+                currentZone_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000010;
+              break;
+            }
           }
         }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
       }
-      
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return KYA.internal_static_KYAResponse_descriptor;
+    }
+
+    protected FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return KYA.internal_static_KYAResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              KYAResponse.class, Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<KYAResponse> PARSER =
+        new com.google.protobuf.AbstractParser<KYAResponse>() {
+      public KYAResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new KYAResponse(input, extensionRegistry);
+      }
+    };
+
+    @Override
+    public com.google.protobuf.Parser<KYAResponse> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // required int32 lastLevel = 1;
+    public static final int LASTLEVEL_FIELD_NUMBER = 1;
+    private int lastLevel_;
+    /**
+     * <code>required int32 lastLevel = 1;</code>
+     *
+     * <pre>
+     * Last risk zone level classification in which the user was present.
+     * </pre>
+     */
+    public boolean hasLastLevel() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required int32 lastLevel = 1;</code>
+     *
+     * <pre>
+     * Last risk zone level classification in which the user was present.
+     * </pre>
+     */
+    public int getLastLevel() {
+      return lastLevel_;
+    }
+
+    // required int32 newLevel = 2;
+    public static final int NEWLEVEL_FIELD_NUMBER = 2;
+    private int newLevel_;
+    /**
+     * <code>required int32 newLevel = 2;</code>
+     *
+     * <pre>
+     * New risk zone level classification in which the user is currently in.
+     * </pre>
+     */
+    public boolean hasNewLevel() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required int32 newLevel = 2;</code>
+     *
+     * <pre>
+     * New risk zone level classification in which the user is currently in.
+     * </pre>
+     */
+    public int getNewLevel() {
+      return newLevel_;
+    }
+
+    // required int32 nextRequestTimeInSeconds = 3;
+    public static final int NEXTREQUESTTIMEINSECONDS_FIELD_NUMBER = 3;
+    private int nextRequestTimeInSeconds_;
+    /**
+     * <code>required int32 nextRequestTimeInSeconds = 3;</code>
+     *
+     * <pre>
+     * Next suggested time delta for check in.
+     * </pre>
+     */
+    public boolean hasNextRequestTimeInSeconds() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>required int32 nextRequestTimeInSeconds = 3;</code>
+     *
+     * <pre>
+     * Next suggested time delta for check in.
+     * </pre>
+     */
+    public int getNextRequestTimeInSeconds() {
+      return nextRequestTimeInSeconds_;
+    }
+
+    // required bool requestFeedback = 4;
+    public static final int REQUESTFEEDBACK_FIELD_NUMBER = 4;
+    private boolean requestFeedback_;
+    /**
+     * <code>required bool requestFeedback = 4;</code>
+     *
+     * <pre>
+     * True if feedback should be requested from user. False otherwise.
+     * </pre>
+     */
+    public boolean hasRequestFeedback() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required bool requestFeedback = 4;</code>
+     *
+     * <pre>
+     * True if feedback should be requested from user. False otherwise.
+     * </pre>
+     */
+    public boolean getRequestFeedback() {
+      return requestFeedback_;
+    }
+
+    // required .GeoZone currentZone = 5;
+    public static final int CURRENTZONE_FIELD_NUMBER = 5;
+    private GeoZone currentZone_;
+    /**
+     * <code>required .GeoZone currentZone = 5;</code>
+     *
+     * <pre>
+     * The current geozone on which the user is.
+     * </pre>
+     */
+    public boolean hasCurrentZone() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>required .GeoZone currentZone = 5;</code>
+     *
+     * <pre>
+     * The current geozone on which the user is.
+     * </pre>
+     */
+    public GeoZone getCurrentZone() {
+      return currentZone_;
+    }
+    /**
+     * <code>required .GeoZone currentZone = 5;</code>
+     *
+     * <pre>
+     * The current geozone on which the user is.
+     * </pre>
+     */
+    public GeoZoneOrBuilder getCurrentZoneOrBuilder() {
+      return currentZone_;
+    }
+
+    private void initFields() {
+      lastLevel_ = 0;
+      newLevel_ = 0;
+      nextRequestTimeInSeconds_ = 0;
+      requestFeedback_ = false;
+      currentZone_ = GeoZone.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasLastLevel()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasNewLevel()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasNextRequestTimeInSeconds()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasRequestFeedback()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasCurrentZone()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getCurrentZone().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, lastLevel_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, newLevel_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(3, nextRequestTimeInSeconds_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeBool(4, requestFeedback_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(5, currentZone_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, lastLevel_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, newLevel_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, nextRequestTimeInSeconds_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(4, requestFeedback_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, currentZone_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @Override
+    protected Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static KYAResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static KYAResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static KYAResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static KYAResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static KYAResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static KYAResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static KYAResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static KYAResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static KYAResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static KYAResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(KYAResponse prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @Override
+    protected Builder newBuilderForType(
+        BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code KYAResponse}
+     *
+     * <pre>
+     * Message sent from server to wear device, when a check in occurs.
+     * The notification logic is deferred to the Android device. The folloing
+     * scenarios can occur during the application's runtime:
+     *  (i)   lastLevel = newLevel : User has not moved, or has moved between
+     *        areas of the same risk level.
+     *  (ii)  lastLevel &lt; newLevel : User moving in the direciton of risk!
+     *  (iii) lastLevel &gt; newLevel : User moving away from risk.
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements KYAResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return KYA.internal_static_KYAResponse_descriptor;
+      }
+
+      protected FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return KYA.internal_static_KYAResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                KYAResponse.class, Builder.class);
+      }
+
+      // Construct using KYA.KYAResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getCurrentZoneFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        lastLevel_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        newLevel_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        nextRequestTimeInSeconds_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        requestFeedback_ = false;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        if (currentZoneBuilder_ == null) {
+          currentZone_ = GeoZone.getDefaultInstance();
+        } else {
+          currentZoneBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return KYA.internal_static_KYAResponse_descriptor;
+      }
+
+      public KYAResponse getDefaultInstanceForType() {
+        return KYAResponse.getDefaultInstance();
+      }
+
+      public KYAResponse build() {
+        KYAResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public KYAResponse buildPartial() {
+        KYAResponse result = new KYAResponse(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.lastLevel_ = lastLevel_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.newLevel_ = newLevel_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.nextRequestTimeInSeconds_ = nextRequestTimeInSeconds_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.requestFeedback_ = requestFeedback_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        if (currentZoneBuilder_ == null) {
+          result.currentZone_ = currentZone_;
+        } else {
+          result.currentZone_ = currentZoneBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof KYAResponse) {
+          return mergeFrom((KYAResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(KYAResponse other) {
+        if (other == KYAResponse.getDefaultInstance()) return this;
+        if (other.hasLastLevel()) {
+          setLastLevel(other.getLastLevel());
+        }
+        if (other.hasNewLevel()) {
+          setNewLevel(other.getNewLevel());
+        }
+        if (other.hasNextRequestTimeInSeconds()) {
+          setNextRequestTimeInSeconds(other.getNextRequestTimeInSeconds());
+        }
+        if (other.hasRequestFeedback()) {
+          setRequestFeedback(other.getRequestFeedback());
+        }
+        if (other.hasCurrentZone()) {
+          mergeCurrentZone(other.getCurrentZone());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasLastLevel()) {
+          
+          return false;
+        }
+        if (!hasNewLevel()) {
+          
+          return false;
+        }
+        if (!hasNextRequestTimeInSeconds()) {
+          
+          return false;
+        }
+        if (!hasRequestFeedback()) {
+          
+          return false;
+        }
+        if (!hasCurrentZone()) {
+          
+          return false;
+        }
+        if (!getCurrentZone().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        KYAResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (KYAResponse) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
       private int bitField0_;
-      
+
       // required int32 lastLevel = 1;
       private int lastLevel_ ;
+      /**
+       * <code>required int32 lastLevel = 1;</code>
+       *
+       * <pre>
+       * Last risk zone level classification in which the user was present.
+       * </pre>
+       */
       public boolean hasLastLevel() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+      /**
+       * <code>required int32 lastLevel = 1;</code>
+       *
+       * <pre>
+       * Last risk zone level classification in which the user was present.
+       * </pre>
+       */
       public int getLastLevel() {
         return lastLevel_;
       }
+      /**
+       * <code>required int32 lastLevel = 1;</code>
+       *
+       * <pre>
+       * Last risk zone level classification in which the user was present.
+       * </pre>
+       */
       public Builder setLastLevel(int value) {
         bitField0_ |= 0x00000001;
         lastLevel_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>required int32 lastLevel = 1;</code>
+       *
+       * <pre>
+       * Last risk zone level classification in which the user was present.
+       * </pre>
+       */
       public Builder clearLastLevel() {
         bitField0_ = (bitField0_ & ~0x00000001);
         lastLevel_ = 0;
         onChanged();
         return this;
       }
-      
+
       // required int32 newLevel = 2;
       private int newLevel_ ;
+      /**
+       * <code>required int32 newLevel = 2;</code>
+       *
+       * <pre>
+       * New risk zone level classification in which the user is currently in.
+       * </pre>
+       */
       public boolean hasNewLevel() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
+      /**
+       * <code>required int32 newLevel = 2;</code>
+       *
+       * <pre>
+       * New risk zone level classification in which the user is currently in.
+       * </pre>
+       */
       public int getNewLevel() {
         return newLevel_;
       }
+      /**
+       * <code>required int32 newLevel = 2;</code>
+       *
+       * <pre>
+       * New risk zone level classification in which the user is currently in.
+       * </pre>
+       */
       public Builder setNewLevel(int value) {
         bitField0_ |= 0x00000002;
         newLevel_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>required int32 newLevel = 2;</code>
+       *
+       * <pre>
+       * New risk zone level classification in which the user is currently in.
+       * </pre>
+       */
       public Builder clearNewLevel() {
         bitField0_ = (bitField0_ & ~0x00000002);
         newLevel_ = 0;
         onChanged();
         return this;
       }
-      
+
       // required int32 nextRequestTimeInSeconds = 3;
       private int nextRequestTimeInSeconds_ ;
+      /**
+       * <code>required int32 nextRequestTimeInSeconds = 3;</code>
+       *
+       * <pre>
+       * Next suggested time delta for check in.
+       * </pre>
+       */
       public boolean hasNextRequestTimeInSeconds() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
+      /**
+       * <code>required int32 nextRequestTimeInSeconds = 3;</code>
+       *
+       * <pre>
+       * Next suggested time delta for check in.
+       * </pre>
+       */
       public int getNextRequestTimeInSeconds() {
         return nextRequestTimeInSeconds_;
       }
+      /**
+       * <code>required int32 nextRequestTimeInSeconds = 3;</code>
+       *
+       * <pre>
+       * Next suggested time delta for check in.
+       * </pre>
+       */
       public Builder setNextRequestTimeInSeconds(int value) {
         bitField0_ |= 0x00000004;
         nextRequestTimeInSeconds_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>required int32 nextRequestTimeInSeconds = 3;</code>
+       *
+       * <pre>
+       * Next suggested time delta for check in.
+       * </pre>
+       */
       public Builder clearNextRequestTimeInSeconds() {
         bitField0_ = (bitField0_ & ~0x00000004);
         nextRequestTimeInSeconds_ = 0;
         onChanged();
         return this;
       }
-      
+
       // required bool requestFeedback = 4;
       private boolean requestFeedback_ ;
+      /**
+       * <code>required bool requestFeedback = 4;</code>
+       *
+       * <pre>
+       * True if feedback should be requested from user. False otherwise.
+       * </pre>
+       */
       public boolean hasRequestFeedback() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
+      /**
+       * <code>required bool requestFeedback = 4;</code>
+       *
+       * <pre>
+       * True if feedback should be requested from user. False otherwise.
+       * </pre>
+       */
       public boolean getRequestFeedback() {
         return requestFeedback_;
       }
+      /**
+       * <code>required bool requestFeedback = 4;</code>
+       *
+       * <pre>
+       * True if feedback should be requested from user. False otherwise.
+       * </pre>
+       */
       public Builder setRequestFeedback(boolean value) {
         bitField0_ |= 0x00000008;
         requestFeedback_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>required bool requestFeedback = 4;</code>
+       *
+       * <pre>
+       * True if feedback should be requested from user. False otherwise.
+       * </pre>
+       */
       public Builder clearRequestFeedback() {
         bitField0_ = (bitField0_ & ~0x00000008);
         requestFeedback_ = false;
         onChanged();
         return this;
       }
-      
+
+      // required .GeoZone currentZone = 5;
+      private GeoZone currentZone_ = GeoZone.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          GeoZone, GeoZone.Builder, GeoZoneOrBuilder> currentZoneBuilder_;
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      public boolean hasCurrentZone() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      public GeoZone getCurrentZone() {
+        if (currentZoneBuilder_ == null) {
+          return currentZone_;
+        } else {
+          return currentZoneBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      public Builder setCurrentZone(GeoZone value) {
+        if (currentZoneBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          currentZone_ = value;
+          onChanged();
+        } else {
+          currentZoneBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      public Builder setCurrentZone(
+          GeoZone.Builder builderForValue) {
+        if (currentZoneBuilder_ == null) {
+          currentZone_ = builderForValue.build();
+          onChanged();
+        } else {
+          currentZoneBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      public Builder mergeCurrentZone(GeoZone value) {
+        if (currentZoneBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) == 0x00000010) &&
+              currentZone_ != GeoZone.getDefaultInstance()) {
+            currentZone_ =
+              GeoZone.newBuilder(currentZone_).mergeFrom(value).buildPartial();
+          } else {
+            currentZone_ = value;
+          }
+          onChanged();
+        } else {
+          currentZoneBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      public Builder clearCurrentZone() {
+        if (currentZoneBuilder_ == null) {
+          currentZone_ = GeoZone.getDefaultInstance();
+          onChanged();
+        } else {
+          currentZoneBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      public GeoZone.Builder getCurrentZoneBuilder() {
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return getCurrentZoneFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      public GeoZoneOrBuilder getCurrentZoneOrBuilder() {
+        if (currentZoneBuilder_ != null) {
+          return currentZoneBuilder_.getMessageOrBuilder();
+        } else {
+          return currentZone_;
+        }
+      }
+      /**
+       * <code>required .GeoZone currentZone = 5;</code>
+       *
+       * <pre>
+       * The current geozone on which the user is.
+       * </pre>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          GeoZone, GeoZone.Builder, GeoZoneOrBuilder>
+          getCurrentZoneFieldBuilder() {
+        if (currentZoneBuilder_ == null) {
+          currentZoneBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              GeoZone, GeoZone.Builder, GeoZoneOrBuilder>(
+                  currentZone_,
+                  getParentForChildren(),
+                  isClean());
+          currentZone_ = null;
+        }
+        return currentZoneBuilder_;
+      }
+
       // @@protoc_insertion_point(builder_scope:KYAResponse)
     }
-    
+
     static {
       defaultInstance = new KYAResponse(true);
       defaultInstance.initFields();
     }
-    
+
     // @@protoc_insertion_point(class_scope:KYAResponse)
   }
-  
+
   public interface TelemetryOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
-    
+
     // required string userID = 1;
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
     boolean hasUserID();
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
     String getUserID();
-    
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
+    com.google.protobuf.ByteString
+        getUserIDBytes();
+
     // required string notificationID = 2;
+    /**
+     * <code>required string notificationID = 2;</code>
+     *
+     * <pre>
+     *Identifier of a notification
+     * </pre>
+     */
     boolean hasNotificationID();
+    /**
+     * <code>required string notificationID = 2;</code>
+     *
+     * <pre>
+     *Identifier of a notification
+     * </pre>
+     */
     String getNotificationID();
-    
+    /**
+     * <code>required string notificationID = 2;</code>
+     *
+     * <pre>
+     *Identifier of a notification
+     * </pre>
+     */
+    com.google.protobuf.ByteString
+        getNotificationIDBytes();
+
     // required int32 zoneID = 3;
+    /**
+     * <code>required int32 zoneID = 3;</code>
+     *
+     * <pre>
+     * Zone where the record was captured or obtained
+     * </pre>
+     */
     boolean hasZoneID();
+    /**
+     * <code>required int32 zoneID = 3;</code>
+     *
+     * <pre>
+     * Zone where the record was captured or obtained
+     * </pre>
+     */
     int getZoneID();
-    
+
     // optional .Telemetry.HeartRate heartRate = 4;
+    /**
+     * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+     *
+     * <pre>
+     *Heart rate mesaurement record that may come in a telemetry record
+     * </pre>
+     */
     boolean hasHeartRate();
+    /**
+     * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+     *
+     * <pre>
+     *Heart rate mesaurement record that may come in a telemetry record
+     * </pre>
+     */
     Telemetry.HeartRate getHeartRate();
+    /**
+     * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+     *
+     * <pre>
+     *Heart rate mesaurement record that may come in a telemetry record
+     * </pre>
+     */
     Telemetry.HeartRateOrBuilder getHeartRateOrBuilder();
-    
+
     // optional .Telemetry.Survey survey = 5;
+    /**
+     * <code>optional .Telemetry.Survey survey = 5;</code>
+     *
+     * <pre>
+     *Survey response record that may come in a telemetry record
+     * </pre>
+     */
     boolean hasSurvey();
+    /**
+     * <code>optional .Telemetry.Survey survey = 5;</code>
+     *
+     * <pre>
+     *Survey response record that may come in a telemetry record
+     * </pre>
+     */
     Telemetry.Survey getSurvey();
+    /**
+     * <code>optional .Telemetry.Survey survey = 5;</code>
+     *
+     * <pre>
+     *Survey response record that may come in a telemetry record
+     * </pre>
+     */
     Telemetry.SurveyOrBuilder getSurveyOrBuilder();
   }
+  /**
+   * Protobuf type {@code Telemetry}
+   *
+   * <pre>
+   * Telemetry
+   * </pre>
+   */
   public static final class Telemetry extends
       com.google.protobuf.GeneratedMessage
       implements TelemetryOrBuilder {
     // Use Telemetry.newBuilder() to construct.
-    private Telemetry(Builder builder) {
+    private Telemetry(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Telemetry(boolean noInit) {}
-    
+    private Telemetry(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
     private static final Telemetry defaultInstance;
     public static Telemetry getDefaultInstance() {
       return defaultInstance;
     }
-    
+
     public Telemetry getDefaultInstanceForType() {
       return defaultInstance;
     }
-    
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Telemetry(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              userID_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              bitField0_ |= 0x00000002;
+              notificationID_ = input.readBytes();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              zoneID_ = input.readInt32();
+              break;
+            }
+            case 34: {
+              HeartRate.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = heartRate_.toBuilder();
+              }
+              heartRate_ = input.readMessage(HeartRate.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(heartRate_);
+                heartRate_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
+              break;
+            }
+            case 42: {
+              Survey.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                subBuilder = survey_.toBuilder();
+              }
+              survey_ = input.readMessage(Survey.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(survey_);
+                survey_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000010;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return KYA.internal_static_Telemetry_descriptor;
     }
-    
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+    protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return KYA.internal_static_Telemetry_fieldAccessorTable;
+      return KYA.internal_static_Telemetry_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              Telemetry.class, Builder.class);
     }
-    
+
+    public static com.google.protobuf.Parser<Telemetry> PARSER =
+        new com.google.protobuf.AbstractParser<Telemetry>() {
+      public Telemetry parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Telemetry(input, extensionRegistry);
+      }
+    };
+
+    @Override
+    public com.google.protobuf.Parser<Telemetry> getParserForType() {
+      return PARSER;
+    }
+
     public interface HeartRateOrBuilder
         extends com.google.protobuf.MessageOrBuilder {
-      
+
       // optional int32 before = 1;
+      /**
+       * <code>optional int32 before = 1;</code>
+       *
+       * <pre>
+       *Measurement before user being notified
+       * </pre>
+       */
       boolean hasBefore();
+      /**
+       * <code>optional int32 before = 1;</code>
+       *
+       * <pre>
+       *Measurement before user being notified
+       * </pre>
+       */
       int getBefore();
-      
+
       // optional int32 after = 2;
+      /**
+       * <code>optional int32 after = 2;</code>
+       *
+       * <pre>
+       *Measurement after user being notified
+       * </pre>
+       */
       boolean hasAfter();
+      /**
+       * <code>optional int32 after = 2;</code>
+       *
+       * <pre>
+       *Measurement after user being notified
+       * </pre>
+       */
       int getAfter();
     }
+    /**
+     * Protobuf type {@code Telemetry.HeartRate}
+     *
+     * <pre>
+     *Heartbeat
+     * </pre>
+     */
     public static final class HeartRate extends
         com.google.protobuf.GeneratedMessage
         implements HeartRateOrBuilder {
       // Use HeartRate.newBuilder() to construct.
-      private HeartRate(Builder builder) {
+      private HeartRate(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
+        this.unknownFields = builder.getUnknownFields();
       }
-      private HeartRate(boolean noInit) {}
-      
+      private HeartRate(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
       private static final HeartRate defaultInstance;
       public static HeartRate getDefaultInstance() {
         return defaultInstance;
       }
-      
+
       public HeartRate getDefaultInstanceForType() {
         return defaultInstance;
       }
-      
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private HeartRate(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                before_ = input.readInt32();
+                break;
+              }
+              case 16: {
+                bitField0_ |= 0x00000002;
+                after_ = input.readInt32();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return KYA.internal_static_Telemetry_HeartRate_descriptor;
       }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return KYA.internal_static_Telemetry_HeartRate_fieldAccessorTable;
+        return KYA.internal_static_Telemetry_HeartRate_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                HeartRate.class, Builder.class);
       }
-      
+
+      public static com.google.protobuf.Parser<HeartRate> PARSER =
+          new com.google.protobuf.AbstractParser<HeartRate>() {
+        public HeartRate parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new HeartRate(input, extensionRegistry);
+        }
+      };
+
+      @Override
+      public com.google.protobuf.Parser<HeartRate> getParserForType() {
+        return PARSER;
+      }
+
       private int bitField0_;
       // optional int32 before = 1;
       public static final int BEFORE_FIELD_NUMBER = 1;
       private int before_;
+      /**
+       * <code>optional int32 before = 1;</code>
+       *
+       * <pre>
+       *Measurement before user being notified
+       * </pre>
+       */
       public boolean hasBefore() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+      /**
+       * <code>optional int32 before = 1;</code>
+       *
+       * <pre>
+       *Measurement before user being notified
+       * </pre>
+       */
       public int getBefore() {
         return before_;
       }
-      
+
       // optional int32 after = 2;
       public static final int AFTER_FIELD_NUMBER = 2;
       private int after_;
+      /**
+       * <code>optional int32 after = 2;</code>
+       *
+       * <pre>
+       *Measurement after user being notified
+       * </pre>
+       */
       public boolean hasAfter() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
+      /**
+       * <code>optional int32 after = 2;</code>
+       *
+       * <pre>
+       *Measurement after user being notified
+       * </pre>
+       */
       public int getAfter() {
         return after_;
       }
-      
+
       private void initFields() {
         before_ = 0;
         after_ = 0;
@@ -668,11 +1555,11 @@ public final class KYA {
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
         if (isInitialized != -1) return isInitialized == 1;
-        
+
         memoizedIsInitialized = 1;
         return true;
       }
-      
+
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
         getSerializedSize();
@@ -684,12 +1571,12 @@ public final class KYA {
         }
         getUnknownFields().writeTo(output);
       }
-      
+
       private int memoizedSerializedSize = -1;
       public int getSerializedSize() {
         int size = memoizedSerializedSize;
         if (size != -1) return size;
-      
+
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           size += com.google.protobuf.CodedOutputStream
@@ -703,94 +1590,87 @@ public final class KYA {
         memoizedSerializedSize = size;
         return size;
       }
-      
+
       private static final long serialVersionUID = 0L;
       @Override
       protected Object writeReplace()
           throws java.io.ObjectStreamException {
         return super.writeReplace();
       }
-      
+
       public static HeartRate parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data).buildParsed();
+        return PARSER.parseFrom(data);
       }
       public static HeartRate parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data, extensionRegistry)
-                 .buildParsed();
+        return PARSER.parseFrom(data, extensionRegistry);
       }
       public static HeartRate parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data).buildParsed();
+        return PARSER.parseFrom(data);
       }
       public static HeartRate parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data, extensionRegistry)
-                 .buildParsed();
+        return PARSER.parseFrom(data, extensionRegistry);
       }
       public static HeartRate parseFrom(java.io.InputStream input)
           throws java.io.IOException {
-        return newBuilder().mergeFrom(input).buildParsed();
+        return PARSER.parseFrom(input);
       }
       public static HeartRate parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        return newBuilder().mergeFrom(input, extensionRegistry)
-                 .buildParsed();
+        return PARSER.parseFrom(input, extensionRegistry);
       }
       public static HeartRate parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
-        Builder builder = newBuilder();
-        if (builder.mergeDelimitedFrom(input)) {
-          return builder.buildParsed();
-        } else {
-          return null;
-        }
+        return PARSER.parseDelimitedFrom(input);
       }
       public static HeartRate parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        Builder builder = newBuilder();
-        if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-          return builder.buildParsed();
-        } else {
-          return null;
-        }
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
       }
       public static HeartRate parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
-        return newBuilder().mergeFrom(input).buildParsed();
+        return PARSER.parseFrom(input);
       }
       public static HeartRate parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        return newBuilder().mergeFrom(input, extensionRegistry)
-                 .buildParsed();
+        return PARSER.parseFrom(input, extensionRegistry);
       }
-      
+
       public static Builder newBuilder() { return Builder.create(); }
       public Builder newBuilderForType() { return newBuilder(); }
       public static Builder newBuilder(HeartRate prototype) {
         return newBuilder().mergeFrom(prototype);
       }
       public Builder toBuilder() { return newBuilder(this); }
-      
+
       @Override
       protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          BuilderParent parent) {
         Builder builder = new Builder(parent);
         return builder;
       }
+      /**
+       * Protobuf type {@code Telemetry.HeartRate}
+       *
+       * <pre>
+       *Heartbeat
+       * </pre>
+       */
       public static final class Builder extends
           com.google.protobuf.GeneratedMessage.Builder<Builder>
          implements HeartRateOrBuilder {
@@ -798,18 +1678,21 @@ public final class KYA {
             getDescriptor() {
           return KYA.internal_static_Telemetry_HeartRate_descriptor;
         }
-        
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+        protected FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return KYA.internal_static_Telemetry_HeartRate_fieldAccessorTable;
+          return KYA.internal_static_Telemetry_HeartRate_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  HeartRate.class, Builder.class);
         }
-        
+
         // Construct using KYA.Telemetry.HeartRate.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
-        
-        private Builder(BuilderParent parent) {
+
+        private Builder(
+            BuilderParent parent) {
           super(parent);
           maybeForceBuilderInitialization();
         }
@@ -820,7 +1703,7 @@ public final class KYA {
         private static Builder create() {
           return new Builder();
         }
-        
+
         public Builder clear() {
           super.clear();
           before_ = 0;
@@ -829,20 +1712,20 @@ public final class KYA {
           bitField0_ = (bitField0_ & ~0x00000002);
           return this;
         }
-        
+
         public Builder clone() {
           return create().mergeFrom(buildPartial());
         }
-        
+
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return HeartRate.getDescriptor();
+          return KYA.internal_static_Telemetry_HeartRate_descriptor;
         }
-        
+
         public HeartRate getDefaultInstanceForType() {
           return HeartRate.getDefaultInstance();
         }
-        
+
         public HeartRate build() {
           HeartRate result = buildPartial();
           if (!result.isInitialized()) {
@@ -850,17 +1733,7 @@ public final class KYA {
           }
           return result;
         }
-        
-        private HeartRate buildParsed()
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          HeartRate result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(
-              result).asInvalidProtocolBufferException();
-          }
-          return result;
-        }
-        
+
         public HeartRate buildPartial() {
           HeartRate result = new HeartRate(this);
           int from_bitField0_ = bitField0_;
@@ -877,7 +1750,7 @@ public final class KYA {
           onBuilt();
           return result;
         }
-        
+
         public Builder mergeFrom(com.google.protobuf.Message other) {
           if (other instanceof HeartRate) {
             return mergeFrom((HeartRate)other);
@@ -886,7 +1759,7 @@ public final class KYA {
             return this;
           }
         }
-        
+
         public Builder mergeFrom(HeartRate other) {
           if (other == HeartRate.getDefaultInstance()) return this;
           if (other.hasBefore()) {
@@ -898,163 +1771,331 @@ public final class KYA {
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
         }
-        
+
         public final boolean isInitialized() {
           return true;
         }
-        
+
         public Builder mergeFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-          com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder(
-              this.getUnknownFields());
-          while (true) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
-              default: {
-                if (!parseUnknownField(input, unknownFields,
-                                       extensionRegistry, tag)) {
-                  this.setUnknownFields(unknownFields.build());
-                  onChanged();
-                  return this;
-                }
-                break;
-              }
-              case 8: {
-                bitField0_ |= 0x00000001;
-                before_ = input.readInt32();
-                break;
-              }
-              case 16: {
-                bitField0_ |= 0x00000002;
-                after_ = input.readInt32();
-                break;
-              }
+          HeartRate parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (HeartRate) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
             }
           }
+          return this;
         }
-        
         private int bitField0_;
-        
+
         // optional int32 before = 1;
         private int before_ ;
+        /**
+         * <code>optional int32 before = 1;</code>
+         *
+         * <pre>
+         *Measurement before user being notified
+         * </pre>
+         */
         public boolean hasBefore() {
           return ((bitField0_ & 0x00000001) == 0x00000001);
         }
+        /**
+         * <code>optional int32 before = 1;</code>
+         *
+         * <pre>
+         *Measurement before user being notified
+         * </pre>
+         */
         public int getBefore() {
           return before_;
         }
+        /**
+         * <code>optional int32 before = 1;</code>
+         *
+         * <pre>
+         *Measurement before user being notified
+         * </pre>
+         */
         public Builder setBefore(int value) {
           bitField0_ |= 0x00000001;
           before_ = value;
           onChanged();
           return this;
         }
+        /**
+         * <code>optional int32 before = 1;</code>
+         *
+         * <pre>
+         *Measurement before user being notified
+         * </pre>
+         */
         public Builder clearBefore() {
           bitField0_ = (bitField0_ & ~0x00000001);
           before_ = 0;
           onChanged();
           return this;
         }
-        
+
         // optional int32 after = 2;
         private int after_ ;
+        /**
+         * <code>optional int32 after = 2;</code>
+         *
+         * <pre>
+         *Measurement after user being notified
+         * </pre>
+         */
         public boolean hasAfter() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
+        /**
+         * <code>optional int32 after = 2;</code>
+         *
+         * <pre>
+         *Measurement after user being notified
+         * </pre>
+         */
         public int getAfter() {
           return after_;
         }
+        /**
+         * <code>optional int32 after = 2;</code>
+         *
+         * <pre>
+         *Measurement after user being notified
+         * </pre>
+         */
         public Builder setAfter(int value) {
           bitField0_ |= 0x00000002;
           after_ = value;
           onChanged();
           return this;
         }
+        /**
+         * <code>optional int32 after = 2;</code>
+         *
+         * <pre>
+         *Measurement after user being notified
+         * </pre>
+         */
         public Builder clearAfter() {
           bitField0_ = (bitField0_ & ~0x00000002);
           after_ = 0;
           onChanged();
           return this;
         }
-        
+
         // @@protoc_insertion_point(builder_scope:Telemetry.HeartRate)
       }
-      
+
       static {
         defaultInstance = new HeartRate(true);
         defaultInstance.initFields();
       }
-      
+
       // @@protoc_insertion_point(class_scope:Telemetry.HeartRate)
     }
-    
+
     public interface SurveyOrBuilder
         extends com.google.protobuf.MessageOrBuilder {
-      
+
       // required int32 actualRisk = 2;
+      /**
+       * <code>required int32 actualRisk = 2;</code>
+       *
+       * <pre>
+       *Risk calculated by KYA
+       * </pre>
+       */
       boolean hasActualRisk();
+      /**
+       * <code>required int32 actualRisk = 2;</code>
+       *
+       * <pre>
+       *Risk calculated by KYA
+       * </pre>
+       */
       int getActualRisk();
-      
+
       // required int32 perceivedRisk = 3;
+      /**
+       * <code>required int32 perceivedRisk = 3;</code>
+       *
+       * <pre>
+       *Risk perceived by the user
+       * </pre>
+       */
       boolean hasPerceivedRisk();
+      /**
+       * <code>required int32 perceivedRisk = 3;</code>
+       *
+       * <pre>
+       *Risk perceived by the user
+       * </pre>
+       */
       int getPerceivedRisk();
     }
+    /**
+     * Protobuf type {@code Telemetry.Survey}
+     *
+     * <pre>
+     *Survey
+     * </pre>
+     */
     public static final class Survey extends
         com.google.protobuf.GeneratedMessage
         implements SurveyOrBuilder {
       // Use Survey.newBuilder() to construct.
-      private Survey(Builder builder) {
+      private Survey(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
+        this.unknownFields = builder.getUnknownFields();
       }
-      private Survey(boolean noInit) {}
-      
+      private Survey(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
       private static final Survey defaultInstance;
       public static Survey getDefaultInstance() {
         return defaultInstance;
       }
-      
+
       public Survey getDefaultInstanceForType() {
         return defaultInstance;
       }
-      
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private Survey(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 16: {
+                bitField0_ |= 0x00000001;
+                actualRisk_ = input.readInt32();
+                break;
+              }
+              case 24: {
+                bitField0_ |= 0x00000002;
+                perceivedRisk_ = input.readInt32();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return KYA.internal_static_Telemetry_Survey_descriptor;
       }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return KYA.internal_static_Telemetry_Survey_fieldAccessorTable;
+        return KYA.internal_static_Telemetry_Survey_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                Survey.class, Builder.class);
       }
-      
+
+      public static com.google.protobuf.Parser<Survey> PARSER =
+          new com.google.protobuf.AbstractParser<Survey>() {
+        public Survey parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new Survey(input, extensionRegistry);
+        }
+      };
+
+      @Override
+      public com.google.protobuf.Parser<Survey> getParserForType() {
+        return PARSER;
+      }
+
       private int bitField0_;
       // required int32 actualRisk = 2;
       public static final int ACTUALRISK_FIELD_NUMBER = 2;
       private int actualRisk_;
+      /**
+       * <code>required int32 actualRisk = 2;</code>
+       *
+       * <pre>
+       *Risk calculated by KYA
+       * </pre>
+       */
       public boolean hasActualRisk() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+      /**
+       * <code>required int32 actualRisk = 2;</code>
+       *
+       * <pre>
+       *Risk calculated by KYA
+       * </pre>
+       */
       public int getActualRisk() {
         return actualRisk_;
       }
-      
+
       // required int32 perceivedRisk = 3;
       public static final int PERCEIVEDRISK_FIELD_NUMBER = 3;
       private int perceivedRisk_;
+      /**
+       * <code>required int32 perceivedRisk = 3;</code>
+       *
+       * <pre>
+       *Risk perceived by the user
+       * </pre>
+       */
       public boolean hasPerceivedRisk() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
+      /**
+       * <code>required int32 perceivedRisk = 3;</code>
+       *
+       * <pre>
+       *Risk perceived by the user
+       * </pre>
+       */
       public int getPerceivedRisk() {
         return perceivedRisk_;
       }
-      
+
       private void initFields() {
         actualRisk_ = 0;
         perceivedRisk_ = 0;
@@ -1063,7 +2104,7 @@ public final class KYA {
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
         if (isInitialized != -1) return isInitialized == 1;
-        
+
         if (!hasActualRisk()) {
           memoizedIsInitialized = 0;
           return false;
@@ -1075,7 +2116,7 @@ public final class KYA {
         memoizedIsInitialized = 1;
         return true;
       }
-      
+
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
         getSerializedSize();
@@ -1087,12 +2128,12 @@ public final class KYA {
         }
         getUnknownFields().writeTo(output);
       }
-      
+
       private int memoizedSerializedSize = -1;
       public int getSerializedSize() {
         int size = memoizedSerializedSize;
         if (size != -1) return size;
-      
+
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           size += com.google.protobuf.CodedOutputStream
@@ -1106,94 +2147,87 @@ public final class KYA {
         memoizedSerializedSize = size;
         return size;
       }
-      
+
       private static final long serialVersionUID = 0L;
       @Override
       protected Object writeReplace()
           throws java.io.ObjectStreamException {
         return super.writeReplace();
       }
-      
+
       public static Survey parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data).buildParsed();
+        return PARSER.parseFrom(data);
       }
       public static Survey parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data, extensionRegistry)
-                 .buildParsed();
+        return PARSER.parseFrom(data, extensionRegistry);
       }
       public static Survey parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data).buildParsed();
+        return PARSER.parseFrom(data);
       }
       public static Survey parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data, extensionRegistry)
-                 .buildParsed();
+        return PARSER.parseFrom(data, extensionRegistry);
       }
       public static Survey parseFrom(java.io.InputStream input)
           throws java.io.IOException {
-        return newBuilder().mergeFrom(input).buildParsed();
+        return PARSER.parseFrom(input);
       }
       public static Survey parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        return newBuilder().mergeFrom(input, extensionRegistry)
-                 .buildParsed();
+        return PARSER.parseFrom(input, extensionRegistry);
       }
       public static Survey parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
-        Builder builder = newBuilder();
-        if (builder.mergeDelimitedFrom(input)) {
-          return builder.buildParsed();
-        } else {
-          return null;
-        }
+        return PARSER.parseDelimitedFrom(input);
       }
       public static Survey parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        Builder builder = newBuilder();
-        if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-          return builder.buildParsed();
-        } else {
-          return null;
-        }
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
       }
       public static Survey parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
-        return newBuilder().mergeFrom(input).buildParsed();
+        return PARSER.parseFrom(input);
       }
       public static Survey parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        return newBuilder().mergeFrom(input, extensionRegistry)
-                 .buildParsed();
+        return PARSER.parseFrom(input, extensionRegistry);
       }
-      
+
       public static Builder newBuilder() { return Builder.create(); }
       public Builder newBuilderForType() { return newBuilder(); }
       public static Builder newBuilder(Survey prototype) {
         return newBuilder().mergeFrom(prototype);
       }
       public Builder toBuilder() { return newBuilder(this); }
-      
+
       @Override
       protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          BuilderParent parent) {
         Builder builder = new Builder(parent);
         return builder;
       }
+      /**
+       * Protobuf type {@code Telemetry.Survey}
+       *
+       * <pre>
+       *Survey
+       * </pre>
+       */
       public static final class Builder extends
           com.google.protobuf.GeneratedMessage.Builder<Builder>
          implements SurveyOrBuilder {
@@ -1201,18 +2235,21 @@ public final class KYA {
             getDescriptor() {
           return KYA.internal_static_Telemetry_Survey_descriptor;
         }
-        
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+        protected FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return KYA.internal_static_Telemetry_Survey_fieldAccessorTable;
+          return KYA.internal_static_Telemetry_Survey_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  Survey.class, Builder.class);
         }
-        
+
         // Construct using KYA.Telemetry.Survey.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
-        
-        private Builder(BuilderParent parent) {
+
+        private Builder(
+            BuilderParent parent) {
           super(parent);
           maybeForceBuilderInitialization();
         }
@@ -1223,7 +2260,7 @@ public final class KYA {
         private static Builder create() {
           return new Builder();
         }
-        
+
         public Builder clear() {
           super.clear();
           actualRisk_ = 0;
@@ -1232,20 +2269,20 @@ public final class KYA {
           bitField0_ = (bitField0_ & ~0x00000002);
           return this;
         }
-        
+
         public Builder clone() {
           return create().mergeFrom(buildPartial());
         }
-        
+
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return Survey.getDescriptor();
+          return KYA.internal_static_Telemetry_Survey_descriptor;
         }
-        
+
         public Survey getDefaultInstanceForType() {
           return Survey.getDefaultInstance();
         }
-        
+
         public Survey build() {
           Survey result = buildPartial();
           if (!result.isInitialized()) {
@@ -1253,17 +2290,7 @@ public final class KYA {
           }
           return result;
         }
-        
-        private Survey buildParsed()
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          Survey result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(
-              result).asInvalidProtocolBufferException();
-          }
-          return result;
-        }
-        
+
         public Survey buildPartial() {
           Survey result = new Survey(this);
           int from_bitField0_ = bitField0_;
@@ -1280,7 +2307,7 @@ public final class KYA {
           onBuilt();
           return result;
         }
-        
+
         public Builder mergeFrom(com.google.protobuf.Message other) {
           if (other instanceof Survey) {
             return mergeFrom((Survey)other);
@@ -1289,7 +2316,7 @@ public final class KYA {
             return this;
           }
         }
-        
+
         public Builder mergeFrom(Survey other) {
           if (other == Survey.getDefaultInstance()) return this;
           if (other.hasActualRisk()) {
@@ -1301,7 +2328,7 @@ public final class KYA {
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
         }
-        
+
         public final boolean isInitialized() {
           if (!hasActualRisk()) {
             
@@ -1313,106 +2340,156 @@ public final class KYA {
           }
           return true;
         }
-        
+
         public Builder mergeFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-          com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder(
-              this.getUnknownFields());
-          while (true) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
-              default: {
-                if (!parseUnknownField(input, unknownFields,
-                                       extensionRegistry, tag)) {
-                  this.setUnknownFields(unknownFields.build());
-                  onChanged();
-                  return this;
-                }
-                break;
-              }
-              case 16: {
-                bitField0_ |= 0x00000001;
-                actualRisk_ = input.readInt32();
-                break;
-              }
-              case 24: {
-                bitField0_ |= 0x00000002;
-                perceivedRisk_ = input.readInt32();
-                break;
-              }
+          Survey parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (Survey) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
             }
           }
+          return this;
         }
-        
         private int bitField0_;
-        
+
         // required int32 actualRisk = 2;
         private int actualRisk_ ;
+        /**
+         * <code>required int32 actualRisk = 2;</code>
+         *
+         * <pre>
+         *Risk calculated by KYA
+         * </pre>
+         */
         public boolean hasActualRisk() {
           return ((bitField0_ & 0x00000001) == 0x00000001);
         }
+        /**
+         * <code>required int32 actualRisk = 2;</code>
+         *
+         * <pre>
+         *Risk calculated by KYA
+         * </pre>
+         */
         public int getActualRisk() {
           return actualRisk_;
         }
+        /**
+         * <code>required int32 actualRisk = 2;</code>
+         *
+         * <pre>
+         *Risk calculated by KYA
+         * </pre>
+         */
         public Builder setActualRisk(int value) {
           bitField0_ |= 0x00000001;
           actualRisk_ = value;
           onChanged();
           return this;
         }
+        /**
+         * <code>required int32 actualRisk = 2;</code>
+         *
+         * <pre>
+         *Risk calculated by KYA
+         * </pre>
+         */
         public Builder clearActualRisk() {
           bitField0_ = (bitField0_ & ~0x00000001);
           actualRisk_ = 0;
           onChanged();
           return this;
         }
-        
+
         // required int32 perceivedRisk = 3;
         private int perceivedRisk_ ;
+        /**
+         * <code>required int32 perceivedRisk = 3;</code>
+         *
+         * <pre>
+         *Risk perceived by the user
+         * </pre>
+         */
         public boolean hasPerceivedRisk() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
+        /**
+         * <code>required int32 perceivedRisk = 3;</code>
+         *
+         * <pre>
+         *Risk perceived by the user
+         * </pre>
+         */
         public int getPerceivedRisk() {
           return perceivedRisk_;
         }
+        /**
+         * <code>required int32 perceivedRisk = 3;</code>
+         *
+         * <pre>
+         *Risk perceived by the user
+         * </pre>
+         */
         public Builder setPerceivedRisk(int value) {
           bitField0_ |= 0x00000002;
           perceivedRisk_ = value;
           onChanged();
           return this;
         }
+        /**
+         * <code>required int32 perceivedRisk = 3;</code>
+         *
+         * <pre>
+         *Risk perceived by the user
+         * </pre>
+         */
         public Builder clearPerceivedRisk() {
           bitField0_ = (bitField0_ & ~0x00000002);
           perceivedRisk_ = 0;
           onChanged();
           return this;
         }
-        
+
         // @@protoc_insertion_point(builder_scope:Telemetry.Survey)
       }
-      
+
       static {
         defaultInstance = new Survey(true);
         defaultInstance.initFields();
       }
-      
+
       // @@protoc_insertion_point(class_scope:Telemetry.Survey)
     }
-    
+
     private int bitField0_;
     // required string userID = 1;
     public static final int USERID_FIELD_NUMBER = 1;
     private Object userID_;
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
     public boolean hasUserID() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
     public String getUserID() {
       Object ref = userID_;
       if (ref instanceof String) {
@@ -1421,30 +2498,53 @@ public final class KYA {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+        if (bs.isValidUtf8()) {
           userID_ = s;
         }
         return s;
       }
     }
-    private com.google.protobuf.ByteString getUserIDBytes() {
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
+    public com.google.protobuf.ByteString
+        getUserIDBytes() {
       Object ref = userID_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
         userID_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
-    
+
     // required string notificationID = 2;
     public static final int NOTIFICATIONID_FIELD_NUMBER = 2;
     private Object notificationID_;
+    /**
+     * <code>required string notificationID = 2;</code>
+     *
+     * <pre>
+     *Identifier of a notification
+     * </pre>
+     */
     public boolean hasNotificationID() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
+    /**
+     * <code>required string notificationID = 2;</code>
+     *
+     * <pre>
+     *Identifier of a notification
+     * </pre>
+     */
     public String getNotificationID() {
       Object ref = notificationID_;
       if (ref instanceof String) {
@@ -1453,60 +2553,125 @@ public final class KYA {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+        if (bs.isValidUtf8()) {
           notificationID_ = s;
         }
         return s;
       }
     }
-    private com.google.protobuf.ByteString getNotificationIDBytes() {
+    /**
+     * <code>required string notificationID = 2;</code>
+     *
+     * <pre>
+     *Identifier of a notification
+     * </pre>
+     */
+    public com.google.protobuf.ByteString
+        getNotificationIDBytes() {
       Object ref = notificationID_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
         notificationID_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
-    
+
     // required int32 zoneID = 3;
     public static final int ZONEID_FIELD_NUMBER = 3;
     private int zoneID_;
+    /**
+     * <code>required int32 zoneID = 3;</code>
+     *
+     * <pre>
+     * Zone where the record was captured or obtained
+     * </pre>
+     */
     public boolean hasZoneID() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
+    /**
+     * <code>required int32 zoneID = 3;</code>
+     *
+     * <pre>
+     * Zone where the record was captured or obtained
+     * </pre>
+     */
     public int getZoneID() {
       return zoneID_;
     }
-    
+
     // optional .Telemetry.HeartRate heartRate = 4;
     public static final int HEARTRATE_FIELD_NUMBER = 4;
     private HeartRate heartRate_;
+    /**
+     * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+     *
+     * <pre>
+     *Heart rate mesaurement record that may come in a telemetry record
+     * </pre>
+     */
     public boolean hasHeartRate() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
+    /**
+     * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+     *
+     * <pre>
+     *Heart rate mesaurement record that may come in a telemetry record
+     * </pre>
+     */
     public HeartRate getHeartRate() {
       return heartRate_;
     }
+    /**
+     * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+     *
+     * <pre>
+     *Heart rate mesaurement record that may come in a telemetry record
+     * </pre>
+     */
     public HeartRateOrBuilder getHeartRateOrBuilder() {
       return heartRate_;
     }
-    
+
     // optional .Telemetry.Survey survey = 5;
     public static final int SURVEY_FIELD_NUMBER = 5;
     private Survey survey_;
+    /**
+     * <code>optional .Telemetry.Survey survey = 5;</code>
+     *
+     * <pre>
+     *Survey response record that may come in a telemetry record
+     * </pre>
+     */
     public boolean hasSurvey() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
+    /**
+     * <code>optional .Telemetry.Survey survey = 5;</code>
+     *
+     * <pre>
+     *Survey response record that may come in a telemetry record
+     * </pre>
+     */
     public Survey getSurvey() {
       return survey_;
     }
+    /**
+     * <code>optional .Telemetry.Survey survey = 5;</code>
+     *
+     * <pre>
+     *Survey response record that may come in a telemetry record
+     * </pre>
+     */
     public SurveyOrBuilder getSurveyOrBuilder() {
       return survey_;
     }
-    
+
     private void initFields() {
       userID_ = "";
       notificationID_ = "";
@@ -1518,7 +2683,7 @@ public final class KYA {
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
-      
+
       if (!hasUserID()) {
         memoizedIsInitialized = 0;
         return false;
@@ -1540,7 +2705,7 @@ public final class KYA {
       memoizedIsInitialized = 1;
       return true;
     }
-    
+
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
@@ -1561,12 +2726,12 @@ public final class KYA {
       }
       getUnknownFields().writeTo(output);
     }
-    
+
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
       if (size != -1) return size;
-    
+
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
@@ -1592,94 +2757,87 @@ public final class KYA {
       memoizedSerializedSize = size;
       return size;
     }
-    
+
     private static final long serialVersionUID = 0L;
     @Override
     protected Object writeReplace()
         throws java.io.ObjectStreamException {
       return super.writeReplace();
     }
-    
+
     public static Telemetry parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
     public static Telemetry parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static Telemetry parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
     public static Telemetry parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static Telemetry parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
     public static Telemetry parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static Telemetry parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input);
     }
     public static Telemetry parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static Telemetry parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
     public static Telemetry parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
-    
+
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder(Telemetry prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
-    
+
     @Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
+    /**
+     * Protobuf type {@code Telemetry}
+     *
+     * <pre>
+     * Telemetry
+     * </pre>
+     */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
        implements TelemetryOrBuilder {
@@ -1687,18 +2845,21 @@ public final class KYA {
           getDescriptor() {
         return KYA.internal_static_Telemetry_descriptor;
       }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return KYA.internal_static_Telemetry_fieldAccessorTable;
+        return KYA.internal_static_Telemetry_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                Telemetry.class, Builder.class);
       }
-      
+
       // Construct using KYA.Telemetry.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
-      
-      private Builder(BuilderParent parent) {
+
+      private Builder(
+          BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
@@ -1711,7 +2872,7 @@ public final class KYA {
       private static Builder create() {
         return new Builder();
       }
-      
+
       public Builder clear() {
         super.clear();
         userID_ = "";
@@ -1734,20 +2895,20 @@ public final class KYA {
         bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
-      
+
       public Builder clone() {
         return create().mergeFrom(buildPartial());
       }
-      
+
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return Telemetry.getDescriptor();
+        return KYA.internal_static_Telemetry_descriptor;
       }
-      
+
       public Telemetry getDefaultInstanceForType() {
         return Telemetry.getDefaultInstance();
       }
-      
+
       public Telemetry build() {
         Telemetry result = buildPartial();
         if (!result.isInitialized()) {
@@ -1755,17 +2916,7 @@ public final class KYA {
         }
         return result;
       }
-      
-      private Telemetry buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Telemetry result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return result;
-      }
-      
+
       public Telemetry buildPartial() {
         Telemetry result = new Telemetry(this);
         int from_bitField0_ = bitField0_;
@@ -1802,7 +2953,7 @@ public final class KYA {
         onBuilt();
         return result;
       }
-      
+
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof Telemetry) {
           return mergeFrom((Telemetry)other);
@@ -1811,14 +2962,18 @@ public final class KYA {
           return this;
         }
       }
-      
+
       public Builder mergeFrom(Telemetry other) {
         if (other == Telemetry.getDefaultInstance()) return this;
         if (other.hasUserID()) {
-          setUserID(other.getUserID());
+          bitField0_ |= 0x00000001;
+          userID_ = other.userID_;
+          onChanged();
         }
         if (other.hasNotificationID()) {
-          setNotificationID(other.getNotificationID());
+          bitField0_ |= 0x00000002;
+          notificationID_ = other.notificationID_;
+          onChanged();
         }
         if (other.hasZoneID()) {
           setZoneID(other.getZoneID());
@@ -1832,7 +2987,7 @@ public final class KYA {
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
-      
+
       public final boolean isInitialized() {
         if (!hasUserID()) {
           
@@ -1854,85 +3009,85 @@ public final class KYA {
         }
         return true;
       }
-      
+
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder(
-            this.getUnknownFields());
-        while (true) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              this.setUnknownFields(unknownFields.build());
-              onChanged();
-              return this;
-            default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
-              }
-              break;
-            }
-            case 10: {
-              bitField0_ |= 0x00000001;
-              userID_ = input.readBytes();
-              break;
-            }
-            case 18: {
-              bitField0_ |= 0x00000002;
-              notificationID_ = input.readBytes();
-              break;
-            }
-            case 24: {
-              bitField0_ |= 0x00000004;
-              zoneID_ = input.readInt32();
-              break;
-            }
-            case 34: {
-              HeartRate.Builder subBuilder = HeartRate.newBuilder();
-              if (hasHeartRate()) {
-                subBuilder.mergeFrom(getHeartRate());
-              }
-              input.readMessage(subBuilder, extensionRegistry);
-              setHeartRate(subBuilder.buildPartial());
-              break;
-            }
-            case 42: {
-              Survey.Builder subBuilder = Survey.newBuilder();
-              if (hasSurvey()) {
-                subBuilder.mergeFrom(getSurvey());
-              }
-              input.readMessage(subBuilder, extensionRegistry);
-              setSurvey(subBuilder.buildPartial());
-              break;
-            }
+        Telemetry parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (Telemetry) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
           }
         }
+        return this;
       }
-      
       private int bitField0_;
-      
+
       // required string userID = 1;
       private Object userID_ = "";
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
       public boolean hasUserID() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
       public String getUserID() {
         Object ref = userID_;
         if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
           userID_ = s;
           return s;
         } else {
           return (String) ref;
         }
       }
-      public Builder setUserID(String value) {
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
+      public com.google.protobuf.ByteString
+          getUserIDBytes() {
+        Object ref = userID_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          userID_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
+      public Builder setUserID(
+          String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -1941,34 +3096,96 @@ public final class KYA {
         onChanged();
         return this;
       }
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
       public Builder clearUserID() {
         bitField0_ = (bitField0_ & ~0x00000001);
         userID_ = getDefaultInstance().getUserID();
         onChanged();
         return this;
       }
-      void setUserID(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000001;
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
+      public Builder setUserIDBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
         userID_ = value;
         onChanged();
+        return this;
       }
-      
+
       // required string notificationID = 2;
       private Object notificationID_ = "";
+      /**
+       * <code>required string notificationID = 2;</code>
+       *
+       * <pre>
+       *Identifier of a notification
+       * </pre>
+       */
       public boolean hasNotificationID() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
+      /**
+       * <code>required string notificationID = 2;</code>
+       *
+       * <pre>
+       *Identifier of a notification
+       * </pre>
+       */
       public String getNotificationID() {
         Object ref = notificationID_;
         if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
           notificationID_ = s;
           return s;
         } else {
           return (String) ref;
         }
       }
-      public Builder setNotificationID(String value) {
+      /**
+       * <code>required string notificationID = 2;</code>
+       *
+       * <pre>
+       *Identifier of a notification
+       * </pre>
+       */
+      public com.google.protobuf.ByteString
+          getNotificationIDBytes() {
+        Object ref = notificationID_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          notificationID_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string notificationID = 2;</code>
+       *
+       * <pre>
+       *Identifier of a notification
+       * </pre>
+       */
+      public Builder setNotificationID(
+          String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -1977,46 +3194,107 @@ public final class KYA {
         onChanged();
         return this;
       }
+      /**
+       * <code>required string notificationID = 2;</code>
+       *
+       * <pre>
+       *Identifier of a notification
+       * </pre>
+       */
       public Builder clearNotificationID() {
         bitField0_ = (bitField0_ & ~0x00000002);
         notificationID_ = getDefaultInstance().getNotificationID();
         onChanged();
         return this;
       }
-      void setNotificationID(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000002;
+      /**
+       * <code>required string notificationID = 2;</code>
+       *
+       * <pre>
+       *Identifier of a notification
+       * </pre>
+       */
+      public Builder setNotificationIDBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
         notificationID_ = value;
         onChanged();
+        return this;
       }
-      
+
       // required int32 zoneID = 3;
       private int zoneID_ ;
+      /**
+       * <code>required int32 zoneID = 3;</code>
+       *
+       * <pre>
+       * Zone where the record was captured or obtained
+       * </pre>
+       */
       public boolean hasZoneID() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
+      /**
+       * <code>required int32 zoneID = 3;</code>
+       *
+       * <pre>
+       * Zone where the record was captured or obtained
+       * </pre>
+       */
       public int getZoneID() {
         return zoneID_;
       }
+      /**
+       * <code>required int32 zoneID = 3;</code>
+       *
+       * <pre>
+       * Zone where the record was captured or obtained
+       * </pre>
+       */
       public Builder setZoneID(int value) {
         bitField0_ |= 0x00000004;
         zoneID_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>required int32 zoneID = 3;</code>
+       *
+       * <pre>
+       * Zone where the record was captured or obtained
+       * </pre>
+       */
       public Builder clearZoneID() {
         bitField0_ = (bitField0_ & ~0x00000004);
         zoneID_ = 0;
         onChanged();
         return this;
       }
-      
+
       // optional .Telemetry.HeartRate heartRate = 4;
       private HeartRate heartRate_ = HeartRate.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           HeartRate, HeartRate.Builder, HeartRateOrBuilder> heartRateBuilder_;
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       public boolean hasHeartRate() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       public HeartRate getHeartRate() {
         if (heartRateBuilder_ == null) {
           return heartRate_;
@@ -2024,6 +3302,13 @@ public final class KYA {
           return heartRateBuilder_.getMessage();
         }
       }
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       public Builder setHeartRate(HeartRate value) {
         if (heartRateBuilder_ == null) {
           if (value == null) {
@@ -2037,6 +3322,13 @@ public final class KYA {
         bitField0_ |= 0x00000008;
         return this;
       }
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       public Builder setHeartRate(
           HeartRate.Builder builderForValue) {
         if (heartRateBuilder_ == null) {
@@ -2048,6 +3340,13 @@ public final class KYA {
         bitField0_ |= 0x00000008;
         return this;
       }
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       public Builder mergeHeartRate(HeartRate value) {
         if (heartRateBuilder_ == null) {
           if (((bitField0_ & 0x00000008) == 0x00000008) &&
@@ -2064,6 +3363,13 @@ public final class KYA {
         bitField0_ |= 0x00000008;
         return this;
       }
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       public Builder clearHeartRate() {
         if (heartRateBuilder_ == null) {
           heartRate_ = HeartRate.getDefaultInstance();
@@ -2074,11 +3380,25 @@ public final class KYA {
         bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       public HeartRate.Builder getHeartRateBuilder() {
         bitField0_ |= 0x00000008;
         onChanged();
         return getHeartRateFieldBuilder().getBuilder();
       }
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       public HeartRateOrBuilder getHeartRateOrBuilder() {
         if (heartRateBuilder_ != null) {
           return heartRateBuilder_.getMessageOrBuilder();
@@ -2086,6 +3406,13 @@ public final class KYA {
           return heartRate_;
         }
       }
+      /**
+       * <code>optional .Telemetry.HeartRate heartRate = 4;</code>
+       *
+       * <pre>
+       *Heart rate mesaurement record that may come in a telemetry record
+       * </pre>
+       */
       private com.google.protobuf.SingleFieldBuilder<
           HeartRate, HeartRate.Builder, HeartRateOrBuilder>
           getHeartRateFieldBuilder() {
@@ -2099,14 +3426,28 @@ public final class KYA {
         }
         return heartRateBuilder_;
       }
-      
+
       // optional .Telemetry.Survey survey = 5;
       private Survey survey_ = Survey.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           Survey, Survey.Builder, SurveyOrBuilder> surveyBuilder_;
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       public boolean hasSurvey() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       public Survey getSurvey() {
         if (surveyBuilder_ == null) {
           return survey_;
@@ -2114,6 +3455,13 @@ public final class KYA {
           return surveyBuilder_.getMessage();
         }
       }
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       public Builder setSurvey(Survey value) {
         if (surveyBuilder_ == null) {
           if (value == null) {
@@ -2127,6 +3475,13 @@ public final class KYA {
         bitField0_ |= 0x00000010;
         return this;
       }
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       public Builder setSurvey(
           Survey.Builder builderForValue) {
         if (surveyBuilder_ == null) {
@@ -2138,6 +3493,13 @@ public final class KYA {
         bitField0_ |= 0x00000010;
         return this;
       }
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       public Builder mergeSurvey(Survey value) {
         if (surveyBuilder_ == null) {
           if (((bitField0_ & 0x00000010) == 0x00000010) &&
@@ -2154,6 +3516,13 @@ public final class KYA {
         bitField0_ |= 0x00000010;
         return this;
       }
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       public Builder clearSurvey() {
         if (surveyBuilder_ == null) {
           survey_ = Survey.getDefaultInstance();
@@ -2164,11 +3533,25 @@ public final class KYA {
         bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       public Survey.Builder getSurveyBuilder() {
         bitField0_ |= 0x00000010;
         onChanged();
         return getSurveyFieldBuilder().getBuilder();
       }
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       public SurveyOrBuilder getSurveyOrBuilder() {
         if (surveyBuilder_ != null) {
           return surveyBuilder_.getMessageOrBuilder();
@@ -2176,6 +3559,13 @@ public final class KYA {
           return survey_;
         }
       }
+      /**
+       * <code>optional .Telemetry.Survey survey = 5;</code>
+       *
+       * <pre>
+       *Survey response record that may come in a telemetry record
+       * </pre>
+       */
       private com.google.protobuf.SingleFieldBuilder<
           Survey, Survey.Builder, SurveyOrBuilder>
           getSurveyFieldBuilder() {
@@ -2189,418 +3579,136 @@ public final class KYA {
         }
         return surveyBuilder_;
       }
-      
+
       // @@protoc_insertion_point(builder_scope:Telemetry)
     }
-    
+
     static {
       defaultInstance = new Telemetry(true);
       defaultInstance.initFields();
     }
-    
+
     // @@protoc_insertion_point(class_scope:Telemetry)
   }
-  
+
   public interface GeoPointOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
-    
+
     // required string userID = 1;
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
     boolean hasUserID();
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
     String getUserID();
-    
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
+    com.google.protobuf.ByteString
+        getUserIDBytes();
+
     // required double latitude = 2;
+    /**
+     * <code>required double latitude = 2;</code>
+     *
+     * <pre>
+     * Latitude coordinate in physical space.
+     * </pre>
+     */
     boolean hasLatitude();
+    /**
+     * <code>required double latitude = 2;</code>
+     *
+     * <pre>
+     * Latitude coordinate in physical space.
+     * </pre>
+     */
     double getLatitude();
-    
+
     // required double longitude = 3;
+    /**
+     * <code>required double longitude = 3;</code>
+     *
+     * <pre>
+     * Longitude coordinate in physical space.
+     * </pre>
+     */
     boolean hasLongitude();
+    /**
+     * <code>required double longitude = 3;</code>
+     *
+     * <pre>
+     * Longitude coordinate in physical space.
+     * </pre>
+     */
     double getLongitude();
   }
+  /**
+   * Protobuf type {@code GeoPoint}
+   *
+   * <pre>
+   * Contains a latitude and longitude that represents a location in space. 
+   * </pre>
+   */
   public static final class GeoPoint extends
       com.google.protobuf.GeneratedMessage
       implements GeoPointOrBuilder {
     // Use GeoPoint.newBuilder() to construct.
-    private GeoPoint(Builder builder) {
+    private GeoPoint(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private GeoPoint(boolean noInit) {}
-    
+    private GeoPoint(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
     private static final GeoPoint defaultInstance;
     public static GeoPoint getDefaultInstance() {
       return defaultInstance;
     }
-    
+
     public GeoPoint getDefaultInstanceForType() {
       return defaultInstance;
     }
-    
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return KYA.internal_static_GeoPoint_descriptor;
-    }
-    
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return KYA.internal_static_GeoPoint_fieldAccessorTable;
-    }
-    
-    private int bitField0_;
-    // required string userID = 1;
-    public static final int USERID_FIELD_NUMBER = 1;
-    private Object userID_;
-    public boolean hasUserID() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    public String getUserID() {
-      Object ref = userID_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-          userID_ = s;
-        }
-        return s;
-      }
-    }
-    private com.google.protobuf.ByteString getUserIDBytes() {
-      Object ref = userID_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-        userID_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    
-    // required double latitude = 2;
-    public static final int LATITUDE_FIELD_NUMBER = 2;
-    private double latitude_;
-    public boolean hasLatitude() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    public double getLatitude() {
-      return latitude_;
-    }
-    
-    // required double longitude = 3;
-    public static final int LONGITUDE_FIELD_NUMBER = 3;
-    private double longitude_;
-    public boolean hasLongitude() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    public double getLongitude() {
-      return longitude_;
-    }
-    
-    private void initFields() {
-      userID_ = "";
-      latitude_ = 0D;
-      longitude_ = 0D;
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
-      
-      if (!hasUserID()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasLatitude()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasLongitude()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-    
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getUserIDBytes());
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeDouble(2, latitude_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeDouble(3, longitude_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-    
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-    
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, getUserIDBytes());
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, latitude_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(3, longitude_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
-      return size;
-    }
-    
-    private static final long serialVersionUID = 0L;
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @Override
-    protected Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
     }
-    
-    public static GeoPoint parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
-    }
-    public static GeoPoint parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
-    }
-    public static GeoPoint parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
-    }
-    public static GeoPoint parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
-    }
-    public static GeoPoint parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
-    }
-    public static GeoPoint parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
-    }
-    public static GeoPoint parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
-    }
-    public static GeoPoint parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
-    }
-    public static GeoPoint parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
-    }
-    public static GeoPoint parseFrom(
+    private GeoPoint(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
-    }
-    
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(GeoPoint prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-    
-    @Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements GeoPointOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return KYA.internal_static_GeoPoint_descriptor;
-      }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return KYA.internal_static_GeoPoint_fieldAccessorTable;
-      }
-      
-      // Construct using KYA.GeoPoint.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-      
-      private Builder(BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-        }
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-      
-      public Builder clear() {
-        super.clear();
-        userID_ = "";
-        bitField0_ = (bitField0_ & ~0x00000001);
-        latitude_ = 0D;
-        bitField0_ = (bitField0_ & ~0x00000002);
-        longitude_ = 0D;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        return this;
-      }
-      
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-      
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return GeoPoint.getDescriptor();
-      }
-      
-      public GeoPoint getDefaultInstanceForType() {
-        return GeoPoint.getDefaultInstance();
-      }
-      
-      public GeoPoint build() {
-        GeoPoint result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-      
-      private GeoPoint buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        GeoPoint result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return result;
-      }
-      
-      public GeoPoint buildPartial() {
-        GeoPoint result = new GeoPoint(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
-        result.userID_ = userID_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.latitude_ = latitude_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.longitude_ = longitude_;
-        result.bitField0_ = to_bitField0_;
-        onBuilt();
-        return result;
-      }
-      
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof GeoPoint) {
-          return mergeFrom((GeoPoint)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-      
-      public Builder mergeFrom(GeoPoint other) {
-        if (other == GeoPoint.getDefaultInstance()) return this;
-        if (other.hasUserID()) {
-          setUserID(other.getUserID());
-        }
-        if (other.hasLatitude()) {
-          setLatitude(other.getLatitude());
-        }
-        if (other.hasLongitude()) {
-          setLongitude(other.getLongitude());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        return this;
-      }
-      
-      public final boolean isInitialized() {
-        if (!hasUserID()) {
-          
-          return false;
-        }
-        if (!hasLatitude()) {
-          
-          return false;
-        }
-        if (!hasLongitude()) {
-          
-          return false;
-        }
-        return true;
-      }
-      
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder(
-            this.getUnknownFields());
-        while (true) {
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
           int tag = input.readTag();
           switch (tag) {
             case 0:
-              this.setUnknownFields(unknownFields.build());
-              onChanged();
-              return this;
+              done = true;
+              break;
             default: {
               if (!parseUnknownField(input, unknownFields,
                                      extensionRegistry, tag)) {
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
+                done = true;
               }
               break;
             }
@@ -2621,26 +3729,497 @@ public final class KYA {
             }
           }
         }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
       }
-      
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return KYA.internal_static_GeoPoint_descriptor;
+    }
+
+    protected FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return KYA.internal_static_GeoPoint_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              GeoPoint.class, Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GeoPoint> PARSER =
+        new com.google.protobuf.AbstractParser<GeoPoint>() {
+      public GeoPoint parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GeoPoint(input, extensionRegistry);
+      }
+    };
+
+    @Override
+    public com.google.protobuf.Parser<GeoPoint> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // required string userID = 1;
+    public static final int USERID_FIELD_NUMBER = 1;
+    private Object userID_;
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
+    public boolean hasUserID() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
+    public String getUserID() {
+      Object ref = userID_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          userID_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string userID = 1;</code>
+     *
+     * <pre>
+     *Identifier of the device where the telemetry was captured
+     * </pre>
+     */
+    public com.google.protobuf.ByteString
+        getUserIDBytes() {
+      Object ref = userID_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        userID_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    // required double latitude = 2;
+    public static final int LATITUDE_FIELD_NUMBER = 2;
+    private double latitude_;
+    /**
+     * <code>required double latitude = 2;</code>
+     *
+     * <pre>
+     * Latitude coordinate in physical space.
+     * </pre>
+     */
+    public boolean hasLatitude() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required double latitude = 2;</code>
+     *
+     * <pre>
+     * Latitude coordinate in physical space.
+     * </pre>
+     */
+    public double getLatitude() {
+      return latitude_;
+    }
+
+    // required double longitude = 3;
+    public static final int LONGITUDE_FIELD_NUMBER = 3;
+    private double longitude_;
+    /**
+     * <code>required double longitude = 3;</code>
+     *
+     * <pre>
+     * Longitude coordinate in physical space.
+     * </pre>
+     */
+    public boolean hasLongitude() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>required double longitude = 3;</code>
+     *
+     * <pre>
+     * Longitude coordinate in physical space.
+     * </pre>
+     */
+    public double getLongitude() {
+      return longitude_;
+    }
+
+    private void initFields() {
+      userID_ = "";
+      latitude_ = 0D;
+      longitude_ = 0D;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasUserID()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasLatitude()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasLongitude()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getUserIDBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeDouble(2, latitude_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeDouble(3, longitude_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getUserIDBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(2, latitude_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(3, longitude_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @Override
+    protected Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static GeoPoint parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static GeoPoint parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static GeoPoint parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static GeoPoint parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static GeoPoint parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static GeoPoint parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static GeoPoint parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static GeoPoint parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static GeoPoint parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static GeoPoint parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(GeoPoint prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @Override
+    protected Builder newBuilderForType(
+        BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code GeoPoint}
+     *
+     * <pre>
+     * Contains a latitude and longitude that represents a location in space. 
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements GeoPointOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return KYA.internal_static_GeoPoint_descriptor;
+      }
+
+      protected FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return KYA.internal_static_GeoPoint_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                GeoPoint.class, Builder.class);
+      }
+
+      // Construct using KYA.GeoPoint.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        userID_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        latitude_ = 0D;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        longitude_ = 0D;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return KYA.internal_static_GeoPoint_descriptor;
+      }
+
+      public GeoPoint getDefaultInstanceForType() {
+        return GeoPoint.getDefaultInstance();
+      }
+
+      public GeoPoint build() {
+        GeoPoint result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public GeoPoint buildPartial() {
+        GeoPoint result = new GeoPoint(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.userID_ = userID_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.latitude_ = latitude_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.longitude_ = longitude_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof GeoPoint) {
+          return mergeFrom((GeoPoint)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(GeoPoint other) {
+        if (other == GeoPoint.getDefaultInstance()) return this;
+        if (other.hasUserID()) {
+          bitField0_ |= 0x00000001;
+          userID_ = other.userID_;
+          onChanged();
+        }
+        if (other.hasLatitude()) {
+          setLatitude(other.getLatitude());
+        }
+        if (other.hasLongitude()) {
+          setLongitude(other.getLongitude());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasUserID()) {
+          
+          return false;
+        }
+        if (!hasLatitude()) {
+          
+          return false;
+        }
+        if (!hasLongitude()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        GeoPoint parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (GeoPoint) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
       private int bitField0_;
-      
+
       // required string userID = 1;
       private Object userID_ = "";
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
       public boolean hasUserID() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
       public String getUserID() {
         Object ref = userID_;
         if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
           userID_ = s;
           return s;
         } else {
           return (String) ref;
         }
       }
-      public Builder setUserID(String value) {
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
+      public com.google.protobuf.ByteString
+          getUserIDBytes() {
+        Object ref = userID_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          userID_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
+      public Builder setUserID(
+          String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -2649,122 +4228,375 @@ public final class KYA {
         onChanged();
         return this;
       }
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
       public Builder clearUserID() {
         bitField0_ = (bitField0_ & ~0x00000001);
         userID_ = getDefaultInstance().getUserID();
         onChanged();
         return this;
       }
-      void setUserID(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000001;
+      /**
+       * <code>required string userID = 1;</code>
+       *
+       * <pre>
+       *Identifier of the device where the telemetry was captured
+       * </pre>
+       */
+      public Builder setUserIDBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
         userID_ = value;
         onChanged();
+        return this;
       }
-      
+
       // required double latitude = 2;
       private double latitude_ ;
+      /**
+       * <code>required double latitude = 2;</code>
+       *
+       * <pre>
+       * Latitude coordinate in physical space.
+       * </pre>
+       */
       public boolean hasLatitude() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
+      /**
+       * <code>required double latitude = 2;</code>
+       *
+       * <pre>
+       * Latitude coordinate in physical space.
+       * </pre>
+       */
       public double getLatitude() {
         return latitude_;
       }
+      /**
+       * <code>required double latitude = 2;</code>
+       *
+       * <pre>
+       * Latitude coordinate in physical space.
+       * </pre>
+       */
       public Builder setLatitude(double value) {
         bitField0_ |= 0x00000002;
         latitude_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>required double latitude = 2;</code>
+       *
+       * <pre>
+       * Latitude coordinate in physical space.
+       * </pre>
+       */
       public Builder clearLatitude() {
         bitField0_ = (bitField0_ & ~0x00000002);
         latitude_ = 0D;
         onChanged();
         return this;
       }
-      
+
       // required double longitude = 3;
       private double longitude_ ;
+      /**
+       * <code>required double longitude = 3;</code>
+       *
+       * <pre>
+       * Longitude coordinate in physical space.
+       * </pre>
+       */
       public boolean hasLongitude() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
+      /**
+       * <code>required double longitude = 3;</code>
+       *
+       * <pre>
+       * Longitude coordinate in physical space.
+       * </pre>
+       */
       public double getLongitude() {
         return longitude_;
       }
+      /**
+       * <code>required double longitude = 3;</code>
+       *
+       * <pre>
+       * Longitude coordinate in physical space.
+       * </pre>
+       */
       public Builder setLongitude(double value) {
         bitField0_ |= 0x00000004;
         longitude_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>required double longitude = 3;</code>
+       *
+       * <pre>
+       * Longitude coordinate in physical space.
+       * </pre>
+       */
       public Builder clearLongitude() {
         bitField0_ = (bitField0_ & ~0x00000004);
         longitude_ = 0D;
         onChanged();
         return this;
       }
-      
+
       // @@protoc_insertion_point(builder_scope:GeoPoint)
     }
-    
+
     static {
       defaultInstance = new GeoPoint(true);
       defaultInstance.initFields();
     }
-    
+
     // @@protoc_insertion_point(class_scope:GeoPoint)
   }
-  
+
   public interface CheckInOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
-    
+
     // required string userId = 1;
+    /**
+     * <code>required string userId = 1;</code>
+     *
+     * <pre>
+     * Unique Id for the wearable device. This could either be registered or use
+     * a particular serial value unique to the physical device.
+     * </pre>
+     */
     boolean hasUserId();
+    /**
+     * <code>required string userId = 1;</code>
+     *
+     * <pre>
+     * Unique Id for the wearable device. This could either be registered or use
+     * a particular serial value unique to the physical device.
+     * </pre>
+     */
     String getUserId();
-    
+    /**
+     * <code>required string userId = 1;</code>
+     *
+     * <pre>
+     * Unique Id for the wearable device. This could either be registered or use
+     * a particular serial value unique to the physical device.
+     * </pre>
+     */
+    com.google.protobuf.ByteString
+        getUserIdBytes();
+
     // required .GeoPoint location = 2;
+    /**
+     * <code>required .GeoPoint location = 2;</code>
+     *
+     * <pre>
+     * Location of wearable device at the time of checkin. This has two purposes
+     * (1) to check for changes between areas that the user traverses and (2) to 
+     * track user mobility for telemetry purposes.
+     * </pre>
+     */
     boolean hasLocation();
+    /**
+     * <code>required .GeoPoint location = 2;</code>
+     *
+     * <pre>
+     * Location of wearable device at the time of checkin. This has two purposes
+     * (1) to check for changes between areas that the user traverses and (2) to 
+     * track user mobility for telemetry purposes.
+     * </pre>
+     */
     GeoPoint getLocation();
+    /**
+     * <code>required .GeoPoint location = 2;</code>
+     *
+     * <pre>
+     * Location of wearable device at the time of checkin. This has two purposes
+     * (1) to check for changes between areas that the user traverses and (2) to 
+     * track user mobility for telemetry purposes.
+     * </pre>
+     */
     GeoPointOrBuilder getLocationOrBuilder();
-    
+
     // optional double speed = 3;
+    /**
+     * <code>optional double speed = 3;</code>
+     *
+     * <pre>
+     * Speed at which user is moving. This can be used to determine the what is 
+     * the most efficient request interval, along with the user distance from 
+     * the closest risk zone increase.
+     * </pre>
+     */
     boolean hasSpeed();
+    /**
+     * <code>optional double speed = 3;</code>
+     *
+     * <pre>
+     * Speed at which user is moving. This can be used to determine the what is 
+     * the most efficient request interval, along with the user distance from 
+     * the closest risk zone increase.
+     * </pre>
+     */
     double getSpeed();
   }
+  /**
+   * Protobuf type {@code CheckIn}
+   *
+   * <pre>
+   * Message sent by the wear device to check in. This message is sent periodically
+   * from the client device, to check if the wearable device has moved in a positive
+   * risk gradient.
+   * </pre>
+   */
   public static final class CheckIn extends
       com.google.protobuf.GeneratedMessage
       implements CheckInOrBuilder {
     // Use CheckIn.newBuilder() to construct.
-    private CheckIn(Builder builder) {
+    private CheckIn(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private CheckIn(boolean noInit) {}
-    
+    private CheckIn(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
     private static final CheckIn defaultInstance;
     public static CheckIn getDefaultInstance() {
       return defaultInstance;
     }
-    
+
     public CheckIn getDefaultInstanceForType() {
       return defaultInstance;
     }
-    
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private CheckIn(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              userId_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              GeoPoint.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = location_.toBuilder();
+              }
+              location_ = input.readMessage(GeoPoint.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(location_);
+                location_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+            case 25: {
+              bitField0_ |= 0x00000004;
+              speed_ = input.readDouble();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return KYA.internal_static_CheckIn_descriptor;
     }
-    
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+    protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return KYA.internal_static_CheckIn_fieldAccessorTable;
+      return KYA.internal_static_CheckIn_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              CheckIn.class, Builder.class);
     }
-    
+
+    public static com.google.protobuf.Parser<CheckIn> PARSER =
+        new com.google.protobuf.AbstractParser<CheckIn>() {
+      public CheckIn parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new CheckIn(input, extensionRegistry);
+      }
+    };
+
+    @Override
+    public com.google.protobuf.Parser<CheckIn> getParserForType() {
+      return PARSER;
+    }
+
     private int bitField0_;
     // required string userId = 1;
     public static final int USERID_FIELD_NUMBER = 1;
     private Object userId_;
+    /**
+     * <code>required string userId = 1;</code>
+     *
+     * <pre>
+     * Unique Id for the wearable device. This could either be registered or use
+     * a particular serial value unique to the physical device.
+     * </pre>
+     */
     public boolean hasUserId() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
+    /**
+     * <code>required string userId = 1;</code>
+     *
+     * <pre>
+     * Unique Id for the wearable device. This could either be registered or use
+     * a particular serial value unique to the physical device.
+     * </pre>
+     */
     public String getUserId() {
       Object ref = userId_;
       if (ref instanceof String) {
@@ -2773,47 +4605,102 @@ public final class KYA {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+        if (bs.isValidUtf8()) {
           userId_ = s;
         }
         return s;
       }
     }
-    private com.google.protobuf.ByteString getUserIdBytes() {
+    /**
+     * <code>required string userId = 1;</code>
+     *
+     * <pre>
+     * Unique Id for the wearable device. This could either be registered or use
+     * a particular serial value unique to the physical device.
+     * </pre>
+     */
+    public com.google.protobuf.ByteString
+        getUserIdBytes() {
       Object ref = userId_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
         userId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
-    
+
     // required .GeoPoint location = 2;
     public static final int LOCATION_FIELD_NUMBER = 2;
     private GeoPoint location_;
+    /**
+     * <code>required .GeoPoint location = 2;</code>
+     *
+     * <pre>
+     * Location of wearable device at the time of checkin. This has two purposes
+     * (1) to check for changes between areas that the user traverses and (2) to 
+     * track user mobility for telemetry purposes.
+     * </pre>
+     */
     public boolean hasLocation() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
+    /**
+     * <code>required .GeoPoint location = 2;</code>
+     *
+     * <pre>
+     * Location of wearable device at the time of checkin. This has two purposes
+     * (1) to check for changes between areas that the user traverses and (2) to 
+     * track user mobility for telemetry purposes.
+     * </pre>
+     */
     public GeoPoint getLocation() {
       return location_;
     }
+    /**
+     * <code>required .GeoPoint location = 2;</code>
+     *
+     * <pre>
+     * Location of wearable device at the time of checkin. This has two purposes
+     * (1) to check for changes between areas that the user traverses and (2) to 
+     * track user mobility for telemetry purposes.
+     * </pre>
+     */
     public GeoPointOrBuilder getLocationOrBuilder() {
       return location_;
     }
-    
+
     // optional double speed = 3;
     public static final int SPEED_FIELD_NUMBER = 3;
     private double speed_;
+    /**
+     * <code>optional double speed = 3;</code>
+     *
+     * <pre>
+     * Speed at which user is moving. This can be used to determine the what is 
+     * the most efficient request interval, along with the user distance from 
+     * the closest risk zone increase.
+     * </pre>
+     */
     public boolean hasSpeed() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
+    /**
+     * <code>optional double speed = 3;</code>
+     *
+     * <pre>
+     * Speed at which user is moving. This can be used to determine the what is 
+     * the most efficient request interval, along with the user distance from 
+     * the closest risk zone increase.
+     * </pre>
+     */
     public double getSpeed() {
       return speed_;
     }
-    
+
     private void initFields() {
       userId_ = "";
       location_ = GeoPoint.getDefaultInstance();
@@ -2823,7 +4710,7 @@ public final class KYA {
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
-      
+
       if (!hasUserId()) {
         memoizedIsInitialized = 0;
         return false;
@@ -2839,7 +4726,7 @@ public final class KYA {
       memoizedIsInitialized = 1;
       return true;
     }
-    
+
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
@@ -2854,12 +4741,12 @@ public final class KYA {
       }
       getUnknownFields().writeTo(output);
     }
-    
+
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
       if (size != -1) return size;
-    
+
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
@@ -2877,94 +4764,89 @@ public final class KYA {
       memoizedSerializedSize = size;
       return size;
     }
-    
+
     private static final long serialVersionUID = 0L;
     @Override
     protected Object writeReplace()
         throws java.io.ObjectStreamException {
       return super.writeReplace();
     }
-    
+
     public static CheckIn parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
     public static CheckIn parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static CheckIn parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
     public static CheckIn parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static CheckIn parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
     public static CheckIn parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static CheckIn parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input);
     }
     public static CheckIn parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static CheckIn parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
     public static CheckIn parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
-    
+
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder(CheckIn prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
-    
+
     @Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
+    /**
+     * Protobuf type {@code CheckIn}
+     *
+     * <pre>
+     * Message sent by the wear device to check in. This message is sent periodically
+     * from the client device, to check if the wearable device has moved in a positive
+     * risk gradient.
+     * </pre>
+     */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
        implements CheckInOrBuilder {
@@ -2972,18 +4854,21 @@ public final class KYA {
           getDescriptor() {
         return KYA.internal_static_CheckIn_descriptor;
       }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return KYA.internal_static_CheckIn_fieldAccessorTable;
+        return KYA.internal_static_CheckIn_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                CheckIn.class, Builder.class);
       }
-      
+
       // Construct using KYA.CheckIn.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
-      
-      private Builder(BuilderParent parent) {
+
+      private Builder(
+          BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
@@ -2995,7 +4880,7 @@ public final class KYA {
       private static Builder create() {
         return new Builder();
       }
-      
+
       public Builder clear() {
         super.clear();
         userId_ = "";
@@ -3010,20 +4895,20 @@ public final class KYA {
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
-      
+
       public Builder clone() {
         return create().mergeFrom(buildPartial());
       }
-      
+
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return CheckIn.getDescriptor();
+        return KYA.internal_static_CheckIn_descriptor;
       }
-      
+
       public CheckIn getDefaultInstanceForType() {
         return CheckIn.getDefaultInstance();
       }
-      
+
       public CheckIn build() {
         CheckIn result = buildPartial();
         if (!result.isInitialized()) {
@@ -3031,17 +4916,7 @@ public final class KYA {
         }
         return result;
       }
-      
-      private CheckIn buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        CheckIn result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return result;
-      }
-      
+
       public CheckIn buildPartial() {
         CheckIn result = new CheckIn(this);
         int from_bitField0_ = bitField0_;
@@ -3066,7 +4941,7 @@ public final class KYA {
         onBuilt();
         return result;
       }
-      
+
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof CheckIn) {
           return mergeFrom((CheckIn)other);
@@ -3075,11 +4950,13 @@ public final class KYA {
           return this;
         }
       }
-      
+
       public Builder mergeFrom(CheckIn other) {
         if (other == CheckIn.getDefaultInstance()) return this;
         if (other.hasUserId()) {
-          setUserId(other.getUserId());
+          bitField0_ |= 0x00000001;
+          userId_ = other.userId_;
+          onChanged();
         }
         if (other.hasLocation()) {
           mergeLocation(other.getLocation());
@@ -3090,7 +4967,7 @@ public final class KYA {
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
-      
+
       public final boolean isInitialized() {
         if (!hasUserId()) {
           
@@ -3106,71 +4983,89 @@ public final class KYA {
         }
         return true;
       }
-      
+
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder(
-            this.getUnknownFields());
-        while (true) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              this.setUnknownFields(unknownFields.build());
-              onChanged();
-              return this;
-            default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
-              }
-              break;
-            }
-            case 10: {
-              bitField0_ |= 0x00000001;
-              userId_ = input.readBytes();
-              break;
-            }
-            case 18: {
-              GeoPoint.Builder subBuilder = GeoPoint.newBuilder();
-              if (hasLocation()) {
-                subBuilder.mergeFrom(getLocation());
-              }
-              input.readMessage(subBuilder, extensionRegistry);
-              setLocation(subBuilder.buildPartial());
-              break;
-            }
-            case 25: {
-              bitField0_ |= 0x00000004;
-              speed_ = input.readDouble();
-              break;
-            }
+        CheckIn parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (CheckIn) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
           }
         }
+        return this;
       }
-      
       private int bitField0_;
-      
+
       // required string userId = 1;
       private Object userId_ = "";
+      /**
+       * <code>required string userId = 1;</code>
+       *
+       * <pre>
+       * Unique Id for the wearable device. This could either be registered or use
+       * a particular serial value unique to the physical device.
+       * </pre>
+       */
       public boolean hasUserId() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+      /**
+       * <code>required string userId = 1;</code>
+       *
+       * <pre>
+       * Unique Id for the wearable device. This could either be registered or use
+       * a particular serial value unique to the physical device.
+       * </pre>
+       */
       public String getUserId() {
         Object ref = userId_;
         if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
           userId_ = s;
           return s;
         } else {
           return (String) ref;
         }
       }
-      public Builder setUserId(String value) {
+      /**
+       * <code>required string userId = 1;</code>
+       *
+       * <pre>
+       * Unique Id for the wearable device. This could either be registered or use
+       * a particular serial value unique to the physical device.
+       * </pre>
+       */
+      public com.google.protobuf.ByteString
+          getUserIdBytes() {
+        Object ref = userId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          userId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string userId = 1;</code>
+       *
+       * <pre>
+       * Unique Id for the wearable device. This could either be registered or use
+       * a particular serial value unique to the physical device.
+       * </pre>
+       */
+      public Builder setUserId(
+          String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -3179,25 +5074,64 @@ public final class KYA {
         onChanged();
         return this;
       }
+      /**
+       * <code>required string userId = 1;</code>
+       *
+       * <pre>
+       * Unique Id for the wearable device. This could either be registered or use
+       * a particular serial value unique to the physical device.
+       * </pre>
+       */
       public Builder clearUserId() {
         bitField0_ = (bitField0_ & ~0x00000001);
         userId_ = getDefaultInstance().getUserId();
         onChanged();
         return this;
       }
-      void setUserId(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000001;
+      /**
+       * <code>required string userId = 1;</code>
+       *
+       * <pre>
+       * Unique Id for the wearable device. This could either be registered or use
+       * a particular serial value unique to the physical device.
+       * </pre>
+       */
+      public Builder setUserIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
         userId_ = value;
         onChanged();
+        return this;
       }
-      
+
       // required .GeoPoint location = 2;
       private GeoPoint location_ = GeoPoint.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           GeoPoint, GeoPoint.Builder, GeoPointOrBuilder> locationBuilder_;
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       public boolean hasLocation() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       public GeoPoint getLocation() {
         if (locationBuilder_ == null) {
           return location_;
@@ -3205,6 +5139,15 @@ public final class KYA {
           return locationBuilder_.getMessage();
         }
       }
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       public Builder setLocation(GeoPoint value) {
         if (locationBuilder_ == null) {
           if (value == null) {
@@ -3218,6 +5161,15 @@ public final class KYA {
         bitField0_ |= 0x00000002;
         return this;
       }
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       public Builder setLocation(
           GeoPoint.Builder builderForValue) {
         if (locationBuilder_ == null) {
@@ -3229,6 +5181,15 @@ public final class KYA {
         bitField0_ |= 0x00000002;
         return this;
       }
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       public Builder mergeLocation(GeoPoint value) {
         if (locationBuilder_ == null) {
           if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -3245,6 +5206,15 @@ public final class KYA {
         bitField0_ |= 0x00000002;
         return this;
       }
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       public Builder clearLocation() {
         if (locationBuilder_ == null) {
           location_ = GeoPoint.getDefaultInstance();
@@ -3255,11 +5225,29 @@ public final class KYA {
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       public GeoPoint.Builder getLocationBuilder() {
         bitField0_ |= 0x00000002;
         onChanged();
         return getLocationFieldBuilder().getBuilder();
       }
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       public GeoPointOrBuilder getLocationOrBuilder() {
         if (locationBuilder_ != null) {
           return locationBuilder_.getMessageOrBuilder();
@@ -3267,6 +5255,15 @@ public final class KYA {
           return location_;
         }
       }
+      /**
+       * <code>required .GeoPoint location = 2;</code>
+       *
+       * <pre>
+       * Location of wearable device at the time of checkin. This has two purposes
+       * (1) to check for changes between areas that the user traverses and (2) to 
+       * track user mobility for telemetry purposes.
+       * </pre>
+       */
       private com.google.protobuf.SingleFieldBuilder<
           GeoPoint, GeoPoint.Builder, GeoPointOrBuilder>
           getLocationFieldBuilder() {
@@ -3280,145 +5277,502 @@ public final class KYA {
         }
         return locationBuilder_;
       }
-      
+
       // optional double speed = 3;
       private double speed_ ;
+      /**
+       * <code>optional double speed = 3;</code>
+       *
+       * <pre>
+       * Speed at which user is moving. This can be used to determine the what is 
+       * the most efficient request interval, along with the user distance from 
+       * the closest risk zone increase.
+       * </pre>
+       */
       public boolean hasSpeed() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
+      /**
+       * <code>optional double speed = 3;</code>
+       *
+       * <pre>
+       * Speed at which user is moving. This can be used to determine the what is 
+       * the most efficient request interval, along with the user distance from 
+       * the closest risk zone increase.
+       * </pre>
+       */
       public double getSpeed() {
         return speed_;
       }
+      /**
+       * <code>optional double speed = 3;</code>
+       *
+       * <pre>
+       * Speed at which user is moving. This can be used to determine the what is 
+       * the most efficient request interval, along with the user distance from 
+       * the closest risk zone increase.
+       * </pre>
+       */
       public Builder setSpeed(double value) {
         bitField0_ |= 0x00000004;
         speed_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>optional double speed = 3;</code>
+       *
+       * <pre>
+       * Speed at which user is moving. This can be used to determine the what is 
+       * the most efficient request interval, along with the user distance from 
+       * the closest risk zone increase.
+       * </pre>
+       */
       public Builder clearSpeed() {
         bitField0_ = (bitField0_ & ~0x00000004);
         speed_ = 0D;
         onChanged();
         return this;
       }
-      
+
       // @@protoc_insertion_point(builder_scope:CheckIn)
     }
-    
+
     static {
       defaultInstance = new CheckIn(true);
       defaultInstance.initFields();
     }
-    
+
     // @@protoc_insertion_point(class_scope:CheckIn)
   }
-  
+
   public interface GeoZoneOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
-    
+
     // required int32 classification = 1;
+    /**
+     * <code>required int32 classification = 1;</code>
+     *
+     * <pre>
+     * Risk zone classification for this particular area. This number will be
+     * between 1 and 10. 
+     * </pre>
+     */
     boolean hasClassification();
+    /**
+     * <code>required int32 classification = 1;</code>
+     *
+     * <pre>
+     * Risk zone classification for this particular area. This number will be
+     * between 1 and 10. 
+     * </pre>
+     */
     int getClassification();
-    
-    // required double crimeRate = 2;
-    boolean hasCrimeRate();
-    double getCrimeRate();
-    
+
+    // required double numberOfCrimes = 2;
+    /**
+     * <code>required double numberOfCrimes = 2;</code>
+     *
+     * <pre>
+     * Crime level for this particular GeoZone, for statistical purposes. This
+     * information can be included as part of info in admin dashboard detail.
+     * </pre>
+     */
+    boolean hasNumberOfCrimes();
+    /**
+     * <code>required double numberOfCrimes = 2;</code>
+     *
+     * <pre>
+     * Crime level for this particular GeoZone, for statistical purposes. This
+     * information can be included as part of info in admin dashboard detail.
+     * </pre>
+     */
+    double getNumberOfCrimes();
+
     // repeated .GeoPoint boundaries = 3;
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     java.util.List<GeoPoint>
         getBoundariesList();
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     GeoPoint getBoundaries(int index);
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     int getBoundariesCount();
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     java.util.List<? extends GeoPointOrBuilder>
         getBoundariesOrBuilderList();
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     GeoPointOrBuilder getBoundariesOrBuilder(
             int index);
+
+    // optional string updated = 4;
+    /**
+     * <code>optional string updated = 4;</code>
+     *
+     * <pre>
+     * Date of last update.
+     * </pre>
+     */
+    boolean hasUpdated();
+    /**
+     * <code>optional string updated = 4;</code>
+     *
+     * <pre>
+     * Date of last update.
+     * </pre>
+     */
+    String getUpdated();
+    /**
+     * <code>optional string updated = 4;</code>
+     *
+     * <pre>
+     * Date of last update.
+     * </pre>
+     */
+    com.google.protobuf.ByteString
+        getUpdatedBytes();
   }
+  /**
+   * Protobuf type {@code GeoZone}
+   *
+   * <pre>
+   * A zone classified with a specific risk level. The KYA Geozone representation
+   * uses grid thematic mapping. Therefore, our Geozone will be defined by four 
+   * GeoPoints.
+   * </pre>
+   */
   public static final class GeoZone extends
       com.google.protobuf.GeneratedMessage
       implements GeoZoneOrBuilder {
     // Use GeoZone.newBuilder() to construct.
-    private GeoZone(Builder builder) {
+    private GeoZone(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private GeoZone(boolean noInit) {}
-    
+    private GeoZone(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
     private static final GeoZone defaultInstance;
     public static GeoZone getDefaultInstance() {
       return defaultInstance;
     }
-    
+
     public GeoZone getDefaultInstanceForType() {
       return defaultInstance;
     }
-    
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GeoZone(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              classification_ = input.readInt32();
+              break;
+            }
+            case 17: {
+              bitField0_ |= 0x00000002;
+              numberOfCrimes_ = input.readDouble();
+              break;
+            }
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                boundaries_ = new java.util.ArrayList<GeoPoint>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              boundaries_.add(input.readMessage(GeoPoint.PARSER, extensionRegistry));
+              break;
+            }
+            case 34: {
+              bitField0_ |= 0x00000004;
+              updated_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          boundaries_ = java.util.Collections.unmodifiableList(boundaries_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return KYA.internal_static_GeoZone_descriptor;
     }
-    
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+    protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return KYA.internal_static_GeoZone_fieldAccessorTable;
+      return KYA.internal_static_GeoZone_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              GeoZone.class, Builder.class);
     }
-    
+
+    public static com.google.protobuf.Parser<GeoZone> PARSER =
+        new com.google.protobuf.AbstractParser<GeoZone>() {
+      public GeoZone parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GeoZone(input, extensionRegistry);
+      }
+    };
+
+    @Override
+    public com.google.protobuf.Parser<GeoZone> getParserForType() {
+      return PARSER;
+    }
+
     private int bitField0_;
     // required int32 classification = 1;
     public static final int CLASSIFICATION_FIELD_NUMBER = 1;
     private int classification_;
+    /**
+     * <code>required int32 classification = 1;</code>
+     *
+     * <pre>
+     * Risk zone classification for this particular area. This number will be
+     * between 1 and 10. 
+     * </pre>
+     */
     public boolean hasClassification() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
+    /**
+     * <code>required int32 classification = 1;</code>
+     *
+     * <pre>
+     * Risk zone classification for this particular area. This number will be
+     * between 1 and 10. 
+     * </pre>
+     */
     public int getClassification() {
       return classification_;
     }
-    
-    // required double crimeRate = 2;
-    public static final int CRIMERATE_FIELD_NUMBER = 2;
-    private double crimeRate_;
-    public boolean hasCrimeRate() {
+
+    // required double numberOfCrimes = 2;
+    public static final int NUMBEROFCRIMES_FIELD_NUMBER = 2;
+    private double numberOfCrimes_;
+    /**
+     * <code>required double numberOfCrimes = 2;</code>
+     *
+     * <pre>
+     * Crime level for this particular GeoZone, for statistical purposes. This
+     * information can be included as part of info in admin dashboard detail.
+     * </pre>
+     */
+    public boolean hasNumberOfCrimes() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
-    public double getCrimeRate() {
-      return crimeRate_;
+    /**
+     * <code>required double numberOfCrimes = 2;</code>
+     *
+     * <pre>
+     * Crime level for this particular GeoZone, for statistical purposes. This
+     * information can be included as part of info in admin dashboard detail.
+     * </pre>
+     */
+    public double getNumberOfCrimes() {
+      return numberOfCrimes_;
     }
-    
+
     // repeated .GeoPoint boundaries = 3;
     public static final int BOUNDARIES_FIELD_NUMBER = 3;
     private java.util.List<GeoPoint> boundaries_;
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     public java.util.List<GeoPoint> getBoundariesList() {
       return boundaries_;
     }
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     public java.util.List<? extends GeoPointOrBuilder>
         getBoundariesOrBuilderList() {
       return boundaries_;
     }
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     public int getBoundariesCount() {
       return boundaries_.size();
     }
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     public GeoPoint getBoundaries(int index) {
       return boundaries_.get(index);
     }
+    /**
+     * <code>repeated .GeoPoint boundaries = 3;</code>
+     *
+     * <pre>
+     * Boundaries of the classified zone. This will always contain exactly 
+     * four GeoPoints.
+     * </pre>
+     */
     public GeoPointOrBuilder getBoundariesOrBuilder(
         int index) {
       return boundaries_.get(index);
     }
-    
+
+    // optional string updated = 4;
+    public static final int UPDATED_FIELD_NUMBER = 4;
+    private Object updated_;
+    /**
+     * <code>optional string updated = 4;</code>
+     *
+     * <pre>
+     * Date of last update.
+     * </pre>
+     */
+    public boolean hasUpdated() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional string updated = 4;</code>
+     *
+     * <pre>
+     * Date of last update.
+     * </pre>
+     */
+    public String getUpdated() {
+      Object ref = updated_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          updated_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string updated = 4;</code>
+     *
+     * <pre>
+     * Date of last update.
+     * </pre>
+     */
+    public com.google.protobuf.ByteString
+        getUpdatedBytes() {
+      Object ref = updated_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        updated_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
       classification_ = 0;
-      crimeRate_ = 0D;
+      numberOfCrimes_ = 0D;
       boundaries_ = java.util.Collections.emptyList();
+      updated_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
-      
+
       if (!hasClassification()) {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasCrimeRate()) {
+      if (!hasNumberOfCrimes()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -3431,7 +5785,7 @@ public final class KYA {
       memoizedIsInitialized = 1;
       return true;
     }
-    
+
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
@@ -3439,19 +5793,22 @@ public final class KYA {
         output.writeInt32(1, classification_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeDouble(2, crimeRate_);
+        output.writeDouble(2, numberOfCrimes_);
       }
       for (int i = 0; i < boundaries_.size(); i++) {
         output.writeMessage(3, boundaries_.get(i));
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBytes(4, getUpdatedBytes());
+      }
       getUnknownFields().writeTo(output);
     }
-    
+
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
       if (size != -1) return size;
-    
+
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
@@ -3459,104 +5816,103 @@ public final class KYA {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, crimeRate_);
+          .computeDoubleSize(2, numberOfCrimes_);
       }
       for (int i = 0; i < boundaries_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, boundaries_.get(i));
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(4, getUpdatedBytes());
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
       return size;
     }
-    
+
     private static final long serialVersionUID = 0L;
     @Override
     protected Object writeReplace()
         throws java.io.ObjectStreamException {
       return super.writeReplace();
     }
-    
+
     public static GeoZone parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
     public static GeoZone parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static GeoZone parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
     public static GeoZone parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static GeoZone parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
     public static GeoZone parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static GeoZone parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input);
     }
     public static GeoZone parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static GeoZone parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
     public static GeoZone parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
-    
+
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder(GeoZone prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
-    
+
     @Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
+    /**
+     * Protobuf type {@code GeoZone}
+     *
+     * <pre>
+     * A zone classified with a specific risk level. The KYA Geozone representation
+     * uses grid thematic mapping. Therefore, our Geozone will be defined by four 
+     * GeoPoints.
+     * </pre>
+     */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
        implements GeoZoneOrBuilder {
@@ -3564,18 +5920,21 @@ public final class KYA {
           getDescriptor() {
         return KYA.internal_static_GeoZone_descriptor;
       }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return KYA.internal_static_GeoZone_fieldAccessorTable;
+        return KYA.internal_static_GeoZone_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                GeoZone.class, Builder.class);
       }
-      
+
       // Construct using KYA.GeoZone.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
-      
-      private Builder(BuilderParent parent) {
+
+      private Builder(
+          BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
@@ -3587,12 +5946,12 @@ public final class KYA {
       private static Builder create() {
         return new Builder();
       }
-      
+
       public Builder clear() {
         super.clear();
         classification_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        crimeRate_ = 0D;
+        numberOfCrimes_ = 0D;
         bitField0_ = (bitField0_ & ~0x00000002);
         if (boundariesBuilder_ == null) {
           boundaries_ = java.util.Collections.emptyList();
@@ -3600,22 +5959,24 @@ public final class KYA {
         } else {
           boundariesBuilder_.clear();
         }
+        updated_ = "";
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
-      
+
       public Builder clone() {
         return create().mergeFrom(buildPartial());
       }
-      
+
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return GeoZone.getDescriptor();
+        return KYA.internal_static_GeoZone_descriptor;
       }
-      
+
       public GeoZone getDefaultInstanceForType() {
         return GeoZone.getDefaultInstance();
       }
-      
+
       public GeoZone build() {
         GeoZone result = buildPartial();
         if (!result.isInitialized()) {
@@ -3623,17 +5984,7 @@ public final class KYA {
         }
         return result;
       }
-      
-      private GeoZone buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        GeoZone result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return result;
-      }
-      
+
       public GeoZone buildPartial() {
         GeoZone result = new GeoZone(this);
         int from_bitField0_ = bitField0_;
@@ -3645,7 +5996,7 @@ public final class KYA {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.crimeRate_ = crimeRate_;
+        result.numberOfCrimes_ = numberOfCrimes_;
         if (boundariesBuilder_ == null) {
           if (((bitField0_ & 0x00000004) == 0x00000004)) {
             boundaries_ = java.util.Collections.unmodifiableList(boundaries_);
@@ -3655,11 +6006,15 @@ public final class KYA {
         } else {
           result.boundaries_ = boundariesBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.updated_ = updated_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
-      
+
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof GeoZone) {
           return mergeFrom((GeoZone)other);
@@ -3668,14 +6023,14 @@ public final class KYA {
           return this;
         }
       }
-      
+
       public Builder mergeFrom(GeoZone other) {
         if (other == GeoZone.getDefaultInstance()) return this;
         if (other.hasClassification()) {
           setClassification(other.getClassification());
         }
-        if (other.hasCrimeRate()) {
-          setCrimeRate(other.getCrimeRate());
+        if (other.hasNumberOfCrimes()) {
+          setNumberOfCrimes(other.getNumberOfCrimes());
         }
         if (boundariesBuilder_ == null) {
           if (!other.boundaries_.isEmpty()) {
@@ -3703,16 +6058,21 @@ public final class KYA {
             }
           }
         }
+        if (other.hasUpdated()) {
+          bitField0_ |= 0x00000008;
+          updated_ = other.updated_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
-      
+
       public final boolean isInitialized() {
         if (!hasClassification()) {
           
           return false;
         }
-        if (!hasCrimeRate()) {
+        if (!hasNumberOfCrimes()) {
           
           return false;
         }
@@ -3724,94 +6084,132 @@ public final class KYA {
         }
         return true;
       }
-      
+
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder(
-            this.getUnknownFields());
-        while (true) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              this.setUnknownFields(unknownFields.build());
-              onChanged();
-              return this;
-            default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
-              }
-              break;
-            }
-            case 8: {
-              bitField0_ |= 0x00000001;
-              classification_ = input.readInt32();
-              break;
-            }
-            case 17: {
-              bitField0_ |= 0x00000002;
-              crimeRate_ = input.readDouble();
-              break;
-            }
-            case 26: {
-              GeoPoint.Builder subBuilder = GeoPoint.newBuilder();
-              input.readMessage(subBuilder, extensionRegistry);
-              addBoundaries(subBuilder.buildPartial());
-              break;
-            }
+        GeoZone parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (GeoZone) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
           }
         }
+        return this;
       }
-      
       private int bitField0_;
-      
+
       // required int32 classification = 1;
       private int classification_ ;
+      /**
+       * <code>required int32 classification = 1;</code>
+       *
+       * <pre>
+       * Risk zone classification for this particular area. This number will be
+       * between 1 and 10. 
+       * </pre>
+       */
       public boolean hasClassification() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+      /**
+       * <code>required int32 classification = 1;</code>
+       *
+       * <pre>
+       * Risk zone classification for this particular area. This number will be
+       * between 1 and 10. 
+       * </pre>
+       */
       public int getClassification() {
         return classification_;
       }
+      /**
+       * <code>required int32 classification = 1;</code>
+       *
+       * <pre>
+       * Risk zone classification for this particular area. This number will be
+       * between 1 and 10. 
+       * </pre>
+       */
       public Builder setClassification(int value) {
         bitField0_ |= 0x00000001;
         classification_ = value;
         onChanged();
         return this;
       }
+      /**
+       * <code>required int32 classification = 1;</code>
+       *
+       * <pre>
+       * Risk zone classification for this particular area. This number will be
+       * between 1 and 10. 
+       * </pre>
+       */
       public Builder clearClassification() {
         bitField0_ = (bitField0_ & ~0x00000001);
         classification_ = 0;
         onChanged();
         return this;
       }
-      
-      // required double crimeRate = 2;
-      private double crimeRate_ ;
-      public boolean hasCrimeRate() {
+
+      // required double numberOfCrimes = 2;
+      private double numberOfCrimes_ ;
+      /**
+       * <code>required double numberOfCrimes = 2;</code>
+       *
+       * <pre>
+       * Crime level for this particular GeoZone, for statistical purposes. This
+       * information can be included as part of info in admin dashboard detail.
+       * </pre>
+       */
+      public boolean hasNumberOfCrimes() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
-      public double getCrimeRate() {
-        return crimeRate_;
+      /**
+       * <code>required double numberOfCrimes = 2;</code>
+       *
+       * <pre>
+       * Crime level for this particular GeoZone, for statistical purposes. This
+       * information can be included as part of info in admin dashboard detail.
+       * </pre>
+       */
+      public double getNumberOfCrimes() {
+        return numberOfCrimes_;
       }
-      public Builder setCrimeRate(double value) {
+      /**
+       * <code>required double numberOfCrimes = 2;</code>
+       *
+       * <pre>
+       * Crime level for this particular GeoZone, for statistical purposes. This
+       * information can be included as part of info in admin dashboard detail.
+       * </pre>
+       */
+      public Builder setNumberOfCrimes(double value) {
         bitField0_ |= 0x00000002;
-        crimeRate_ = value;
+        numberOfCrimes_ = value;
         onChanged();
         return this;
       }
-      public Builder clearCrimeRate() {
+      /**
+       * <code>required double numberOfCrimes = 2;</code>
+       *
+       * <pre>
+       * Crime level for this particular GeoZone, for statistical purposes. This
+       * information can be included as part of info in admin dashboard detail.
+       * </pre>
+       */
+      public Builder clearNumberOfCrimes() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        crimeRate_ = 0D;
+        numberOfCrimes_ = 0D;
         onChanged();
         return this;
       }
-      
+
       // repeated .GeoPoint boundaries = 3;
       private java.util.List<GeoPoint> boundaries_ =
         java.util.Collections.emptyList();
@@ -3821,10 +6219,18 @@ public final class KYA {
           bitField0_ |= 0x00000004;
          }
       }
-      
+
       private com.google.protobuf.RepeatedFieldBuilder<
           GeoPoint, GeoPoint.Builder, GeoPointOrBuilder> boundariesBuilder_;
-      
+
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public java.util.List<GeoPoint> getBoundariesList() {
         if (boundariesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(boundaries_);
@@ -3832,6 +6238,14 @@ public final class KYA {
           return boundariesBuilder_.getMessageList();
         }
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public int getBoundariesCount() {
         if (boundariesBuilder_ == null) {
           return boundaries_.size();
@@ -3839,6 +6253,14 @@ public final class KYA {
           return boundariesBuilder_.getCount();
         }
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public GeoPoint getBoundaries(int index) {
         if (boundariesBuilder_ == null) {
           return boundaries_.get(index);
@@ -3846,6 +6268,14 @@ public final class KYA {
           return boundariesBuilder_.getMessage(index);
         }
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder setBoundaries(
           int index, GeoPoint value) {
         if (boundariesBuilder_ == null) {
@@ -3860,6 +6290,14 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder setBoundaries(
           int index, GeoPoint.Builder builderForValue) {
         if (boundariesBuilder_ == null) {
@@ -3871,6 +6309,14 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder addBoundaries(GeoPoint value) {
         if (boundariesBuilder_ == null) {
           if (value == null) {
@@ -3884,6 +6330,14 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder addBoundaries(
           int index, GeoPoint value) {
         if (boundariesBuilder_ == null) {
@@ -3898,6 +6352,14 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder addBoundaries(
           GeoPoint.Builder builderForValue) {
         if (boundariesBuilder_ == null) {
@@ -3909,6 +6371,14 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder addBoundaries(
           int index, GeoPoint.Builder builderForValue) {
         if (boundariesBuilder_ == null) {
@@ -3920,6 +6390,14 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder addAllBoundaries(
           Iterable<? extends GeoPoint> values) {
         if (boundariesBuilder_ == null) {
@@ -3931,6 +6409,14 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder clearBoundaries() {
         if (boundariesBuilder_ == null) {
           boundaries_ = java.util.Collections.emptyList();
@@ -3941,6 +6427,14 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public Builder removeBoundaries(int index) {
         if (boundariesBuilder_ == null) {
           ensureBoundariesIsMutable();
@@ -3951,10 +6445,26 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public GeoPoint.Builder getBoundariesBuilder(
           int index) {
         return getBoundariesFieldBuilder().getBuilder(index);
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public GeoPointOrBuilder getBoundariesOrBuilder(
           int index) {
         if (boundariesBuilder_ == null) {
@@ -3962,6 +6472,14 @@ public final class KYA {
           return boundariesBuilder_.getMessageOrBuilder(index);
         }
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public java.util.List<? extends GeoPointOrBuilder>
            getBoundariesOrBuilderList() {
         if (boundariesBuilder_ != null) {
@@ -3970,15 +6488,39 @@ public final class KYA {
           return java.util.Collections.unmodifiableList(boundaries_);
         }
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public GeoPoint.Builder addBoundariesBuilder() {
         return getBoundariesFieldBuilder().addBuilder(
             GeoPoint.getDefaultInstance());
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public GeoPoint.Builder addBoundariesBuilder(
           int index) {
         return getBoundariesFieldBuilder().addBuilder(
             index, GeoPoint.getDefaultInstance());
       }
+      /**
+       * <code>repeated .GeoPoint boundaries = 3;</code>
+       *
+       * <pre>
+       * Boundaries of the classified zone. This will always contain exactly 
+       * four GeoPoints.
+       * </pre>
+       */
       public java.util.List<GeoPoint.Builder>
            getBoundariesBuilderList() {
         return getBoundariesFieldBuilder().getBuilderList();
@@ -3997,80 +6539,327 @@ public final class KYA {
         }
         return boundariesBuilder_;
       }
-      
+
+      // optional string updated = 4;
+      private Object updated_ = "";
+      /**
+       * <code>optional string updated = 4;</code>
+       *
+       * <pre>
+       * Date of last update.
+       * </pre>
+       */
+      public boolean hasUpdated() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional string updated = 4;</code>
+       *
+       * <pre>
+       * Date of last update.
+       * </pre>
+       */
+      public String getUpdated() {
+        Object ref = updated_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          updated_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>optional string updated = 4;</code>
+       *
+       * <pre>
+       * Date of last update.
+       * </pre>
+       */
+      public com.google.protobuf.ByteString
+          getUpdatedBytes() {
+        Object ref = updated_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          updated_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string updated = 4;</code>
+       *
+       * <pre>
+       * Date of last update.
+       * </pre>
+       */
+      public Builder setUpdated(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        updated_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string updated = 4;</code>
+       *
+       * <pre>
+       * Date of last update.
+       * </pre>
+       */
+      public Builder clearUpdated() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        updated_ = getDefaultInstance().getUpdated();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string updated = 4;</code>
+       *
+       * <pre>
+       * Date of last update.
+       * </pre>
+       */
+      public Builder setUpdatedBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        updated_ = value;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:GeoZone)
     }
-    
+
     static {
       defaultInstance = new GeoZone(true);
       defaultInstance.initFields();
     }
-    
+
     // @@protoc_insertion_point(class_scope:GeoZone)
   }
-  
+
   public interface GridOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
-    
+
     // repeated .GeoZone tiles = 1;
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     java.util.List<GeoZone>
         getTilesList();
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     GeoZone getTiles(int index);
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     int getTilesCount();
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     java.util.List<? extends GeoZoneOrBuilder>
         getTilesOrBuilderList();
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     GeoZoneOrBuilder getTilesOrBuilder(
             int index);
   }
+  /**
+   * Protobuf type {@code Grid}
+   *
+   * <pre>
+   * Grid of zones requested by the admin dashboard. This grid should contain 
+   * all the risk areas for a subset of the area of study. Message will be a 
+   * list of geozones that can be mapped to Google Map API.
+   * </pre>
+   */
   public static final class Grid extends
       com.google.protobuf.GeneratedMessage
       implements GridOrBuilder {
     // Use Grid.newBuilder() to construct.
-    private Grid(Builder builder) {
+    private Grid(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Grid(boolean noInit) {}
-    
+    private Grid(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
     private static final Grid defaultInstance;
     public static Grid getDefaultInstance() {
       return defaultInstance;
     }
-    
+
     public Grid getDefaultInstanceForType() {
       return defaultInstance;
     }
-    
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Grid(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                tiles_ = new java.util.ArrayList<GeoZone>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              tiles_.add(input.readMessage(GeoZone.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          tiles_ = java.util.Collections.unmodifiableList(tiles_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return KYA.internal_static_Grid_descriptor;
     }
-    
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+    protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return KYA.internal_static_Grid_fieldAccessorTable;
+      return KYA.internal_static_Grid_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              Grid.class, Builder.class);
     }
-    
+
+    public static com.google.protobuf.Parser<Grid> PARSER =
+        new com.google.protobuf.AbstractParser<Grid>() {
+      public Grid parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Grid(input, extensionRegistry);
+      }
+    };
+
+    @Override
+    public com.google.protobuf.Parser<Grid> getParserForType() {
+      return PARSER;
+    }
+
     // repeated .GeoZone tiles = 1;
     public static final int TILES_FIELD_NUMBER = 1;
     private java.util.List<GeoZone> tiles_;
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     public java.util.List<GeoZone> getTilesList() {
       return tiles_;
     }
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     public java.util.List<? extends GeoZoneOrBuilder>
         getTilesOrBuilderList() {
       return tiles_;
     }
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     public int getTilesCount() {
       return tiles_.size();
     }
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     public GeoZone getTiles(int index) {
       return tiles_.get(index);
     }
+    /**
+     * <code>repeated .GeoZone tiles = 1;</code>
+     *
+     * <pre>
+     * List of geozones in the area currently visualized.
+     * </pre>
+     */
     public GeoZoneOrBuilder getTilesOrBuilder(
         int index) {
       return tiles_.get(index);
     }
-    
+
     private void initFields() {
       tiles_ = java.util.Collections.emptyList();
     }
@@ -4078,7 +6867,7 @@ public final class KYA {
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
-      
+
       for (int i = 0; i < getTilesCount(); i++) {
         if (!getTiles(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -4088,7 +6877,7 @@ public final class KYA {
       memoizedIsInitialized = 1;
       return true;
     }
-    
+
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
@@ -4097,12 +6886,12 @@ public final class KYA {
       }
       getUnknownFields().writeTo(output);
     }
-    
+
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
       if (size != -1) return size;
-    
+
       size = 0;
       for (int i = 0; i < tiles_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -4112,94 +6901,89 @@ public final class KYA {
       memoizedSerializedSize = size;
       return size;
     }
-    
+
     private static final long serialVersionUID = 0L;
     @Override
     protected Object writeReplace()
         throws java.io.ObjectStreamException {
       return super.writeReplace();
     }
-    
+
     public static Grid parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
     public static Grid parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static Grid parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
     public static Grid parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static Grid parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
     public static Grid parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static Grid parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input);
     }
     public static Grid parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static Grid parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
     public static Grid parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
-    
+
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder(Grid prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
-    
+
     @Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
+    /**
+     * Protobuf type {@code Grid}
+     *
+     * <pre>
+     * Grid of zones requested by the admin dashboard. This grid should contain 
+     * all the risk areas for a subset of the area of study. Message will be a 
+     * list of geozones that can be mapped to Google Map API.
+     * </pre>
+     */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
        implements GridOrBuilder {
@@ -4207,18 +6991,21 @@ public final class KYA {
           getDescriptor() {
         return KYA.internal_static_Grid_descriptor;
       }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return KYA.internal_static_Grid_fieldAccessorTable;
+        return KYA.internal_static_Grid_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                Grid.class, Builder.class);
       }
-      
+
       // Construct using KYA.Grid.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
-      
-      private Builder(BuilderParent parent) {
+
+      private Builder(
+          BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
@@ -4230,7 +7017,7 @@ public final class KYA {
       private static Builder create() {
         return new Builder();
       }
-      
+
       public Builder clear() {
         super.clear();
         if (tilesBuilder_ == null) {
@@ -4241,20 +7028,20 @@ public final class KYA {
         }
         return this;
       }
-      
+
       public Builder clone() {
         return create().mergeFrom(buildPartial());
       }
-      
+
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return Grid.getDescriptor();
+        return KYA.internal_static_Grid_descriptor;
       }
-      
+
       public Grid getDefaultInstanceForType() {
         return Grid.getDefaultInstance();
       }
-      
+
       public Grid build() {
         Grid result = buildPartial();
         if (!result.isInitialized()) {
@@ -4262,17 +7049,7 @@ public final class KYA {
         }
         return result;
       }
-      
-      private Grid buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Grid result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return result;
-      }
-      
+
       public Grid buildPartial() {
         Grid result = new Grid(this);
         int from_bitField0_ = bitField0_;
@@ -4288,7 +7065,7 @@ public final class KYA {
         onBuilt();
         return result;
       }
-      
+
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof Grid) {
           return mergeFrom((Grid)other);
@@ -4297,7 +7074,7 @@ public final class KYA {
           return this;
         }
       }
-      
+
       public Builder mergeFrom(Grid other) {
         if (other == Grid.getDefaultInstance()) return this;
         if (tilesBuilder_ == null) {
@@ -4329,7 +7106,7 @@ public final class KYA {
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
-      
+
       public final boolean isInitialized() {
         for (int i = 0; i < getTilesCount(); i++) {
           if (!getTiles(i).isInitialized()) {
@@ -4339,42 +7116,26 @@ public final class KYA {
         }
         return true;
       }
-      
+
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder(
-            this.getUnknownFields());
-        while (true) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              this.setUnknownFields(unknownFields.build());
-              onChanged();
-              return this;
-            default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
-              }
-              break;
-            }
-            case 10: {
-              GeoZone.Builder subBuilder = GeoZone.newBuilder();
-              input.readMessage(subBuilder, extensionRegistry);
-              addTiles(subBuilder.buildPartial());
-              break;
-            }
+        Grid parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (Grid) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
           }
         }
+        return this;
       }
-      
       private int bitField0_;
-      
+
       // repeated .GeoZone tiles = 1;
       private java.util.List<GeoZone> tiles_ =
         java.util.Collections.emptyList();
@@ -4384,10 +7145,17 @@ public final class KYA {
           bitField0_ |= 0x00000001;
          }
       }
-      
+
       private com.google.protobuf.RepeatedFieldBuilder<
           GeoZone, GeoZone.Builder, GeoZoneOrBuilder> tilesBuilder_;
-      
+
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public java.util.List<GeoZone> getTilesList() {
         if (tilesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(tiles_);
@@ -4395,6 +7163,13 @@ public final class KYA {
           return tilesBuilder_.getMessageList();
         }
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public int getTilesCount() {
         if (tilesBuilder_ == null) {
           return tiles_.size();
@@ -4402,6 +7177,13 @@ public final class KYA {
           return tilesBuilder_.getCount();
         }
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public GeoZone getTiles(int index) {
         if (tilesBuilder_ == null) {
           return tiles_.get(index);
@@ -4409,6 +7191,13 @@ public final class KYA {
           return tilesBuilder_.getMessage(index);
         }
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder setTiles(
           int index, GeoZone value) {
         if (tilesBuilder_ == null) {
@@ -4423,6 +7212,13 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder setTiles(
           int index, GeoZone.Builder builderForValue) {
         if (tilesBuilder_ == null) {
@@ -4434,6 +7230,13 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder addTiles(GeoZone value) {
         if (tilesBuilder_ == null) {
           if (value == null) {
@@ -4447,6 +7250,13 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder addTiles(
           int index, GeoZone value) {
         if (tilesBuilder_ == null) {
@@ -4461,6 +7271,13 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder addTiles(
           GeoZone.Builder builderForValue) {
         if (tilesBuilder_ == null) {
@@ -4472,6 +7289,13 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder addTiles(
           int index, GeoZone.Builder builderForValue) {
         if (tilesBuilder_ == null) {
@@ -4483,6 +7307,13 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder addAllTiles(
           Iterable<? extends GeoZone> values) {
         if (tilesBuilder_ == null) {
@@ -4494,6 +7325,13 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder clearTiles() {
         if (tilesBuilder_ == null) {
           tiles_ = java.util.Collections.emptyList();
@@ -4504,6 +7342,13 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public Builder removeTiles(int index) {
         if (tilesBuilder_ == null) {
           ensureTilesIsMutable();
@@ -4514,10 +7359,24 @@ public final class KYA {
         }
         return this;
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public GeoZone.Builder getTilesBuilder(
           int index) {
         return getTilesFieldBuilder().getBuilder(index);
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public GeoZoneOrBuilder getTilesOrBuilder(
           int index) {
         if (tilesBuilder_ == null) {
@@ -4525,6 +7384,13 @@ public final class KYA {
           return tilesBuilder_.getMessageOrBuilder(index);
         }
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public java.util.List<? extends GeoZoneOrBuilder>
            getTilesOrBuilderList() {
         if (tilesBuilder_ != null) {
@@ -4533,15 +7399,36 @@ public final class KYA {
           return java.util.Collections.unmodifiableList(tiles_);
         }
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public GeoZone.Builder addTilesBuilder() {
         return getTilesFieldBuilder().addBuilder(
             GeoZone.getDefaultInstance());
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public GeoZone.Builder addTilesBuilder(
           int index) {
         return getTilesFieldBuilder().addBuilder(
             index, GeoZone.getDefaultInstance());
       }
+      /**
+       * <code>repeated .GeoZone tiles = 1;</code>
+       *
+       * <pre>
+       * List of geozones in the area currently visualized.
+       * </pre>
+       */
       public java.util.List<GeoZone.Builder>
            getTilesBuilderList() {
         return getTilesFieldBuilder().getBuilderList();
@@ -4560,18 +7447,18 @@ public final class KYA {
         }
         return tilesBuilder_;
       }
-      
+
       // @@protoc_insertion_point(builder_scope:Grid)
     }
-    
+
     static {
       defaultInstance = new Grid(true);
       defaultInstance.initFields();
     }
-    
+
     // @@protoc_insertion_point(class_scope:Grid)
   }
-  
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_KYAResponse_descriptor;
   private static
@@ -4612,7 +7499,7 @@ public final class KYA {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_Grid_fieldAccessorTable;
-  
+
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
@@ -4621,22 +7508,23 @@ public final class KYA {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\tKYA.proto\"m\n\013KYAResponse\022\021\n\tlastLevel\030" +
-      "\001 \002(\005\022\020\n\010newLevel\030\002 \002(\005\022 \n\030nextRequestTi" +
-      "meInSeconds\030\003 \002(\005\022\027\n\017requestFeedback\030\004 \002" +
-      "(\010\"\360\001\n\tTelemetry\022\016\n\006userID\030\001 \002(\t\022\026\n\016noti" +
-      "ficationID\030\002 \002(\t\022\016\n\006zoneID\030\003 \002(\005\022\'\n\thear" +
-      "tRate\030\004 \001(\0132\024.Telemetry.HeartRate\022!\n\006sur" +
-      "vey\030\005 \001(\0132\021.Telemetry.Survey\032*\n\tHeartRat" +
-      "e\022\016\n\006before\030\001 \001(\005\022\r\n\005after\030\002 \001(\005\0323\n\006Surv" +
-      "ey\022\022\n\nactualRisk\030\002 \002(\005\022\025\n\rperceivedRisk\030" +
-      "\003 \002(\005\"?\n\010GeoPoint\022\016\n\006userID\030\001 \002(\t\022\020\n\010lat",
-      "itude\030\002 \002(\001\022\021\n\tlongitude\030\003 \002(\001\"E\n\007CheckI" +
-      "n\022\016\n\006userId\030\001 \002(\t\022\033\n\010location\030\002 \002(\0132\t.Ge" +
-      "oPoint\022\r\n\005speed\030\003 \001(\001\"S\n\007GeoZone\022\026\n\016clas" +
-      "sification\030\001 \002(\005\022\021\n\tcrimeRate\030\002 \002(\001\022\035\n\nb" +
-      "oundaries\030\003 \003(\0132\t.GeoPoint\"\037\n\004Grid\022\027\n\005ti" +
-      "les\030\001 \003(\0132\010.GeoZone"
+      "\n\tKYA.proto\"\214\001\n\013KYAResponse\022\021\n\tlastLevel" +
+      "\030\001 \002(\005\022\020\n\010newLevel\030\002 \002(\005\022 \n\030nextRequestT" +
+      "imeInSeconds\030\003 \002(\005\022\027\n\017requestFeedback\030\004 " +
+      "\002(\010\022\035\n\013currentZone\030\005 \002(\0132\010.GeoZone\"\360\001\n\tT" +
+      "elemetry\022\016\n\006userID\030\001 \002(\t\022\026\n\016notification" +
+      "ID\030\002 \002(\t\022\016\n\006zoneID\030\003 \002(\005\022\'\n\theartRate\030\004 " +
+      "\001(\0132\024.Telemetry.HeartRate\022!\n\006survey\030\005 \001(" +
+      "\0132\021.Telemetry.Survey\032*\n\tHeartRate\022\016\n\006bef" +
+      "ore\030\001 \001(\005\022\r\n\005after\030\002 \001(\005\0323\n\006Survey\022\022\n\nac" +
+      "tualRisk\030\002 \002(\005\022\025\n\rperceivedRisk\030\003 \002(\005\"?\n",
+      "\010GeoPoint\022\016\n\006userID\030\001 \002(\t\022\020\n\010latitude\030\002 " +
+      "\002(\001\022\021\n\tlongitude\030\003 \002(\001\"E\n\007CheckIn\022\016\n\006use" +
+      "rId\030\001 \002(\t\022\033\n\010location\030\002 \002(\0132\t.GeoPoint\022\r" +
+      "\n\005speed\030\003 \001(\001\"i\n\007GeoZone\022\026\n\016classificati" +
+      "on\030\001 \002(\005\022\026\n\016numberOfCrimes\030\002 \002(\001\022\035\n\nboun" +
+      "daries\030\003 \003(\0132\t.GeoPoint\022\017\n\007updated\030\004 \001(\t" +
+      "\"\037\n\004Grid\022\027\n\005tiles\030\001 \003(\0132\010.GeoZone"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -4648,65 +7536,49 @@ public final class KYA {
           internal_static_KYAResponse_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_KYAResponse_descriptor,
-              new String[] { "LastLevel", "NewLevel", "NextRequestTimeInSeconds", "RequestFeedback", },
-              KYAResponse.class,
-              KYAResponse.Builder.class);
+              new String[] { "LastLevel", "NewLevel", "NextRequestTimeInSeconds", "RequestFeedback", "CurrentZone", });
           internal_static_Telemetry_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_Telemetry_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Telemetry_descriptor,
-              new String[] { "UserID", "NotificationID", "ZoneID", "HeartRate", "Survey", },
-              Telemetry.class,
-              Telemetry.Builder.class);
+              new String[] { "UserID", "NotificationID", "ZoneID", "HeartRate", "Survey", });
           internal_static_Telemetry_HeartRate_descriptor =
             internal_static_Telemetry_descriptor.getNestedTypes().get(0);
           internal_static_Telemetry_HeartRate_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Telemetry_HeartRate_descriptor,
-              new String[] { "Before", "After", },
-              Telemetry.HeartRate.class,
-              Telemetry.HeartRate.Builder.class);
+              new String[] { "Before", "After", });
           internal_static_Telemetry_Survey_descriptor =
             internal_static_Telemetry_descriptor.getNestedTypes().get(1);
           internal_static_Telemetry_Survey_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Telemetry_Survey_descriptor,
-              new String[] { "ActualRisk", "PerceivedRisk", },
-              Telemetry.Survey.class,
-              Telemetry.Survey.Builder.class);
+              new String[] { "ActualRisk", "PerceivedRisk", });
           internal_static_GeoPoint_descriptor =
             getDescriptor().getMessageTypes().get(2);
           internal_static_GeoPoint_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_GeoPoint_descriptor,
-              new String[] { "UserID", "Latitude", "Longitude", },
-              GeoPoint.class,
-              GeoPoint.Builder.class);
+              new String[] { "UserID", "Latitude", "Longitude", });
           internal_static_CheckIn_descriptor =
             getDescriptor().getMessageTypes().get(3);
           internal_static_CheckIn_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_CheckIn_descriptor,
-              new String[] { "UserId", "Location", "Speed", },
-              CheckIn.class,
-              CheckIn.Builder.class);
+              new String[] { "UserId", "Location", "Speed", });
           internal_static_GeoZone_descriptor =
             getDescriptor().getMessageTypes().get(4);
           internal_static_GeoZone_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_GeoZone_descriptor,
-              new String[] { "Classification", "CrimeRate", "Boundaries", },
-              GeoZone.class,
-              GeoZone.Builder.class);
+              new String[] { "Classification", "NumberOfCrimes", "Boundaries", "Updated", });
           internal_static_Grid_descriptor =
             getDescriptor().getMessageTypes().get(5);
           internal_static_Grid_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Grid_descriptor,
-              new String[] { "Tiles", },
-              Grid.class,
-              Grid.Builder.class);
+              new String[] { "Tiles", });
           return null;
         }
       };
@@ -4715,6 +7587,6 @@ public final class KYA {
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
   }
-  
+
   // @@protoc_insertion_point(outer_class_scope)
 }
