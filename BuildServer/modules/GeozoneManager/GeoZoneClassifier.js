@@ -6,63 +6,230 @@
 /**
  * Module imports
  */
-var geoCoordiante = require('./geoCoordiante.js');
-var storage = require('./DataClassificationStorage.js');
-var strategy = require('./ClassificationStrategy.js');
-var geoZone = require('./GeoZone.js');
+var GeoCoordinate = require('./GeoCoordinate.js');
+var DataClassificationStorage = require('./DataClassificationStorage.js');
+var MongoManager = require('./MongoManager.js');
+var Strategy = require('./ClassificationStrategy.js');
+var Geozone = require('./Geozone.js');
 
 /**
  * @Constructor get the list of crime with the marshall
  */
-module.exports = function GeoZoneClassifier (geoJson) {
+module.exports = function GeozoneClassifier (client, mongoClient, log) {
+
+	var classifierLog = log;
+	var mongo = new MongoManager(mongoClient, classifierLog);
+	var storage = new DataClassificationStorage(client, classifierLog);
+
+	var unclassifiedZone;
+	var classifiedZone = [];
+	var onClassifierSet;
+
+	var strategy = new Strategy();
+	var isCreated = false;
 
 	var crimeCount
-	var storage
-	var mGrid = geoJson
+	var classificationCount = 0;
+	var onBatchComplete;
+	var currentCrimeIndex;
+	var crimeLength;
+	var classificationLength;	
+	var currentBatch;
+	var that = this;
+	var notPinpointed;
+	var pinpointCount;
 
+	var maxZone;
+	var minZone;
+
+	var mapZone;
+
+	var onClassification;
+
+	classifierLog.info('Initializing variables for Geozone Classifier');
+
+	/**
+	 * This method is use for as a callback method for pinpoint
+	 */
+	function onPinpoint() {
+		currentCrimeIndex ++;
+		if(currentCrimeIndex < crimeLength) {
+			that.pinpoint(new GeoCoordinate(currentBatch[currentCrimeIndex].getLatitude(), currentBatch[currentCrimeIndex].getLongitude()), onPinpoint);
+		} 
+		else {
+			classifierLog.debug('');
+			classifierLog.notice("Batch Completed. " +pinpointCount+ " crimes were pinpointed and "+notPinpointed+" were not pinpointed.");
+			console.log("Batch Completed. " +pinpointCount+ " crimes were pinpointed and "+notPinpointed+" were not pinpointed.");
+			onBatchComplete();
+		}
+	}
+
+	/**
+	 * This method Initialize the  the zone to be classify
+	 * @param zone: Unclassified zone.
+	 * @param size: Size of the Unclassified zone.
+	 * @param callback: Callback function use when the sorting on the table is done.
+	 */
+	this.init = function(zone, size, callback) {
+		unclassifiedZone = zone;
+		onClassifierSet = callback;
+
+		classificationLength = unclassifiedZone.length;
+		currentBatch;
+		notPinpointed = 0;
+		pinpointCount = 0;
+
+		storage.createTable(size, function(err, result, callback) {
+			if(err) {
+				classifierLog.error('There was an error in the Geozone Classifier: ', err);
+				console.error(err);
+			}
+			else {
+				console.log(result);
+				classifierLog.notice('Zone Dictionary population completed');
+				onClassifierSet();
+			}
+		});
+	}
 
 	/**
 	 * This method received the crime list and the marshall
 	 * @param List<crime> : List of crime
 	 * @param Marshall : marshall to classify each crime.
-	 * @param callback : callback method to it finished.
+	 * @param feed_callback : callback method to it finished.
 	 */
-	this.feedCrime = function(List<Crime>, Marshall, callback) {
+	this.feedCrime = function(crime, marshall, feed_callback) {
 
+		var ignoreList = marshall.getIgnoreList()
+		var isValidCrime = true;
+		var filtered = [];
+		classifierLog.notice('Processing Crime');
+		classifierLog.notice('Type of of crime to ignore: ', ignoreList.length);
+
+		for (var i = 0; i < crime.length; i++) {
+			for (var j = 0; j < ignoreList.length; j++) {
+				if(crime[i].getType() == ignoreList[j]) {
+					isValidCrime = false;
+					break;
+				}
+			}
+
+			if(isValidCrime) {
+				filtered.push(crime[i]);
+			}
+			isValidCrime = true;
+		}
+
+			onBatchComplete = feed_callback;
+			currentCrimeIndex = 0;
+			crimeLength = filtered.length;
+			currentBatch = filtered;
+			classifierLog.notice("There were " + crimeLength + " filtered from ", crime.length);
+			console.log("There were " + crimeLength + " filtered from ", crime.length);
+			classifierLog.notice('Begining of Pinpoint');
+			this.pinpoint(new GeoCoordinate(filtered[0].getLatitude(), filtered[0].getLongitude()), onPinpoint);
 	}
 	
 	/**
-	 * This method incriase the ZoneID accumulator by one
-	 * when the zone is pinpointed.
+	 * This method incriase the ZoneID accumulator by one when the zone is pinpointed.
+	 * @param zoneID: Zone id of the zone to be update.
+	 * @param update_callback: Callback function use when the zone is updated.
 	 */
-	this.updateDictonary = function(zoneID) {
-
-
+	var updateDictonary = function(zoneID, update_callback) {
+		storage.updateCrimeCount(zoneID, update_callback)
 	}
 
 	/**
-	 * This method return the zoneID where the crime was
-	 * pinpointed
-	 * @return Return the zoneID of the pinpointed crime.
+	 * This method return the zoneID where the crime was pinpointed
+	 * @param coodinate: Location of the crime.
+	 * @param pinpoint_callback: Callback function when pinpoint is done.
 	 */
-	this.pinpoint = function() {
+	this.pinpoint = function(coordinate, pinpoint_callback) {
+		if(coordinate.getLongitude() != null || coordinate.getLatitude() != null) {
+			var location = {
+				latitude : parseFloat(coordinate.getLatitude()),
+				longitude : parseFloat(coordinate.getLongitude())
+			};
+			
+			mongo.findZone(location, function(found) {
+				if(found[0] != undefined){
+					pinpointCount++;
+					classifierLog.debug('The crime with coordinate: (' + coordinate.getLongitude() + ', ' + coordinate.getLatitude() + ') was pinpointed in zone: ' + found[0].zone_id + '. ' + (currentCrimeIndex + 1) + ' of ', crimeLength);
+					updateDictonary(parseInt(found[0].zone_id), pinpoint_callback);
+				}
+				else {
+					classifierLog.warning('The crime with coordinate: (' + coordinate.getLongitude() + ', ' + coordinate.getLatitude() + ') was NOT pinpointed into any zone');
+					notPinpointed++;
+					pinpoint_callback();
+				}
 
+			});
+		}
+		else {
+			classifierLog.alert('The crime with coordinate: (' + coordinate.getLongitude() + ', ' + coordinate.getLatitude() + ') was NOT pinpointed');
+			notPinpointed++;
+			pinpoint_callback();
+		}
 	}
 
 	/**
 	 * This method clears the data of the dictonary.
-	 * @return Return a boolean value if it was clear or not.
+	 * @param clear_callback: Callback function when the data is cleared.
 	 */
-	this.clear = function() {
-
-
+	this.clear = function(clear_callback) {
+		storage.clearData( function(err, result) {
+			if(!err) {
+				clear_callback(null, result);
+			}
+			else {
+				clear_callback(result, null);
+			}
+		});
 	}
 
 	/**
 	 * This method classify all the tile zone using a classfication strategy.
-	 * @return Return a list of GeoZone
+	 * @para beginClassification_callback: Callback function use when is ready to classify.
 	 */
-	this.beginClassification = function() {
+	this.beginClassification = function(beginClassification_callback) {
+		onClassification = beginClassification_callback;
+		if(classificationCount < classificationLength) {
+			classifyZone(classificationCount);
+		}
+		else {
+			beginClassification_callback(null, classifiedZone);
+		}
+	}
 
+	/**
+	 * This method set the parameter for the classification.
+	 * @param parameter_callback: Callback function use when parameter are set.
+	 */
+	this.getParameter = function(parameter_callback) {
+		classifierLog.notice('Getting Parameter for classification');
+		storage.getMaxMin(function(err, max, min) {
+			if(!err) {
+				maxZone = max;
+				minZone = min;
+				classifierLog.info("The maximun crime count within the zone is " +maxZone+ " and minimun crime count within the zone is ", minZone);
+				parameter_callback();
+			}
+		})
+	}
+
+	/**
+	 * This method classify each zone and then create a Geozone.
+	 * @param count: Counter to iterate between zone.
+	 */
+	function classifyZone(count) {
+		storage.getZoneCount(count, function(err, result) {
+			if(!err) {
+				strategy.classify(maxZone, minZone, result, function(level, totalCrime) {
+					classifiedZone.push({zone: count, level: level, totalCrime: totalCrime});
+					classificationCount++;
+					that.beginClassification(onClassification);
+				});
+			}
+		});
 	}
 }
