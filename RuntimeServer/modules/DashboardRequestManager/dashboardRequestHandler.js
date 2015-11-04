@@ -20,6 +20,7 @@ module.exports = function DashboardRequestHandler() {
 	var KYA = protoBuilder.build("KYA");
 	var GridBounds = KYA.GridBounds;
 	var Stats = KYA.Stats;
+	var Threshold = KYA.Threshold;
 	var zonesManager = new ZonesManager();
 	var gridController;
 
@@ -79,7 +80,7 @@ module.exports = function DashboardRequestHandler() {
 							// 		}
 							// 	});
 							// }
-							var result = encodeStats(0, 0, 0);
+							var result = encodeStats(10, 0, 0);
 							callback(err, result)
 						// });
 					}
@@ -150,9 +151,17 @@ module.exports = function DashboardRequestHandler() {
 		callback(result);
 	};
 
-	this.setThreshold = function(threshold) {
-		var areaThreshold = parseFloat(threshold);
-		gridController = new GridController(areaThreshold);
+	this.setThreshold = function(buffer, callback) {
+		try {
+			var thresholdBuf = Threshold.decode(buffer);
+			var areaThreshold = thresholdBuf.threshold;
+			gridController = new GridController(areaThreshold);
+			callback(null, 'SUCCESS');
+		}
+		catch(err) {
+			callback(err);
+		}
+		
 	};
 
 	/**

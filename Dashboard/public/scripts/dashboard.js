@@ -21,6 +21,7 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 	KYA = builder.build("KYA"),
 	GridBounds = KYA.GridBounds,
 	GeoPoint = KYA.GeoPoint;
+	Threshold = KYA.Threshold;
 
 /**
  * Gets the current crime statistics when the HTML
@@ -28,12 +29,14 @@ var ProtoBuf = dcodeIO.ProtoBuf,
  */
 $(document).ready(function() {
 	// Specify bounds for the initial position of the grid
+	// Change this to indicate the location for the grids
 	var swLat = 17.918636,
 		swLng = -67.299500,
 		neLat = 18.536909,
 		neLng = -65.176392;
 
 	// Specify the map's location
+	// Change this to indicate the location of the area of study
 	var mapLocLat = 18.210952,
 		mapLocLng = -66.492914;
 
@@ -68,10 +71,18 @@ this.buildMap = function(locLat, locLng, swLat, swLng, neLat, neLng, area) {
 };
 
 this.setThreshold = function() {
+
+	// Preparing buffer for HTTP request 
+	var threshold = new Threshold(thresholdArea);
+	var buffer = threshold.encode();
+	var message = buffer.toArrayBuffer();
+
 	$.ajax({
-		url:  'http://localhost:3000/threshold?threshold=' + thresholdArea,
+		url:  'http://localhost:3000/threshold',
 		type: 'POST',
-		data: '{"data": "TEST"}',
+		data: message,
+		contentType: 'application/octet-stream',
+		processData: false,
 		success: function(res) {
 			
 		}
@@ -87,7 +98,8 @@ this.setThreshold = function() {
 this.onMapDrag = function() {
 	if (currentArea > thresholdArea && currentArea < initArea) {
 		clearGrids();
-		requestNewGrid(gridArea);
+		// requestNewGrid(gridArea);
+		drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
     }
     else if (currentArea == thresholdArea) {
     	map.setZoom(map.getZoom() - 1);

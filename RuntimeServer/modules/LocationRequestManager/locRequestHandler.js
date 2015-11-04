@@ -20,8 +20,9 @@ module.exports = function LocationRequestHandler(latitude,longitude,velocity,cli
 	/**
 	 * Call functions required to schedule the next request	
 	 */
-	this.handleRequest = function() {
-
+	this.handleRequest = function(checkInBuffer, callback) {
+	
+		callback('SUCCESS');
 	};
 
 

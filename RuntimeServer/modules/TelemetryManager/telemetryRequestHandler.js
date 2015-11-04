@@ -13,6 +13,7 @@ module.exports = function TelemetryRequestHandler() {
 	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
 	var KYA = protoBuilder.build("KYA");
 	var Telemetry = KYA.Telemetry;
+	var GeoPoint = KYA.GeoPoint;
 	
 	var mUserID;
 	var mNotificationID;
@@ -22,7 +23,7 @@ module.exports = function TelemetryRequestHandler() {
 	/**
 	 * Call functions required to schedule the next request	
 	 */
-	this.handleTelemetry = function(telemetryDataBuffer) {
+	this.handleTelemetryData = function(telemetryDataBuffer) {
 		var telemetryRecord = Telemetry.decode(telemetryDataBuffer);
 		console.log('Telemetry record handle:')
 		console.log(telemetryRecord);

@@ -2,7 +2,7 @@
 *.log
 
 # test directory
-RuntimeServer/modules/RequestServer/test
+#RuntimeServer/modules/RequestServer/test
 
 # mongo data directory
 RuntimeServer/modules/RequestServer/data

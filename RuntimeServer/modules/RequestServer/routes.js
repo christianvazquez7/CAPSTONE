@@ -33,7 +33,7 @@ module.exports = function Route(app, handlers) {
 	
 	app.post('/telemetry/movement', bufferParser, handlers.handleMovement);
 
-	app.post('/threshold', handlers.setThreshold);
+	app.post('/threshold', bufferParser, handlers.setThreshold);
 	
 	// Error
 	app.use(function(req, res, next) {

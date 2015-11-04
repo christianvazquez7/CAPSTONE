@@ -72,15 +72,9 @@ module.exports = function RequestHandlers() {
 	this.handleCheckIn = function(req, res) {
 		logger.debug("POST --> Checkin handle");
 		var locationData = req.body;
-		mLocationHandler.handleRequest(locationData, function(err, result) {
-			if (err) {
-				res.statusCode = 404;
-				logger.error(err);
-			}
-			else {
-				res.send(result);
-				// logger.info('Checkin result --> ', result);
-			}
+		mLocationHandler.handleRequest(locationData, function(result) {
+			res.send(result);
+			// logger.info('Checkin result --> ', result);
 		});
 	}
 
@@ -95,7 +89,7 @@ module.exports = function RequestHandlers() {
 	this.handleHeartBeat = function(req, res) {
 		logger.debug("POST --> Heartbeat handle");
 		var telemetryData = req.body;
-		mTelemetryHandler.handleTelemetry(telemetryData);
+		mTelemetryHandler.handleTelemetryData(telemetryData);
 		res.send('SUCCESS');
 	}
 
@@ -110,7 +104,7 @@ module.exports = function RequestHandlers() {
 	this.handleSurvey = function(req, res) {
 		logger.debug("POST --> Survey handle");
 		var telemetryData = req.body;
-		mTelemetryHandler.handleTelemetry(telemetryData);
+		mTelemetryHandler.handleTelemetryData(telemetryData);
 		res.send('SUCCESS');
 	}
 	
@@ -125,7 +119,7 @@ module.exports = function RequestHandlers() {
 	this.handleMovement = function(req, res) {
 		logger.debug("POST --> Movement handle");
 		var telemetryData = req.body;
-		mTelemetryHandler.handleMovement(telemetryData);
+		mTelemetryHandler.handleMovementData(telemetryData);
 		res.send('SUCCESS');
 	}
 
@@ -168,10 +162,16 @@ module.exports = function RequestHandlers() {
 
 	this.setThreshold = function(req, res) {
 		logger.debug("POST --> Threshold handle");
-		threshold = req.query.threshold;
-		mDashboardHandler.setThreshold(threshold, function(result){
-			res.send(result);
+		threshold = req.body;
+		mDashboardHandler.setThreshold(threshold, function(err, result){
+			if (err) {
+				res.statusCode = 400;
+				res.send(err);
+			}
+			else {
+				res.sendStatus(result);
 				// logger.info('Threshold result --> ', result);
+			}
 		});
 	}
 
