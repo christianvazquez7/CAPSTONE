@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.util.concurrent.ExecutionException;
 
@@ -40,17 +41,43 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "CurrentZoneFragment";
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mBackgroundView.setBackgroundColor(getResources().getColor(R.color.level2));
-                    loading.setVisibility(View.GONE);
-                    content.setVisibility(View.VISIBLE);
+                    byte[] serialData = intent.getByteArrayExtra("PROTO");
+                    KYA.GeoZone zone = null;
+                    try {
+                        zone = KYA.GeoZone.parseFrom(serialData);
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e(TAG,e.getMessage());
+                    }
+                    if(zone != null) {
+                        mBackgroundView.setBackgroundColor(getResources().getColor(getColorByLevel(zone.getClassification())));
+                        mAreaRatingTextView.setText(""+ zone.getClassification());
+                        loading.setVisibility(View.GONE);
+                        content.setVisibility(View.VISIBLE);
+                    }
                 }
             });
         }
     };
+
+    public static int getColorByLevel(int level) {
+        switch (level) {
+            case 1: return R.color.level1;
+            case 2: return R.color.level2;
+            case 3: return R.color.level3;
+            case 4: return R.color.level4;
+            case 5: return R.color.level5;
+            case 6: return R.color.level6;
+            case 7: return R.color.level7;
+            case 8: return R.color.level8;
+            case 9: return R.color.level9;
+            case 10: return R.color.level10;
+            default: return R.color.level1;
+        }
+    }
 
 
     @Override

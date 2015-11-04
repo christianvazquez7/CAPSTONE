@@ -176,7 +176,7 @@ public class MessageService extends WearableListenerService {
     private void fetchZone(RequestManager manager, byte[] body) {
         manager.getCurrentZone(body, new Response.Listener<byte[]>() {
             @Override
-            public void onResponse(byte[] response) {
+            public void onResponse(final byte[] response) {
                 Log.d(TAG,"Got server response for current-zone...");
                 HandlerThread handlerThread = new HandlerThread("SensorHandlerThread");
                 handlerThread.start();
@@ -186,7 +186,7 @@ public class MessageService extends WearableListenerService {
                     public void run() {
                         Log.d("TAG","Sending current zone to wear");
                         WearInterface wInterface = WearInterface.getInstance(MessageService.this);
-                        wInterface.sendResponseGetZone(new byte[1]);
+                        wInterface.sendResponseGetZone(response);
                         Log.d("TAG","Sent current zone to wear");
                     }
                 });

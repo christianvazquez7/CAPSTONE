@@ -279,7 +279,7 @@ public class KYANotificationService extends Service {
         boolean doSurvey = response.getRequestFeedback();
         double crimeRate = 45.4; //TODO: Fetch param from proto.
         boolean enabled = preferences.getBoolean(MUTE_PREFERENCE,true);
-        int prevZone = response.getLastLevel();
+        int prevZone =  preferences.getInt(CURRENT_ZONE_PREFERENCE,1);
         int threshold = preferences.getInt(THRESHOLD_PREFERENCE,1);
         preferences.edit().putInt(CURRENT_ZONE_PREFERENCE,currentZone).commit();
         mAlarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
