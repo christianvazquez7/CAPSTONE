@@ -17,7 +17,7 @@ var location =
 };
 
 var LocObj = new GeoPoint(tUserID, location.latitude, location.longitude);
-var speed = 9;
+var speed = 1.7;
 var checkIn = new CheckIn(tUserID,LocObj,speed);
 
 var checkInBuffer = checkIn.encode();

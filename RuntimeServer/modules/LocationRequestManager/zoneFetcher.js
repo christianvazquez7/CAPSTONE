@@ -40,12 +40,11 @@ module.exports = function ZoneFetcher() {
 			container = getPolygon(locationGeoJSON, numRings, mZoneSize);		
 		}
 		else{
-			throw "Cannot fetch more than 1 ring";
+			zonesCallback(new Error("Cannot fetch more than 1 ring"));
 		}
 
 		connectToDB(url, function(err, db) {			
-  			if(err) throw err;
-  			console.log("Connection successful");
+  			if(err) zonesCallback(err);
   			findZones(db, container, zonesCallback);
 		});
 	};
@@ -75,7 +74,7 @@ module.exports = function ZoneFetcher() {
      			}
      		}
   		}).toArray(function(err,result){
-				if(err) throw err;
+				if(err) callback(err);
 				result.sort(function(a, b) {
     				// Sort by latitude decreasing
     				var dLat = parseFloat(b.loc.coordinates[0][0][1]) - parseFloat(a.loc.coordinates[0][0][1]);
@@ -84,9 +83,9 @@ module.exports = function ZoneFetcher() {
     				// If there is a tie, sort by longitude increasing
     				var dLon = parseFloat(a.loc.coordinates[0][0][0]) - parseFloat(b.loc.coordinates[0][0][0]);
     				return dLon;
-					});				
+				});				
 				db.close();
-				callback(result);
+				callback(null, result);
 				});
   	};
 	

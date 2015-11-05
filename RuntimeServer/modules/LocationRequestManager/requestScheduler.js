@@ -53,21 +53,27 @@ module.exports = function RequestScheduler() {
 	 *
 	 * @param currentGeoZone: Object containing the current geo-zone.
 	 */	
-	zonesFetchingCallback = function onZonesFetched(geoZones) {
+	zonesFetchingCallback = function onZonesFetched(error, geoZones) {
+		/* Testing
 		console.log("Zones fetched");
 		console.log(geoZones);
 		console.log("Zones fetched latitudes");
 		for(var i = 0; i < geoZones.length; i++){
 			console.log("Lat: " + geoZones[i].loc.coordinates[0][0][1] + "   Lon: " + geoZones[i].loc.coordinates[0][0][0]);
 		}
+		*/
+		if(error) mResponseCallback(error);
+
 		/*Analyze zone to obtain the time to schedule the next location request*/
 	 	var locationGeoJSON = turf.point([mCheckIn.location.longitude, mCheckIn.location.latitude]);	
 		
-		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON,geoZones);
+		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON,geoZones, function (err){ 
+			mResponseCallback(err)
+		});
 
 		analyzer.getCurrentZone(locationGeoJSON,geoZones, function (currentZone){
 			var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag); 
-			mResponseCallback(response);
+			mResponseCallback(null, response);
 		});
 	};	
 };

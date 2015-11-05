@@ -1,7 +1,7 @@
 var ResponseBuilder = require('../responseBuilder.js');
 
 var ProtoBuf = require("../../../node_modules/protobufjs");
-var assert = require('chai').assert;
+var expect = require('chai').expect;
 
 //TODO: Check path 
 var builder = ProtoBuf.loadProtoFile('C:/Users/LuisR/Documents/GitHub/CAPSTONE/RuntimeServer/resources/kya.proto');
@@ -45,7 +45,7 @@ var resBuilder = new ResponseBuilder();
 describe('Response Builder', function() {
   describe('#build()', function () {
     it('should return encoded message', function () {
-		assert.deepEqual(responseMessage, resBuilder.build(currentZone, nextRequestTime, surveyFlag));
+		expect(responseMessage).to.eql(resBuilder.build(currentZone, nextRequestTime, surveyFlag));
     });
   });
 });

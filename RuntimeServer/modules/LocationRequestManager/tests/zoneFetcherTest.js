@@ -5,58 +5,387 @@ var ZoneFetcher = require('../zoneFetcher.js');
 var fetcherTest = new ZoneFetcher();
 var location = 
 {
-	/*longitude: -67.297,
-	latitude: 18.0025*/
-	longitude: -66.164,
-	latitude: 18.408
+  NWCorner : { 
+      longitude: -67.30,
+      latitude: 18.537
+  },
+	WBound : { 
+      longitude: -67.30,
+      latitude: 18.408
+  },
+  SWCorner : { 
+      longitude: -67.30,
+      latitude: 17.919
+  },
+  NBound : { 
+      longitude: -66,
+      latitude: 18.537
+  },
+	Center : {
+    longitude: -66.164,
+	   latitude: 18.408
+  },
+  SBound : { 
+      longitude: -66,
+      latitude: 17.919
+  },
+  NECorner : { 
+      longitude: -65.177,
+      latitude: 18.537
+  },
+  EBound : { 
+      longitude: -65.177,
+      latitude: 18.2
+  },
+  SECorner : { 
+      longitude: -65.177,
+      latitude: 17.919
+  }
 };
+
+
 var numRings = 1;
 
-//Node testing
+//Node test
 /*
-fetcherTest.fetchByLocation(location, numRings, function(result){
+fetcherTest.fetchByLocation(location.NWCorner, numRings, function(err, result){
         zones = result;
-        console.log(zones[1].loc.coordinates[0][0][0]);
+        for(var i = 0; i<zones.length; i++){
+          zones[i].totalCrime Math.floor((Math.random() * 10) + 1); = 
+        }
+        console.log(zones);
 });
 */
 
-
-//TODO: Object with possible locations (NBound, WBound, NECorners...);
 /*---------------------------------------------------------------------------------*/
 /* Zone fetcher Mocha test */
 
 describe('Zone Fetcher', function() {
+  this.timeout(5000);
+  
   describe('#fetchByLocation(location, numRings, zonesCallback)', function () {
-  	var zones = [];
-    it('should connect succesfully to database' , function () {
-    	fetcherTest.fetchByLocation(location, numRings, function(result){
-			   done();					
-		  });	
-    });    
-    it('should fetch correct number of zones from location: [' + location.latitude + ', ' + location.longitude + ']' , function () {
-    	fetcherTest.fetchByLocation(location, numRings, function(result){
-        zones = result;
-        expect(zones).to.be.an('array');
-        expect(zones).to.have.length(9);
+  	it('should connect succesfully to database' , function (done) {
+           fetcherTest.fetchByLocation(location.Center, numRings, function(err, result){
+           expect(err).to.be.null;
+           expect(result).to.exist;
+           done();          
+        }); 
+      });    
+
+    describe('Center location (Non-boundary)', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+      	fetcherTest.fetchByLocation(location.Center, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(9);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.Center, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          expect(zones[1].loc.coordinates[0][0][0]).to.be.lessThan(zones[2].loc.coordinates[0][0][0]);
+          expect(zones[2].loc.coordinates[0][0][1]).to.be.greaterThan(zones[3].loc.coordinates[0][0][1]);
+
+          expect(zones[3].loc.coordinates[0][0][0]).to.be.equal(zones[0].loc.coordinates[0][0][0]);
+
+          expect(zones[3].loc.coordinates[0][0][0]).to.be.lessThan(zones[4].loc.coordinates[0][0][0]);
+          expect(zones[4].loc.coordinates[0][0][0]).to.be.lessThan(zones[5].loc.coordinates[0][0][0]);
+          expect(zones[5].loc.coordinates[0][0][1]).to.be.greaterThan(zones[6].loc.coordinates[0][0][1]);
+
+          expect(zones[6].loc.coordinates[0][0][0]).to.be.equal(zones[3].loc.coordinates[0][0][0]);
+
+          expect(zones[6].loc.coordinates[0][0][0]).to.be.lessThan(zones[7].loc.coordinates[0][0][0]);
+          expect(zones[7].loc.coordinates[0][0][0]).to.be.lessThan(zones[8].loc.coordinates[0][0][0]);
+
+          done();
+        });
       });
     });
-    it('should sort the zones correctly' , function () {
-      fetcherTest.fetchByLocation(location, numRings, function(result){
-        zones = result;
-        expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
-        expect(zones[1].loc.coordinates[0][0][0]).to.be.lessThan(zones[2].loc.coordinates[0][0][0]);
-        expect(zones[2].loc.coordinates[0][0][1]).to.be.greaterThan(zones[3].loc.coordinates[0][0][1]);
+    
+    describe('NW corner location ', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+        fetcherTest.fetchByLocation(location.NWCorner, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
 
-        expect(zones[3].loc.coordinates[0][0][0]).to.be.equal(zones[0].loc.coordinates[0][0][0]);
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(4);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.NWCorner, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
 
-        expect(zones[3].loc.coordinates[0][0][0]).to.be.lessThan(zones[4].loc.coordinates[0][0][0]);
-        expect(zones[4].loc.coordinates[0][0][0]).to.be.lessThan(zones[5].loc.coordinates[0][0][0]);
-        expect(zones[5].loc.coordinates[0][0][1]).to.be.greaterThan(zones[6].loc.coordinates[0][0][1]);
+          zones = result;
 
-        expect(zones[6].loc.coordinates[0][0][0]).to.be.equal(zones[3].loc.coordinates[0][0][0]);
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          expect(zones[1].loc.coordinates[0][0][1]).to.be.greaterThan(zones[2].loc.coordinates[0][0][1]);
 
-        expect(zones[6].loc.coordinates[0][0][0]).to.be.lessThan(zones[7].loc.coordinates[0][0][0]);
-        expect(zones[7].loc.coordinates[0][0][0]).to.be.lessThan(zones[8].loc.coordinates[0][0][0]);
+          expect(zones[2].loc.coordinates[0][0][0]).to.be.lessThan(zones[3].loc.coordinates[0][0][0]);
+          expect(zones[3].loc.coordinates[0][0][1]).to.be.lessThan(zones[1].loc.coordinates[0][0][1]);
+          
+          done();
+        });
+      });
+    });
+
+    describe('NE corner location ', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+        fetcherTest.fetchByLocation(location.NECorner, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(4);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.NECorner, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          expect(zones[1].loc.coordinates[0][0][1]).to.be.greaterThan(zones[2].loc.coordinates[0][0][1]);
+
+          expect(zones[2].loc.coordinates[0][0][0]).to.be.lessThan(zones[3].loc.coordinates[0][0][0]);
+          expect(zones[3].loc.coordinates[0][0][1]).to.be.lessThan(zones[1].loc.coordinates[0][0][1]);
+          
+          done();
+        });
+      });
+    });
+
+    describe('SW corner location ', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+        fetcherTest.fetchByLocation(location.SWCorner, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(4);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.SWCorner, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          expect(zones[1].loc.coordinates[0][0][1]).to.be.greaterThan(zones[2].loc.coordinates[0][0][1]);
+
+          expect(zones[2].loc.coordinates[0][0][0]).to.be.lessThan(zones[3].loc.coordinates[0][0][0]);
+          expect(zones[3].loc.coordinates[0][0][1]).to.be.lessThan(zones[1].loc.coordinates[0][0][1]);
+          
+          done();
+        });
+      });
+    });
+
+    describe('SE corner location ', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+        fetcherTest.fetchByLocation(location.SECorner, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(4);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.SECorner, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          expect(zones[1].loc.coordinates[0][0][1]).to.be.greaterThan(zones[2].loc.coordinates[0][0][1]);
+
+          expect(zones[2].loc.coordinates[0][0][0]).to.be.lessThan(zones[3].loc.coordinates[0][0][0]);
+          expect(zones[3].loc.coordinates[0][0][1]).to.be.lessThan(zones[1].loc.coordinates[0][0][1]);
+          
+          done();
+        });
+      });
+    });
+
+    describe('N bound location ', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+        fetcherTest.fetchByLocation(location.NBound, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(6);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.NBound, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          expect(zones[1].loc.coordinates[0][0][0]).to.be.lessThan(zones[2].loc.coordinates[0][0][0]);
+          
+          expect(zones[2].loc.coordinates[0][0][1]).to.be.greaterThan(zones[3].loc.coordinates[0][0][1]);
+
+          expect(zones[3].loc.coordinates[0][0][0]).to.be.lessThan(zones[4].loc.coordinates[0][0][0]);
+          expect(zones[4].loc.coordinates[0][0][0]).to.be.lessThan(zones[5].loc.coordinates[0][0][0]);
+
+          expect(zones[5].loc.coordinates[0][0][1]).to.be.lessThan(zones[0].loc.coordinates[0][0][1]);
+          
+          done();
+        });
+      });
+    });
+    
+    describe('S bound location ', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+        fetcherTest.fetchByLocation(location.SBound, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(6);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.SBound, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          expect(zones[1].loc.coordinates[0][0][0]).to.be.lessThan(zones[2].loc.coordinates[0][0][0]);
+          
+          expect(zones[2].loc.coordinates[0][0][1]).to.be.greaterThan(zones[3].loc.coordinates[0][0][1]);
+
+          expect(zones[3].loc.coordinates[0][0][0]).to.be.lessThan(zones[4].loc.coordinates[0][0][0]);
+          expect(zones[4].loc.coordinates[0][0][0]).to.be.lessThan(zones[5].loc.coordinates[0][0][0]);
+
+          expect(zones[5].loc.coordinates[0][0][1]).to.be.lessThan(zones[0].loc.coordinates[0][0][1]);
+          
+          done();
+        });
+      });
+    });
+    
+    describe('E bound location ', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+        fetcherTest.fetchByLocation(location.EBound, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(6);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.EBound, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          
+          expect(zones[1].loc.coordinates[0][0][1]).to.be.greaterThan(zones[2].loc.coordinates[0][0][1]);
+          
+          expect(zones[2].loc.coordinates[0][0][0]).to.be.lessThan(zones[3].loc.coordinates[0][0][0]);
+          
+          expect(zones[3].loc.coordinates[0][0][1]).to.be.greaterThan(zones[4].loc.coordinates[0][0][1]);
+
+          expect(zones[4].loc.coordinates[0][0][0]).to.be.lessThan(zones[5].loc.coordinates[0][0][0]);
+
+          expect(zones[5].loc.coordinates[0][0][1]).to.be.lessThan(zones[0].loc.coordinates[0][0][1]);
+          
+          done();
+        });
+      });
+    });
+  
+    describe('W bound location ', function () {
+      var zones = [];      
+      it('should fetch correct number of zones' , function (done) {
+        fetcherTest.fetchByLocation(location.WBound, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+          
+          expect(zones).to.be.an('array');
+          expect(zones).to.have.length(6);
+          done();
+        });
+      });
+      it('should sort the zones correctly' , function (done) {
+        fetcherTest.fetchByLocation(location.WBound, numRings, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+
+          zones = result;
+
+          expect(zones[0].loc.coordinates[0][0][0]).to.be.lessThan(zones[1].loc.coordinates[0][0][0]);
+          
+          expect(zones[1].loc.coordinates[0][0][1]).to.be.greaterThan(zones[2].loc.coordinates[0][0][1]);
+          
+          expect(zones[2].loc.coordinates[0][0][0]).to.be.lessThan(zones[3].loc.coordinates[0][0][0]);
+          
+          expect(zones[3].loc.coordinates[0][0][1]).to.be.greaterThan(zones[4].loc.coordinates[0][0][1]);
+
+          expect(zones[4].loc.coordinates[0][0][0]).to.be.lessThan(zones[5].loc.coordinates[0][0][0]);
+
+          expect(zones[5].loc.coordinates[0][0][1]).to.be.lessThan(zones[0].loc.coordinates[0][0][1]);
+          
+          done();
+        });
       });
     });
   });
