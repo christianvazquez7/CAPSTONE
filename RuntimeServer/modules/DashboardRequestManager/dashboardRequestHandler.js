@@ -25,7 +25,8 @@ module.exports = function DashboardRequestHandler() {
 	var gridController;
 
 	// URL for Mondo db 
-	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/Geozone';
+	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';
+	// var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/ChicagoGeozone';
 	// var url = 'mongodb://localhost:27017/Geozone';
 	
 	/**
@@ -58,31 +59,29 @@ module.exports = function DashboardRequestHandler() {
 					else if (result.length) {
 						maxCrime = result[0].totalCrime;
 						logger.info('Max crimes: ', maxCrime);
-						// collection.find().sort({"totalCrime":1}).limit(1).toArray(function (err, result) 
-						// {
-							// if (err) {
-							// 	logger.error(err);
-							// }
-							// else if (result.length) {
-							// 	minCrime = result[0].totalCrime;
-							// 	logger.info('Min crimes: ', minCrime);
-							// 	collection.aggregate([{$group: {_id:null, crimeAverage: {$avg:"$totalCrime"} } }]).toArray(function (err, result)
-							// 	{
-							// 		if (err) {
-							// 			logger.error(err);
-							// 		}
-							// 		else if (result.length) {
-							// 			crimeAverage = result[0].crimeAverage;
-							// 			logger.info('Crime rate: ', crimeAverage);
-							// 			db.close();                    
-							// 			var result = encodeStats(maxCrime, minCrime, crimeAverage);
-							// 			callback(err, result)
-							// 		}
-							// 	});
-							// }
-							var result = encodeStats(0, 0, 0);
-							callback(err, result)
-						// });
+						collection.find().sort({"totalCrime":1}).limit(1).toArray(function (err, result) 
+						{
+							if (err) {
+								logger.error(err);
+							}
+							else if (result.length) {
+								minCrime = result[0].totalCrime;
+								logger.info('Min crimes: ', minCrime);
+								collection.aggregate([{$group: {_id:null, crimeAverage: {$avg:"$totalCrime"} } }]).toArray(function (err, result)
+								{
+									if (err) {
+										logger.error(err);
+									}
+									else if (result.length) {
+										crimeAverage = result[0].crimeAverage;
+										logger.info('Crime rate: ', crimeAverage);
+										db.close();                    
+										var result = encodeStats(maxCrime, minCrime, crimeAverage);
+										callback(err, result)
+									}
+								});
+							}
+						});
 					}
 					else {
 						logger.error('No document(s) found with defined "find" criteria!');
@@ -92,7 +91,7 @@ module.exports = function DashboardRequestHandler() {
 			}
 		});
 	};
-	
+
 	/**
 	 * Fetch the zones from KYA DB.
 	 *
