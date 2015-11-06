@@ -142,7 +142,7 @@ hr.divider {
 /* 	text-align: center; */
  	width: 250px;
  	vertical-align: middle;
- 	padding-top: 20%;
+ 	padding-top: 15%;
 }
 
 #kya-story-text h1  {
@@ -443,8 +443,8 @@ em {
 
 #loading-img {
 	height: 450px;
-/* 	background: #DDDDD5 url(../images/loading2.gif) no-repeat center center; */
-	background: #DDDDD5 url(../images/loading3.gif) no-repeat center center;
+	background: #FFFFFF url(../images/loading2.gif) no-repeat center center;
+/* 	background: #DDDDD5 url(../images/loading3.gif) no-repeat center center; */
 
 }
 
