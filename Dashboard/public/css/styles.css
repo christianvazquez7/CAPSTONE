@@ -453,9 +453,9 @@ em {
   position:absolute;
   width: 200px;
   height: 120px;
-  top:10px;  /* adjust value accordingly */
-  left: 10px;  /* adjust value accordingly */
-  border: solid 6px #FFFFFF;
+  top:2px;  /* adjust value accordingly */
+  left: 2px;  /* adjust value accordingly */
+  border: solid 2px #2E8BAB;
 }
 
 

@@ -24,8 +24,8 @@ module.exports = function DashboardRequestHandler() {
 	var gridController;
 
 	// URL for Mondo db 
-	// var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/Geozone';
-	var url = 'mongodb://localhost:27017/Geozone';
+	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/Geozone';
+	// var url = 'mongodb://localhost:27017/Geozone';
 	
 	/**
 	 * Fetch the current crime statistics from KYA DB.
