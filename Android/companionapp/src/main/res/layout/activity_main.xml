@@ -8,5 +8,11 @@
         android:gravity="center" android:layout_centerInParent="true" android:text="Messages" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="34dp"/>
+    <Button
+        android:id="@+id/http"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:text="HTTP"/>
 
 </RelativeLayout>
