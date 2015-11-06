@@ -10,7 +10,8 @@ var map,
 	infoWindow,
 	instrWindow,
 	initialZoom,
-	minimumZoom;
+	minimumZoom,
+	maximumZoom;
 
 var backControlDiv,
 	zoomControlDiv;
@@ -43,6 +44,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 	swPoint = swPoint_;
 	nePoint = nePoint_;
 	initialZoom = minimumZoom = 9;
+	maximumZoom = 19;
 
 	map = new google.maps.Map(document.getElementById('googleMap'), {
 		zoom: initialZoom,
@@ -50,6 +52,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 		mapTypeControl: false,
 		streetViewControl: false,
 		scrollwheel: false,
+		disableDoubleClickZoom: true,
 		center: mapLoc
 	});
 
@@ -157,7 +160,11 @@ this.zoomControl = function(zoomInButton, zoomOutButton) {
 
 	// Listener for zoomIn
 	google.maps.event.addDomListener(zoomInButton, 'click', function() {
-		map.setZoom(map.getZoom() + 1);
+		var currentZoom = map.getZoom();
+		if (currentZoom >= maximumZoom)
+			map.setZoom(map.getZoom());
+		else
+			map.setZoom(map.getZoom() + 1);
 	});
 
 	// Listener for zoomOut
@@ -273,6 +280,8 @@ this.addMapViewer = function() {
 		mapTypeControl: false,
 		streetViewControl: false,
 		scrollwheel: false,
+		disableDoubleClickZoom: true,
+		draggable: false,
 		center: mapLoc
 	});
 	mapMarker = new google.maps.Marker({

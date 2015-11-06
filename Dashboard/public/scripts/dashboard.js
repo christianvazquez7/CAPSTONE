@@ -102,9 +102,9 @@ this.onMapDrag = function() {
 		drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
     }
     else if (currentArea == thresholdArea) {
-    	map.setZoom(map.getZoom() - 1);
+    	map.setZoom(map.getZoom() - 2);
     	newBounds = map.getBounds();
-    	map.setZoom(map.getZoom() + 1);
+    	map.setZoom(map.getZoom() + 2);
     	clearZones();
     	requestZones(newBounds);
     }
