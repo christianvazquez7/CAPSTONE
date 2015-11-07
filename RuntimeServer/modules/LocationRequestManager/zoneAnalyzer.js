@@ -24,8 +24,8 @@ module.exports = function ZoneAnalyzer() {
 	 * @param nearbyHigherRiskZones: List of higher risk zones surrounding the current location
 	 * @return long containing time (in seconds) it will take to reach closest higher risk zone
 	 */
-	this.calculateTimeToHRZone = function(speed,locationGeoJSON, zonesToAnalyze, errCallback) {            
-            var mDistance = getDistance(locationGeoJSON, zonesToAnalyze, errCallback);
+	this.calculateTimeToHRZone = function(speed,locationGeoJSON, zonesToAnalyze, negDelta, errCallback) {            
+            var mDistance = getDistance(locationGeoJSON, zonesToAnalyze, negDelta, errCallback);
             return mDistance/speed;
 	};
 
@@ -42,7 +42,7 @@ module.exports = function ZoneAnalyzer() {
 	 function getCurrentZoneIndex(locationGeoJSON, zonesToAnalyze){
         for(var i = 0; i < zonesToAnalyze.length; i++){
             var poly = turf.polygon([zonesToAnalyze[i].loc.coordinates[0]]); 
-            if(turf.inside(locationGeoJSON,poly)) {
+            if(turf.inside(locationGeoJSON, poly)) {
                 return i;
             }
         }
@@ -55,7 +55,7 @@ module.exports = function ZoneAnalyzer() {
 	 * Calculates distance to closest higher risk zone
 	 * 
 	 */
-	function getDistance(locationGeoJSON,zonesToAnalyze, errorCallback){
+	function getDistance(locationGeoJSON,zonesToAnalyze, negDelta, errorCallback){
 
 		var tempDistance;
 
@@ -67,9 +67,9 @@ module.exports = function ZoneAnalyzer() {
         var currentZone = that.getCurrentZone(locationGeoJSON, zonesToAnalyze);
 
         if(zoneIndex == null)
-                    errorCallback(new Error('Index not found')); 
+            errorCallback(new Error('Index not found')); 
         if(currentZone == null)
-                    errorCallback(new Error('Zone not found')); 
+            errorCallback(new Error('Zone not found')); 
 
 		var zonesFetchedCount = zonesToAnalyze.length;
 
@@ -78,17 +78,17 @@ module.exports = function ZoneAnalyzer() {
 
     			case 0: /*Current zone is in the NW corner of the grid*/
         			//Calculate distance to closest HR zone E
-        			if(zonesToAnalyze[1].level > currentZone.level){
+        			if( (zonesToAnalyze[1].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[1].level != currentZone.level)) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[1], reference.E);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
         			//Calculate distance to closest HR zone S
-        			if(zonesToAnalyze[2].level > currentZone.level){
+        			if( (zonesToAnalyze[2].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[2].level != currentZone.level)) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[2], reference.S);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;
         			}
         			//Calculate distance to closest zone SE
-        			if(zonesToAnalyze[3].level > currentZone.level){
+        			if( (zonesToAnalyze[3].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[3].level != currentZone.level)) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[3], reference.SE);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;
         			}
@@ -96,17 +96,17 @@ module.exports = function ZoneAnalyzer() {
 
      			case 1: /*Current zone is in NE corner of the grid*/
 					//Calculate distance to closest zone W
-        			if(zonesToAnalyze[0].level > currentZone.level){
+        			if((zonesToAnalyze[0].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[0].level != currentZone.level)) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[0], reference.W);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
         			//Calculate distance to closest zone SW
-        			if(zonesToAnalyze[2].level > currentZone.level){
+        			if((zonesToAnalyze[2].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[2].level != currentZone.level)) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[2], reference.SW);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
         			//Calculate distance to closest zone S
-        			if(zonesToAnalyze[3].level > currentZone.level){
+        			if((zonesToAnalyze[3].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[3].level != currentZone.level)) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[3], reference.S);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
@@ -114,34 +114,34 @@ module.exports = function ZoneAnalyzer() {
      			
      			case 2: /*Current zone is in SW corner of the grid*/
            			//Calculate distance to closest zone N
-           			if(zonesToAnalyze[0].level > currentZone.level){
+           			if( (zonesToAnalyze[0].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[0].level != currentZone.level))  ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[0], reference.N);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
         			//Calculate distance to closest zone NE	
-        			if(zonesToAnalyze[1].level > currentZone.level){
+        			if( (zonesToAnalyze[1].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[1].level != currentZone.level)) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[1], reference.NE);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
         			//Calculate distance to closest zone E
-        			if(zonesToAnalyze[3].level > currentZone.level){
+        			if( (zonesToAnalyze[3].level > currentZone.level) || ((negDelta) && (zonesToAnalyze[3].level != currentZone.level)) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[3], reference.E);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
                     break;
         		case 3: /*Current zone is in SE corner of the grid*/
         			//Calculate distance to closest zone NW
-           			if(zonesToAnalyze[0].level > currentZone.level){
+           			if( (zonesToAnalyze[0].level > currentZone.level) || ( (negDelta) && (zonesToAnalyze[0].level != currentZone.level) ) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[0], reference.NW);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
         			//Calculate distance to closest zone N	
-        			if(zonesToAnalyze[1].level > currentZone.level){
+        			if( (zonesToAnalyze[1].level > currentZone.level) || ( (negDelta) && (zonesToAnalyze[1].level != currentZone.level) ) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[1], reference.N);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
         			//Calculate distance to closest zone W
-        			if(zonesToAnalyze[2].level > currentZone.level){
+        			if( (zonesToAnalyze[2].level > currentZone.level) || ( (negDelta) && (zonesToAnalyze[2].level != currentZone.level) ) ){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[2], reference.W);
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;
         			}
@@ -160,7 +160,7 @@ module.exports = function ZoneAnalyzer() {
     			case 1:
         			/*Current zone is in N border of the grid*/
         			for(tempIndex = 0, referenceIndex = 4; tempIndex < 6; tempIndex++, referenceIndex++){
-        				if(referenceIndex != reference.L && zonesToAnalyze[tempIndex].level > currentZone.level){
+        				if((referenceIndex != reference.L) && ( (zonesToAnalyze[tempIndex].level > currentZone.level) || (negDelta && (zonesToAnalyze[tempIndex].level != currentZone.level)))){
         					tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[tempIndex], referenceIndex);
         					shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;
         				}
@@ -169,7 +169,7 @@ module.exports = function ZoneAnalyzer() {
      			case 2:
         			/* Current zone is in W border of the grid */
         			for(tempIndex = 0, referenceIndex = 2; tempIndex < 6; tempIndex++, referenceIndex++){
-        				if(referenceIndex != reference.L && zonesToAnalyze[tempIndex].level > currentZone.level){        				
+        				if((referenceIndex != reference.L) && ( (zonesToAnalyze[tempIndex].level > currentZone.level) || (negDelta && (zonesToAnalyze[tempIndex].level != currentZone.level)))){        				
         					tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[tempIndex], referenceIndex);
         					shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         				}
@@ -181,7 +181,7 @@ module.exports = function ZoneAnalyzer() {
      			case 3:
         			/*Current zone is in E border of the grid*/
         			for(tempIndex = 0, referenceIndex = 1; tempIndex < 6; tempIndex++, referenceIndex++){
-        				if(referenceIndex != reference.L && zonesToAnalyze[tempIndex].level > currentZone.level){
+        				if((referenceIndex != reference.L) && ( (zonesToAnalyze[tempIndex].level > currentZone.level) || (negDelta && (zonesToAnalyze[tempIndex].level != currentZone.level)))){
         					tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[tempIndex], referenceIndex);
         					shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	      					        					
         				}
@@ -193,7 +193,7 @@ module.exports = function ZoneAnalyzer() {
         		case 4:
         			/*Current zone is in S border of the grid*/
         			for(tempIndex = 0, referenceIndex = 1; tempIndex < 6; tempIndex++, referenceIndex++){
-        				if(referenceIndex != reference.L && zonesToAnalyze[tempIndex].level > currentZone.level){        				
+        				if((referenceIndex != reference.L) && ( (zonesToAnalyze[tempIndex].level > currentZone.level) || (negDelta && (zonesToAnalyze[tempIndex].level != currentZone.level)))){        				
         					tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[tempIndex], referenceIndex);
         					shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;
         				}
@@ -206,7 +206,7 @@ module.exports = function ZoneAnalyzer() {
 		}
 		else if((zonesFetchedCount == 9) && (zoneIndex==4)){
 			for(tempIndex = 0, referenceIndex = 1; tempIndex < 9; tempIndex++, referenceIndex++){
-        		if(referenceIndex != reference.L && zonesToAnalyze[tempIndex].level > currentZone.level){        				
+        		if((referenceIndex != reference.L) && ( (zonesToAnalyze[tempIndex].level > currentZone.level) || (negDelta && (zonesToAnalyze[tempIndex].level != currentZone.level)))){        				
       				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[tempIndex], referenceIndex);
       				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;
    				}

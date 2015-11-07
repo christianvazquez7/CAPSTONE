@@ -23,7 +23,7 @@ var location =
 
 var LocObj = new GeoPoint('', location.latitude, location.longitude);
 var speed = 1.78;
-var negDelta = false;
+var negDelta = true;
 var checkIn = new CheckIn(tUserID,LocObj,speed,negDelta);
 
 var checkInBuffer = checkIn.encode();

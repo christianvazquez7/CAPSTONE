@@ -66,7 +66,7 @@ var currentLocationGeoJSON = {
 	SECorner : turf.point([location.SECorner.longitude, location.SECorner.latitude])
 }
 var speed = 1.78;
-
+var negDelta = true;
 var analyzer = new ZoneAnalyzer();
 
 console.log("Begin");
@@ -90,17 +90,18 @@ describe('Zone Analyzer', function() {
 		describe('Center location (Non-boundary)', function () {
 	    	it('should calculate time to reach closest higher risk zone' , function (done) {
 	    		testedFetcher.fetchByLocation(location.Center, numRings, function (err, zones){
-	    			var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.Center, zones, function (error){	
+	    			var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.Center, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.Center, numRings, function (err, zones){
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.Center, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.Center, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
@@ -117,20 +118,21 @@ describe('Zone Analyzer', function() {
 	    			for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NWCorner, zones, function (error){	
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NWCorner, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.NWCorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NWCorner, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NWCorner, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
@@ -147,20 +149,21 @@ describe('Zone Analyzer', function() {
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NECorner, zones, function (error){	
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NECorner, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.NECorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NECorner, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NECorner, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
@@ -177,20 +180,21 @@ describe('Zone Analyzer', function() {
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SWCorner, zones, function (error){	
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SWCorner, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.SWCorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SWCorner, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SWCorner, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
@@ -207,20 +211,21 @@ describe('Zone Analyzer', function() {
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SECorner, zones, function (error){	
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SECorner, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.SECorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SECorner, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SECorner, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
@@ -229,20 +234,22 @@ describe('Zone Analyzer', function() {
 				   	done();
 				});	
 	    	});
-	    	it("should return the default distance as no zones around have higer risk", function (done) {
+	    	if(!negDelta){
+	    		it("should return the default distance as no zones around have higer risk", function (done) {
 	    		testedFetcher.fetchByLocation(location.SECorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SECorner, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SECorner, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
 				   	var	maxDist = math.eval('sqrt(2 * ' + zoneSize + ' ^ 2)'); // in Km				   
-				   	expect(time*speed).be.within(zoneSize - 0.5,zoneSize + 0.5);
+				   	expect(time*speed).be.lowerThan(maxDist);
 				   	done();
-				});	
-	    	});
+					});	
+	    		});
+	    	}
 	    });
 
 	    describe('N bound location ', function () {
@@ -251,20 +258,21 @@ describe('Zone Analyzer', function() {
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NBound, zones, function (error){	
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NBound, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.NBound, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NBound, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.NBound, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
@@ -281,20 +289,21 @@ describe('Zone Analyzer', function() {
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SBound, zones, function (error){	
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SBound, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.SBound, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SBound, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.SBound, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
@@ -311,20 +320,21 @@ describe('Zone Analyzer', function() {
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.EBound, zones, function (error){	
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.EBound, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.EBound, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.EBound, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.EBound, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   
@@ -341,20 +351,21 @@ describe('Zone Analyzer', function() {
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.WBound, zones, function (error){	
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.WBound, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
 				   	console.log('\t Time to reach next zone: ' + time);
+				   	console.log('\t Distance to next zone: ' + time*speed);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones dimensions set", function (done) {
 	    		testedFetcher.fetchByLocation(location.WBound, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
         			}
-				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.WBound, zones, function (error){
+				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.WBound, zones, negDelta, function (error){
 				   		expect(error).to.be.null;	
 				   	});
 				   

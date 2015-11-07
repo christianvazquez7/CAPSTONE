@@ -59,7 +59,7 @@ module.exports = function RequestScheduler() {
 		/*Analyze zone to obtain the time to schedule the next location request*/
 	 	var locationGeoJSON = turf.point([mCheckIn.location.longitude, mCheckIn.location.latitude]);	
 		
-		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON,geoZones, function (err){ 
+		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON, geoZones, mCheckIn.negDelta, function (err){ 
 			mResponseCallback(err);
 		});
 
