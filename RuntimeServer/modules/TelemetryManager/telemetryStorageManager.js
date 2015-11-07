@@ -8,9 +8,11 @@ module.exports = function TelemetryStorageManager() {
 	 * Module imports.
 	 */
 	var pg = require('../../node_modules/pg');
- 
+  //Local
 	var conString = "postgres://postgres:kyateam@localhost:5432/KYA_SQL_DB";
- 
+  
+  //Remote
+  //var conString = "postgres://kyadb:CapstoneProject2015@postgresql-kya.cch3ie56ioks.us-west-2.rds.amazonaws.com:5432/KYA_SQL_DB"; 
 	var client = new pg.Client(conString);
 
 
