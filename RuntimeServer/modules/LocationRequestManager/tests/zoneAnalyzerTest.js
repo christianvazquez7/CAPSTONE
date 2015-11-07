@@ -94,11 +94,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.Center, numRings, function (err, zones){
 				   	var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.Center, zones, function (error){
 				   		expect(error).to.be.null;	
@@ -121,11 +121,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.NWCorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
@@ -151,11 +151,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.NECorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
@@ -181,11 +181,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.SWCorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
@@ -211,11 +211,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.SECorner, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
@@ -255,11 +255,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.NBound, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
@@ -285,11 +285,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.SBound, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
@@ -315,11 +315,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.EBound, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;
@@ -345,11 +345,11 @@ describe('Zone Analyzer', function() {
 				   		expect(error).to.be.null;
 				   	});
 				   	expect(time).to.be.greaterThan(0);
-				   	console.log(time);
+				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
 	    	});    
-	    	it("should calculate a distance shorter or equal to the zone's assigned dimensions", function (done) {
+	    	it("should calculate a distance <= to the zones assigned dimensions", function (done) {
 	    		testedFetcher.fetchByLocation(location.WBound, numRings, function (err, zones){
 				   	for(var i = 0; i<zones.length; i++){
           				zones[i].level = i+1;

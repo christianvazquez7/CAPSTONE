@@ -16,8 +16,7 @@ module.exports = function LocationRequestHandler() {
 	/**
 	 * Protobuffer message decoding variables
 	 */
-
-	//Check path 
+	//TODO: Check path 
 	var protoBuilder = ProtoBuf.loadProtoFile('C:/Users/LuisR/Documents/GitHub/CAPSTONE/RuntimeServer/resources/kya.proto');
 	var KYA = protoBuilder.build("KYA");
 	var CheckIn = KYA.CheckIn;

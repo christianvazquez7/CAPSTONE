@@ -30,10 +30,6 @@ module.exports = function ZoneAnalyzer() {
 	};
 
 	this.getCurrentZone = function(locationGeoJSON, zonesToAnalyze) {
-/*      console.log("--------------------------------------------------");
-        console.log("Location for index: " + JSON.stringify(locationGeoJSON));
-        console.log("--------------------------------------------------");
-*/
         for(var i = 0; i < zonesToAnalyze.length; i++){
             var poly = turf.polygon([zonesToAnalyze[i].loc.coordinates[0]]); 
             if(turf.inside(locationGeoJSON,poly)) {
@@ -133,8 +129,7 @@ module.exports = function ZoneAnalyzer() {
         				shortestDistance = tempDistance < shortestDistance ? tempDistance : shortestDistance;	
         			}
                     break;
-        		case 3:
-        			/*Current zone is in SE corner of the grid*/
+        		case 3: /*Current zone is in SE corner of the grid*/
         			//Calculate distance to closest zone NW
            			if(zonesToAnalyze[0].level > currentZone.level){
         				tempDistance = distanceToZone(locationGeoJSON, zonesToAnalyze[0], reference.NW);

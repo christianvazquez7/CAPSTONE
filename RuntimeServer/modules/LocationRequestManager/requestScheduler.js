@@ -15,12 +15,12 @@ module.exports = function RequestScheduler() {
 	var ZoneFetcher = require('./zoneFetcher.js');
 	var ZoneAnalyzer = require('./zoneAnalyzer.js');
 	var ResponseBuilder = require('./responseBuilder.js');
-
 	
 
 	//Admin provided
 	//Default = 1
 	var numberOfRingsToFetch = 1;
+	var probability = 50/100;
 
 	//TODO: Calculate
 	//Default = true
@@ -54,26 +54,22 @@ module.exports = function RequestScheduler() {
 	 * @param currentGeoZone: Object containing the current geo-zone.
 	 */	
 	zonesFetchingCallback = function onZonesFetched(error, geoZones) {
-		/* Testing
-		console.log("Zones fetched");
-		console.log(geoZones);
-		console.log("Zones fetched latitudes");
-		for(var i = 0; i < geoZones.length; i++){
-			console.log("Lat: " + geoZones[i].loc.coordinates[0][0][1] + "   Lon: " + geoZones[i].loc.coordinates[0][0][0]);
-		}
-		*/
 		if(error) mResponseCallback(error);
 
 		/*Analyze zone to obtain the time to schedule the next location request*/
 	 	var locationGeoJSON = turf.point([mCheckIn.location.longitude, mCheckIn.location.latitude]);	
 		
 		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON,geoZones, function (err){ 
-			mResponseCallback(err)
+			mResponseCallback(err);
 		});
 
-		analyzer.getCurrentZone(locationGeoJSON,geoZones, function (currentZone){
-			var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag); 
-			mResponseCallback(null, response);
-		});
+		var currentZone = analyzer.getCurrentZone(locationGeoJSON,geoZones);
+		if(currentZone == null) mResponseCallback(new Error("Zone not found"));
+		
+		surveyFlag = (Math.random() > probability);
+		
+		var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag); 
+		mResponseCallback(null, response);
+		
 	};	
 };

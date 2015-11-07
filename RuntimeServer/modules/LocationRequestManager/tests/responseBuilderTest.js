@@ -1,6 +1,6 @@
 var ResponseBuilder = require('../responseBuilder.js');
 
-var ProtoBuf = require("../../../node_modules/protobufjs");
+var ProtoBuf = require('protobufjs');
 var expect = require('chai').expect;
 
 //TODO: Check path 
@@ -13,9 +13,9 @@ var CheckInResponse = KYA.CheckInResponse,
 
 //Mock data
 var currentZone = {
-	_id: 10,
+	zone_id: 10,
 	level: 6,	
-	crimeRate: 190,
+	totalCrime: '190',
 	loc: 
 	{	
 		type:'Polygon',
@@ -34,7 +34,7 @@ var mockGeoPointsAr =
 	new GeoPoint('', 18, -67.29810938811335)
 ];
 
-var currentZoneMessage = new GeoZone("10", 6, 190, mockGeoPointsAr);
+var currentZoneMessage = new GeoZone(10, 6, '190', mockGeoPointsAr);
 var response = new CheckInResponse(currentZoneMessage,nextRequestTime,surveyFlag);
 var responseMessage = response.encode().toBuffer();
 

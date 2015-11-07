@@ -70,6 +70,10 @@ message CheckIn {
     // the most efficient request interval, along with the user distance from 
     // the closest risk zone increase.
     required double speed = 3;
+
+    // A flag to identify if the user is expecting notifications to be triggered
+    // when he/she moves from a higer risk zone to a lower risk zone.
+    required bool negDelta = 4;
 }
 
       
@@ -88,7 +92,7 @@ message CheckInResponse {
 message GeoZone {
 
     // Identifier of a zone
-    required string zoneID = 1;
+    required int32 zoneID = 1;
 
     // Risk zone classification for this particular area. This number will be
     // between 1 and 10. 
@@ -96,7 +100,7 @@ message GeoZone {
 
     // Crime rate for this particular GeoZone, for statistical purposes. This
     // information can be included as part of info in admin dashboard detail.
-    required double crimeRate = 3;
+    required string totalCrime = 3;
 
     // Boundaries of the classified zone. This will always contain exactly 
     // four GeoPoints.

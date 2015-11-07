@@ -1,6 +1,7 @@
 /**
- * This modules communicates with the database to find the current GeoZone where
- * the device is. It also fetches from the database a list of zones enclosed by two coordinates.
+ * This module communicates with the database to find the current GeoZone where
+ * the device is. It also fetches the zones around the current zone according to
+ * the number of rings requested
  */
  
 module.exports = function ZoneFetcher() {
@@ -20,14 +21,18 @@ module.exports = function ZoneFetcher() {
 	var mZoneSize = 200;
 	 
 	/**
-	 * From a given location it fetches the geo-zone that encloses it.
+	 * From a given location it fetches the geo-zone that it belongs to. 
+	 * A number of rings around the current zone can be assigned to fetch the zones
+	 * surrounding the current one. An input of 0 numRings will fetch only the current location.
 	 *
-	 * @param location: Point representing coordinates of current location of the device.
-	 * @param currentZoneCallback: Callback function called when the geoZone has been fetched.
-	 * @return True if a zone is found and successfully fetched, False otherwise.
+	 * @param location: GeoPoint object containing location to fecth the zone from.
+	 * @param numRings: Number of rings to fetch around the zone where the location belongs to.
+	 * @param zonesCallback: Callback to be called when the zones have been fetched.
+	 * 
 	 */
 	this.fetchByLocation = function(location, numRings, zonesCallback) {
 		var container;
+		
 		//Convert the location message to a GeoJSON for easier opeations on it
 		var locationGeoJSON = turf.point([location.longitude, location.latitude]);
 		
@@ -39,29 +44,47 @@ module.exports = function ZoneFetcher() {
 		else if (numRings == 1){
 			container = getPolygon(locationGeoJSON, numRings, mZoneSize);		
 		}
+		//Currently only supports only 0 or 1 rings around the current zone
 		else{
 			zonesCallback(new Error("Cannot fetch more than 1 ring"));
 		}
 
+		//Start connection to db
 		connectToDB(url, function(err, db) {			
   			if(err) zonesCallback(err);
   			findZones(db, container, zonesCallback);
 		});
 	};
 	
+	/**
+	 * Local method to handle database connection
+	 *
+	 * @param url: Database server url
+	 * @param callback: callback to return an instance of the data base or an error mesasage
+	 * 
+	 */
 	function connectToDB(url, callback){
+		//Connection to db
 		MongoClient.connect(url, function(err, db) {
   			callback(err,db);
 		});			
 	}
 
+	/**
+	 * Local method to query the database zone(s)
+	 *
+	 * @param db: An instance of the database to fetch the zones from
+	 * @param container: polygon container used for fetching rings around the current zone.
+	 * @param callback: Callback to be called when the zones have been fetched.
+	 * 
+	 */
 	function findZones(db, container, callback){
   		
   		// Get the documents collection 
   		var collection = db.collection('Geozone');
   		// Find some documents 
   		
-  		//Variable to store db result
+  		//Query zones and sort them by ascending longitude and descending latitude
 		collection.find(
   		{	
   			loc: 
@@ -76,11 +99,11 @@ module.exports = function ZoneFetcher() {
   		}).toArray(function(err,result){
 				if(err) callback(err);
 				result.sort(function(a, b) {
-    				// Sort by latitude decreasing
+    				// Sort by latitude decsencding
     				var dLat = parseFloat(b.loc.coordinates[0][0][1]) - parseFloat(a.loc.coordinates[0][0][1]);
     				if(dLat) return dLat;
 
-    				// If there is a tie, sort by longitude increasing
+    				// If there is a tie, sort by longitude ascending
     				var dLon = parseFloat(a.loc.coordinates[0][0][0]) - parseFloat(b.loc.coordinates[0][0][0]);
     				return dLon;
 				});				
@@ -89,22 +112,28 @@ module.exports = function ZoneFetcher() {
 				});
   	};
 	
-	
+	/**
+	 * Generates polygon geojson used to fetch multiple zones from the database
+	 *
+	 * @param locationGeoJSON: GeoJSON object containing location to build the polygon around
+	 * @param numRings: Number of rings to calculate area of the polygon
+	 * @param zoneSize: Geozone size assigned to build the grid
+	 * 
+	 * @return polygon: polygon geojson to fetch zones
+	 */
 	function getPolygon(locationGeoJSON, numRings, zoneSize){
 		
-		//console.log('Fetching from location: ' + locationGeoJSON.geometry.coordinates);
-		
-		/*	
-		 *  Calculates hypotenuse to generate polygon depending on number of rings requestd and the size
-		 *	of the grid tiles containging the geozones.
-		 */
+			
+		//Calculates hypotenuse to generate polygon depending on number of rings requestd and the size
+		//of the grid tiles containging the geozones.
 		var	distanceFromCenter = math.eval('sqrt(2 * ' + numRings*zoneSize + ' ^ 2)')/1000; // in Km
 
-		//Finds the for corners of the polygon to be created
+		//Finds the four corners of the polygon to be created
 		var NW = turf.destination(locationGeoJSON,distanceFromCenter , -45 ,'kilometers').geometry.coordinates,
 			NE = turf.destination(locationGeoJSON,distanceFromCenter , 45 ,'kilometers').geometry.coordinates,
 			SE = turf.destination(locationGeoJSON,distanceFromCenter , 135 ,'kilometers').geometry.coordinates,
 			SW = turf.destination(locationGeoJSON,distanceFromCenter , -135 ,'kilometers').geometry.coordinates;
+		//Creates polygon using turf library
 		var polygon = turf.polygon([[SW,NW,NE,SE,SW]]);
 
 		return polygon;
