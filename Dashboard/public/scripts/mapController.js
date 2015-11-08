@@ -65,6 +65,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
   	onHover();	// Listen for hover events
   	onDrag(dragCallback);	// Listen for hover events
 	styleMap(); // Add some style to the map
+	boundsControl(swPoint, nePoint);
 	backButtonControl(backButtonCallback);
 	zoomButtonControl(zoomOutCallback);
 };
@@ -174,6 +175,41 @@ this.zoomControl = function(zoomInButton, zoomOutButton, callback) {
 		callback();
 	});  
 };
+
+this.boundsControl = function(swPoint, nePoint) {
+	// Bounds of the desired area
+	var allowedBounds = new google.maps.LatLngBounds(
+		swPoint,
+		nePoint
+		);
+	var boundLimits = {
+		maxLat : allowedBounds.getNorthEast().lat(),
+		maxLng : allowedBounds.getNorthEast().lng(),
+		minLat : allowedBounds.getSouthWest().lat(),
+		minLng : allowedBounds.getSouthWest().lng()
+	};
+
+	var lastValidCenter = map.getCenter();
+	var newLat, newLng;
+
+	google.maps.event.addListener(map, 'center_changed', function() {
+		center = map.getCenter();
+		if (allowedBounds.contains(center)) {
+			// still within valid bounds, so save the last valid position
+			lastValidCenter = map.getCenter();
+			return;
+		}
+		newLat = lastValidCenter.lat();
+		newLng = lastValidCenter.lng();
+		if(center.lng() > boundLimits.minLng && center.lng() < boundLimits.maxLng){
+			newLng = center.lng();
+		}
+		if(center.lat() > boundLimits.minLat && center.lat() < boundLimits.maxLat){
+			newLat = center.lat();
+		}
+		map.panTo(new google.maps.LatLng(newLat, newLng));
+	});
+}
 
 /**
  * Function to be called when the user hovers over the grids.
