@@ -39,6 +39,7 @@ var response = new CheckInResponse(currentZoneMessage,nextRequestTime,surveyFlag
 var responseMessage = response.encode().toBuffer();
 
 var resBuilder = new ResponseBuilder();
+
 /*----------------------------------------------------------------------------------------------------------------------------------------*/
 //Module test
 

@@ -49,6 +49,10 @@ var location =
     SECorner : { 
       	longitude: -65.176,
       	latitude: 17.919
+    },
+    Outside : {
+    	longitude: -60,
+    	latitude: 17
     }
 };
 
@@ -63,7 +67,8 @@ var currentLocationGeoJSON = {
 	SBound : turf.point([location.SBound.longitude, location.SBound.latitude]),
 	NECorner : turf.point([location.NECorner.longitude, location.NECorner.latitude]),
 	EBound : turf.point([location.EBound.longitude, location.EBound.latitude]),
-	SECorner : turf.point([location.SECorner.longitude, location.SECorner.latitude])
+	SECorner : turf.point([location.SECorner.longitude, location.SECorner.latitude]),
+	Outside : turf.point([location.Outside.longitude, location.Outside.latitude])
 }
 var speed = 1.78;
 var negDelta = true;
@@ -375,6 +380,22 @@ describe('Zone Analyzer', function() {
 				});	
 	    	});
 	    });
+
+		describe('Default case', function () {
+	    	it('should get the default time for when the user is not moving' , function (done) {
+	    		testedFetcher.fetchByLocation(location.Center, numRings, function (err, zones){
+				   	for(var i = 0; i<zones.length; i++){
+          				zones[i].level = i+1;
+        			}
+				   	var time = analyzer.calculateTimeToHRZone(0, currentLocationGeoJSON.Center, zones, negDelta, function (error){	
+				   		expect(error).to.be.null;
+				   	});
+				   	expect(time).to.equal(120);
+				   	console.log('\t Time to reach next zone: ' + time);
+				   	done();
+				});	
+	    	});    
+	    });
 	});
 
     describe('#getCurrentZone(locationGeoJSON, zonesToAnalyze, callback)', function () {
@@ -493,4 +514,22 @@ describe('Zone Analyzer', function() {
 			});
 		});
     });
+	describe('Error cases', function () {	
+    	it('should return null if trying to get the zone of a location that is not in any of the zones' , function (done) {
+			testedFetcher.fetchByLocation(location.Center, numRings, function (error, zones){
+		   		var currentZone = analyzer.getCurrentZone(currentLocationGeoJSON.Outside, zones);
+		   		expect(currentZone).to.be.null;
+		   		done();						
+			});	
+  	    });
+
+  	    it('should throw an error if trying to get the time to a zone that is not in the grid or zones fethced.' , function (done) {
+			testedFetcher.fetchByLocation(location.Center, numRings, function (err, zones){
+		   		var time = analyzer.calculateTimeToHRZone(speed, currentLocationGeoJSON.Outside, zones, negDelta, function (error){	
+				   	expect(error).to.be.an('error');											
+				   	done();
+				});		
+			});	
+  	    });
+	});
 });

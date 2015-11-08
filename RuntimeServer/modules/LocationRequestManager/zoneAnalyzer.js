@@ -25,6 +25,9 @@ module.exports = function ZoneAnalyzer() {
 	 * @return long containing time (in seconds) it will take to reach closest higher risk zone
 	 */
 	this.calculateTimeToHRZone = function(speed,locationGeoJSON, zonesToAnalyze, negDelta, errCallback) {            
+            if(speed <= 0){
+                return 120;
+            }
             var mDistance = getDistance(locationGeoJSON, zonesToAnalyze, negDelta, errCallback);
             return mDistance/speed;
 	};
@@ -66,10 +69,16 @@ module.exports = function ZoneAnalyzer() {
 
         var currentZone = that.getCurrentZone(locationGeoJSON, zonesToAnalyze);
 
-        if(zoneIndex == null)
-            errorCallback(new Error('Index not found')); 
-        if(currentZone == null)
+
+        if(currentZone == null){
             errorCallback(new Error('Zone not found')); 
+            return;
+        }
+        if(zoneIndex == null){
+            errorCallback(new Error('Index not found')); 
+            return;
+        }
+            
 
 		var zonesFetchedCount = zonesToAnalyze.length;
 
