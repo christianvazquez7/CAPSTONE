@@ -67,7 +67,7 @@ this.buildMap = function(locLat, locLng, swLat, swLng, neLat, neLng, area) {
 	swInitLatLng = new google.maps.LatLng(swLat, swLng);
 	neInitLatLng = new google.maps.LatLng(neLat, neLng);
 	setThreshold();
-	drawMap(locLat, locLng, swInitLatLng, neInitLatLng, initArea, onGridClicked, onBackButtonClicked, onMapDrag);
+	drawMap(locLat, locLng, swInitLatLng, neInitLatLng, initArea, onGridClicked, onBackButtonClicked, onMapDrag, onZoomOut);
 };
 
 this.setThreshold = function() {
@@ -102,9 +102,9 @@ this.onMapDrag = function() {
 		drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
     }
     else if (currentArea == thresholdArea) {
-    	map.setZoom(map.getZoom() - 1);
+    	map.setZoom(map.getZoom() - 2);
     	newBounds = map.getBounds();
-    	map.setZoom(map.getZoom() + 1);
+    	map.setZoom(map.getZoom() + 2);
     	clearZones();
     	requestZones(newBounds);
     }
@@ -121,6 +121,23 @@ this.onGridClicked = function(swCoord, neCoord, areaOfGrid) {
 	lastBounds = map.getBounds();
 	isReady(swCoord, neCoord, areaOfGrid);
 };
+
+this.onZoomOut = function() {
+	if (currentArea > thresholdArea && currentArea < initArea) {
+		clearGrids();
+		drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
+    }
+    else if (currentArea == thresholdArea) {
+    	map.setZoom(map.getZoom() - 2);
+    	newBounds = map.getBounds();
+    	map.setZoom(map.getZoom() + 2);
+    	clearZones();
+    	requestZones(newBounds);
+    }
+
+	// clearGrids();
+	// drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
+}
 
 /**
  * Connects to the server and retrieves the current statistics.
@@ -230,10 +247,12 @@ this.isReady = function(swCoord, neCoord, areaOfGrid) {
               clearGrids();
 
               map.setZoom(map.getZoom() + 1);
+              setMinimumZoom();
               requestZones(newBounds);
             }
             else {
             	clearGrids();
+            	setMinimumZoom();
             	drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
             }
         }

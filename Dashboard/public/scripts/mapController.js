@@ -10,7 +10,8 @@ var map,
 	infoWindow,
 	instrWindow,
 	initialZoom,
-	minimumZoom;
+	minimumZoom,
+	maximumZoom;
 
 var backControlDiv,
 	zoomControlDiv;
@@ -36,13 +37,14 @@ var ProtoBuf = dcodeIO.ProtoBuf,
  * @param onGridClickedCallback : Callback function to notify when a grid have been clicked
  * @param backButtonCallback	: Callback function to notify when the back button have been clicked
  */
-this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedCallback, backButtonCallback, dragCallback) {
+this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedCallback, backButtonCallback, dragCallback, zoomOutCallback) {
 	mapLoc = new google.maps.LatLng(locLat, locLng);
 
 	// Reference to the initial boundaries
 	swPoint = swPoint_;
 	nePoint = nePoint_;
 	initialZoom = minimumZoom = 9;
+	maximumZoom = 19;
 
 	map = new google.maps.Map(document.getElementById('googleMap'), {
 		zoom: initialZoom,
@@ -50,6 +52,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 		mapTypeControl: false,
 		streetViewControl: false,
 		scrollwheel: false,
+		disableDoubleClickZoom: true,
 		center: mapLoc
 	});
 
@@ -62,8 +65,9 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
   	onHover();	// Listen for hover events
   	onDrag(dragCallback);	// Listen for hover events
 	styleMap(); // Add some style to the map
+	boundsControl(swPoint, nePoint);
 	backButtonControl(backButtonCallback);
-	zoomButtonControl();
+	zoomButtonControl(zoomOutCallback);
 };
 
 /**
@@ -74,9 +78,6 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
  * @param callback: Callback function to be called when a grid is clicked.
  */
 this.drawGrid = function(swPoint, nePoint, areaOfGrid, onGridClickedCallback) {
-	// Save the current zoom
-	minimumZoom = map.getZoom();
-
 	// Get the southwest and northeast latitude and longitude
 	swLat = swPoint.lat();
 	swLng = swPoint.lng();
@@ -153,11 +154,15 @@ this.getCurrentSwPoint = function() {
  * @param area: (int) the area of 
  * @param callback: Callback function to be called when the map is zoomed.
  */
-this.zoomControl = function(zoomInButton, zoomOutButton) {
+this.zoomControl = function(zoomInButton, zoomOutButton, callback) {
 
 	// Listener for zoomIn
 	google.maps.event.addDomListener(zoomInButton, 'click', function() {
-		map.setZoom(map.getZoom() + 1);
+		var currentZoom = map.getZoom();
+		if (currentZoom >= maximumZoom)
+			map.setZoom(map.getZoom());
+		else
+			map.setZoom(map.getZoom() + 1);
 	});
 
 	// Listener for zoomOut
@@ -167,8 +172,44 @@ this.zoomControl = function(zoomInButton, zoomOutButton) {
 			map.setZoom(minimumZoom);
 		else
 			map.setZoom(map.getZoom() - 1);
+		callback();
 	});  
 };
+
+this.boundsControl = function(swPoint, nePoint) {
+	// Bounds of the desired area
+	var allowedBounds = new google.maps.LatLngBounds(
+		swPoint,
+		nePoint
+		);
+	var boundLimits = {
+		maxLat : allowedBounds.getNorthEast().lat(),
+		maxLng : allowedBounds.getNorthEast().lng(),
+		minLat : allowedBounds.getSouthWest().lat(),
+		minLng : allowedBounds.getSouthWest().lng()
+	};
+
+	var lastValidCenter = map.getCenter();
+	var newLat, newLng;
+
+	google.maps.event.addListener(map, 'center_changed', function() {
+		center = map.getCenter();
+		if (allowedBounds.contains(center)) {
+			// still within valid bounds, so save the last valid position
+			lastValidCenter = map.getCenter();
+			return;
+		}
+		newLat = lastValidCenter.lat();
+		newLng = lastValidCenter.lng();
+		if(center.lng() > boundLimits.minLng && center.lng() < boundLimits.maxLng){
+			newLng = center.lng();
+		}
+		if(center.lat() > boundLimits.minLat && center.lat() < boundLimits.maxLat){
+			newLat = center.lat();
+		}
+		map.panTo(new google.maps.LatLng(newLat, newLng));
+	});
+}
 
 /**
  * Function to be called when the user hovers over the grids.
@@ -207,9 +248,6 @@ this.onDrag = function(callback) {
  * @param geozones: (GeoJson)  the GeoJsin with the zones to draw
  */
 this.drawZones = function(geozones) {
-	// Save current zoom
-	minimumZoom = map.getZoom();
-
 	map.data.addGeoJson(geozones);
 	onZoneClicked();
 	styleZones();
@@ -273,6 +311,8 @@ this.addMapViewer = function() {
 		mapTypeControl: false,
 		streetViewControl: false,
 		scrollwheel: false,
+		disableDoubleClickZoom: true,
+		draggable: false,
 		center: mapLoc
 	});
 	mapMarker = new google.maps.Marker({
@@ -376,6 +416,8 @@ this.resetMap = function(swPoint, nePoint, area, onGridClickedCallback) {
 	map.setZoom(initialZoom);
 	map.setCenter(mapLoc);
 
+	// Save current zoom
+	minimumZoom = map.getZoom();
 	// Load new GeoJSON with initial grids
 	drawGrid(swPoint, nePoint, area, onGridClickedCallback);
 	mapMarker.setPosition(map.getCenter());
@@ -391,6 +433,8 @@ this.goBackToGrids = function(area, onGridClickedCallback) {
 	clearZones();
 	newZoom = 4;
 	map.setZoom(map.getZoom() - newZoom);
+	// Save current zoom
+	minimumZoom = map.getZoom();
 	drawGrid(getCurrentSwPoint(), getCurrentNePoint(), area, onGridClickedCallback);
 };
 
@@ -436,7 +480,7 @@ this.backButtonControl = function(callback) {
  * Creates the zoom button and adds listener.
  *
  */
-this.zoomButtonControl = function() {
+this.zoomButtonControl = function(callback) {
 	// Create div to hold zoom buttons
 	zoomControlDiv = document.createElement('div');
 
@@ -470,7 +514,7 @@ this.zoomButtonControl = function() {
 	controlWrapper.appendChild(zoomOutButton);
 
 	// Add listener for zoom buttons
-	zoomControl(zoomInButton, zoomOutButton);
+	zoomControl(zoomInButton, zoomOutButton, callback);
 
 	zoomControlDiv.index = 1;
 	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(zoomControlDiv);
@@ -483,6 +527,10 @@ this.zoomButtonControl = function() {
 this.showBackButton = function() {
 	backControlDiv.style.display =  'initial';
 };
+
+this.setMinimumZoom = function() {
+	minimumZoom = map.getZoom();
+}
 
 /**
  * Hides the back button.

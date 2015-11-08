@@ -15,6 +15,10 @@ module.exports = function Route(app, handlers) {
 	    res.sendFile(path.join(__dirname+ '/public/views/index.html'));
 	});
 
+	app.get('/aboutus', function (req, res) {
+	    res.sendFile(path.join(__dirname+ '/public/views/aboutus.html'));
+	});
+
 	app.get('/stats', handlers.getStats);
 
 	app.get('/grids/', handlers.getGrids);

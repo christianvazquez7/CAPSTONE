@@ -20,8 +20,8 @@ body {
 	font-family: 'Avenir Next LT Pro Regular', 'Open Sans', 'Helvetica Nueue' Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizelegibility;
-	width: 100%;
 }
+
 
 .container {
 	width: 924px;
@@ -142,7 +142,7 @@ hr.divider {
 /* 	text-align: center; */
  	width: 250px;
  	vertical-align: middle;
- 	padding-top: 20%;
+ 	padding-top: 15%;
 }
 
 #kya-story-text h1  {
@@ -443,7 +443,7 @@ em {
 
 #loading-img {
 	height: 450px;
-/* 	background: #DDDDD5 url(../images/loading2.gif) no-repeat center center; */
+	background: #FFFFFF url(../images/loading2.gif) no-repeat center center;
 /* 	background: #DDDDD5 url(../images/loading3.gif) no-repeat center center; */
 
 }
@@ -451,11 +451,19 @@ em {
 #mapViewer
 {
   position:absolute;
+<<<<<<< HEAD
   width: 200px;
   height: 120px;
   top:10px;  /* adjust value accordingly */
   left: 10px;  /* adjust value accordingly */
   border: solid 6px #FFFFFF;
+=======
+  width: 240px;
+  height: 120px;
+  top:2px;  /* adjust value accordingly */
+  left: 2px;  /* adjust value accordingly */
+  border: solid 2px #2E8BAB;
+>>>>>>> Dashboard
 }
 
 
