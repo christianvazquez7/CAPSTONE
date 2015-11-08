@@ -66,7 +66,7 @@ module.exports = function RequestScheduler() {
 		var currentZone = analyzer.getCurrentZone(locationGeoJSON,geoZones);
 		if(currentZone == null) mResponseCallback(new Error("Zone not found"));
 		
-		surveyFlag = (Math.random() > probability);
+		surveyFlag = (Math.random() > (1-probability));
 		
 		var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag); 
 		mResponseCallback(null, response);
