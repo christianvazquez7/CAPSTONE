@@ -37,7 +37,7 @@ public class KYANotificationService extends Service {
     private static final String LAST_UPDATED = "LAST_UPDATED";
     private static final String EXTRA_ID = "NOTIFICATION_ID";
     private static final String TAG = "KYANotificationService";
-    private static final long HEART_BEAT_TIMEOUT = 5000;
+    private static final long HEART_BEAT_TIMEOUT = 10000;
     private static final long COLLECT_PERIOD = 1000 * 60 * 1; // 1 minutes.
     private static final long SAMPLE_PERIOD = 1000 * 10; // 10 seconds.
     private long mTimeStartedCollecting = 0;
@@ -62,7 +62,11 @@ public class KYANotificationService extends Service {
             public void run() {
                 Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
                 if(location != null) {
-                    Log.d(TAG,"LOCATION SPEEDL: "+location.getSpeed());
+                    Log.d(TAG,"LOCATION SPEED: "+location.getSpeed());
+                    if(location.getSpeed() > mLastSpeed) {
+                        mLastSpeed = location.getSpeed();
+                        checkIn();
+                    }
                 }
             }
         };
@@ -385,6 +389,7 @@ public class KYANotificationService extends Service {
     }
 
     private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate){
+        Utils.acquire(this);
         Intent surveyActivity = new Intent(getApplicationContext(),SurveyActivity.class);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

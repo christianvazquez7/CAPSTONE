@@ -80,12 +80,24 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                         LatLng se =  new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), -100));
                         LatLng sw =new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), -100));
 
+                        LatLng nw2 = new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 300));
+                        LatLng ne2 = new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), 300));
+                        LatLng se2 =  new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), 100));
+                        LatLng sw2 =new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 100));
+                        int level = getIntent().getIntExtra("CLASS",1);
+
                         Polygon polygon = map.addPolygon(new PolygonOptions()
                                 .add(nw, ne, se, sw)
-                                .fillColor(getResources().getColor(R.color.level10transluscent))
-                                .strokeWidth(0.5f)
-                                .strokeColor(Color.RED));
+                                .fillColor(getResources().getColor(Utils.getAlphaColorByLevel(level)))
+                                .strokeWidth(0.7f)
+                                .strokeColor(getResources().getColor(Utils.getColorByLevel(level))));
 
+                        int safe = level==1? 1:level - 1;
+                        Polygon safer = map.addPolygon(new PolygonOptions()
+                                .add(nw2, ne2, se2, sw2)
+                                .fillColor(getResources().getColor(Utils.getAlphaColorByLevel(safe)))
+                                .strokeWidth(0.7f)
+                                .strokeColor(getResources().getColor(Utils.getColorByLevel(safe))));
                     }
                 });
 

@@ -58,7 +58,7 @@ public class BaseNotificationFragment extends Fragment {
             public void onClick(View v) {
                 Intent orientationActivity = new Intent();
                 orientationActivity.setClass(getActivity(),OrientationActivity.class);
-                //TODO: PUT SHIT
+                orientationActivity.putExtra("CLASS",getArguments().getInt(CLASS_PARAM));
                 startActivity(orientationActivity);
             }
         });
