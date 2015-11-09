@@ -31,11 +31,13 @@ module.exports = function TelemetryStorageManager() {
 			  heartRateID;
 		if(!surveyFlag && !heartRateFlag){
       callback(new Error('No telemetry data to process'));
+      return;
     }
     //Initiate connection to database
 		client.connect(function(err) {
   			if(err) {
     			callback(err);
+          return;
   			}
   			
   			//Checks if there is survey data to process
@@ -56,8 +58,8 @@ module.exports = function TelemetryStorageManager() {
    					surveyID = result.rows[0].survey_id;
 
             //Query to insert or update telemetry record with survey ID
-            var query2 = 'INSERT INTO telemetry_record (user_id, survey_id, notification_id, zone_id) ' +
-                 'VALUES (' + telemetryRecord.userID +', ' + surveyID + ', ' + telemetryRecord.notificationID + ', ' + telemetryRecord.zoneID + ') ' +
+            var query2 = 'INSERT INTO telemetry_record (user_id, survey_id, tel_timestamp, notification_id, zone_id) ' +
+                 'VALUES (' + telemetryRecord.userID +', ' + surveyID + ', NOW(),' + telemetryRecord.notificationID + ', ' + telemetryRecord.zoneID + ') ' +
                  'ON CONFLICT (user_id, notification_id) ' + 
                  'DO UPDATE SET survey_id = EXCLUDED.survey_id ';
           

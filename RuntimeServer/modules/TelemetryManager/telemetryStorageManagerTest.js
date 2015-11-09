@@ -9,52 +9,52 @@ var expect = require('../../node_modules/chai').expect
 
 /*-----------------Record with only a survey response------------------------*/
 var telRecord1 = new Telemetry({
-	"userID" : 50,
-	"notificationID" : 50,
-	"zoneID": 50,
+	"userID" : 999,
+	"notificationID" : 999,
+	"zoneID": 999,
 	"survey" : {
-			"actualRisk" : 50,
-			"perceivedRisk" : 50
+			"actualRisk" : 9,
+			"perceivedRisk" : 9
 	}
  });
 
 /*------------------Record with only heart rate data------------------------*/
 var telRecord2 = new Telemetry({
-	"userID" : 50,
-	"notificationID" : 50,
-	"zoneID": 50,
+	"userID" : 888,
+	"notificationID" : 888,
+	"zoneID": 888,
 	"heartRate" : {
-			"before" : 50,
-			"after" : 50
+			"before" : 8,
+			"after" : 8
 	}
  });
 
 /*------------------Record with both heart rate and survey------------------*/
 var telRecord3 = new Telemetry({
-	"userID" : 70,
-	"notificationID" : 70,
-	"zoneID": 7,
+	"userID" : 777,
+	"notificationID" : 777,
+	"zoneID": 777,
 	"heartRate" : {
-			"before" : 700,
-			"after" : 777
+			"before" : 77,
+			"after" : 77
 	},
 	"survey" : {
-			"actualRisk" : 70,
-			"perceivedRisk" : 70
+			"actualRisk" : 7,
+			"perceivedRisk" : 7
 	}
  });
 
-/*-----------------Record with only a survey response------------------------*/
+/*-----------------Record with no data------------------------------------*/
 var telRecord4 = new Telemetry({
-	"userID" : 50,
-	"notificationID" : 50,
-	"zoneID": 50	
+	"userID" : 555,
+	"notificationID" : 555,
+	"zoneID": 555	
  });
 
 
 /*-----------------Location data for movement tracking---------------------*/
 var locRecord = new GeoPoint({
-	"userID" : 80,
+	"userID" : 444,
 	"latitude" : 80.8888,
 	"longitude" : 80.888	
  });
