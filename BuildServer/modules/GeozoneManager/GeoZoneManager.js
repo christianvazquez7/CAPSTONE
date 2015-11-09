@@ -37,7 +37,7 @@ module.exports = function GeozoneManager (pgClient, mongoClient, finish_callback
 			geozoneList = gridBuilder.buildGrid(nwCoordinate, seCoordinate, area);
 		}
 		
-		geozoneLog.info('Grid Building Completed');
+		geozoneLog.notice('Grid Building Completed');
 		onStorageComplete = complete_callback;
 		storeGeozone();
 	}
@@ -65,7 +65,7 @@ module.exports = function GeozoneManager (pgClient, mongoClient, finish_callback
 	this.feedCrime = function(crime, marshall, batch_callback) {
 		console.log("Feeding crime....")
 		onBatchComplete = batch_callback;
-		geozoneLog.notice('Feeding Crime');
+		geozoneLog.info('Feeding Crime');
 		classifier.feedCrime(crime, marshall, onCrimeProcessed);
 
 	}
@@ -94,15 +94,15 @@ module.exports = function GeozoneManager (pgClient, mongoClient, finish_callback
 	 * on the SQL database.
 	 * @return Return a boolean value if the data were deleted or not.
 	 */
-	this.clearClassificationData = function() {
+	this.clearClassificationData = function(clear_callback) {
 		classifier.clear(function(err, result) {
 			if(!err) {
-				geozoneLog.info(result);
-				return true;
+				geozoneLog.notice(result);
+				clear_callback(null, 'Classification Data clear...');
 			}
 			else {
 				geozoneLog.error(result);
-				return false;
+				clear_callback('error', null);
 			}
 		});
 	}
@@ -146,7 +146,7 @@ module.exports = function GeozoneManager (pgClient, mongoClient, finish_callback
 		}
 		else {
 			console.log(result)
-			geozoneLog.info('Batch of Crime completed');
+			geozoneLog.notice('Batch of Crime completed');
 			onBatchComplete();
 		}
 	}

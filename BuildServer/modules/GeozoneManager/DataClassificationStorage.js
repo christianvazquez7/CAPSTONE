@@ -34,7 +34,7 @@ module.exports = function DataClassificationStorage(client, log) {
 			else if(size != count.rows[0].count){
 				that.clearData(function(err) {
 					console.log("Amount of rows to insert: " + size + ". Amount of rows previously: ", count.rows[0].count)
-					classificationLog.notice("Amount of rows to insert: " + size + ". Amount of rows previously: ", count.rows[0].count);
+					classificationLog.info("Amount of rows to insert: " + size + ". Amount of rows previously: ", count.rows[0].count);
 					if (!err) {
 		 				zoneLength = size;
 		 				zoneCount = 0;
@@ -74,11 +74,19 @@ module.exports = function DataClassificationStorage(client, log) {
 	 * @param zoneID: Zone id of zone to be update
 	 * @param updateCrime_callback: Callback function use when is done.
 	 */
-	this.updateCrimeCount = function(zoneID, updateCrime_callback) {
+	this.updateCrimeCount = function(zoneID, page, offset, updateCrime_callback) {
 		pgClient.query("UPDATE classifier SET crimecounter = crimecounter + 1 WHERE zoneid = $1", [zoneID], function(err, result) {
-			if(!err){
-				classificationLog.notice('Updating of zone ' + zoneID + ' successfully completed');
-				updateCrime_callback();
+			if(!err) {
+				pgClient.query("UPDATE utility SET lastpage = $1, lastoffset = $2", [page, offset], function(error, result) {
+	 				if(error) {
+	 					classificationLog.alert('There was a problem updating the utility table');
+	 				}
+	 				else {
+	 					classificationLog.notice('Insertion of lastpage ' + page + ' and lastoffset ' + offset + ' successfully completed');
+	 					classificationLog.notice('Updating of zone ' + zoneID + ' successfully completed');
+						updateCrime_callback();
+	 				}
+	 			});
 			}
 			else {
 				classificationLog.critical('There was a problem updating zone ', zoneID);
@@ -97,8 +105,16 @@ module.exports = function DataClassificationStorage(client, log) {
  				clear_callback("The values for classification were NOT deleted or were deleted already!", null);		
  			}
  			else {
- 				classificationLog.notice('The values in classification table were deleted');
- 				clear_callback(null, "The values for classification were deleted!");
+ 				pgClient.query("UPDATE utility SET lastpage = null, lastoffset = null", function(error, result) {
+					if(error) {
+						log.critical('The utility table was NOT reset');
+					}
+					else {
+						log.notice('The utility table was reset');
+						classificationLog.notice('The values in classification table were deleted');
+ 						clear_callback(null, "The values for classification were deleted!");
+					}
+				});
  			}
  		});
 	}

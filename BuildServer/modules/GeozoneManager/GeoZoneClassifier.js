@@ -25,7 +25,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	var classifiedZone = [];
 	var onClassifierSet;
 
-	var strategy = new Strategy();
+	var strategy = new Strategy(classifierLog);
 
 	var crimeCount
 	var classificationCount = 0;
@@ -51,7 +51,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	function onPinpoint() {
 		currentCrimeIndex ++;
 		if(currentCrimeIndex < crimeLength) {
-			pinpoint(new GeoCoordinate(currentBatch[currentCrimeIndex].getLatitude(), currentBatch[currentCrimeIndex].getLongitude()), onPinpoint);
+			pinpoint(new GeoCoordinate(currentBatch[currentCrimeIndex].getLatitude(), currentBatch[currentCrimeIndex].getLongitude()), currentBatch[currentCrimeIndex].getPage(), currentBatch[currentCrimeIndex].getOffset(), onPinpoint);
 		} 
 		else {
 			classifierLog.debug('');
@@ -99,8 +99,8 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 		var ignoreList = marshall.getIgnoreList()
 		var isValidCrime = true;
 		var filtered = [];
-		classifierLog.notice('Processing Crime');
-		classifierLog.notice('Type of of crime to ignore: ', ignoreList.length);
+		classifierLog.info('Processing Crime');
+		classifierLog.info('Type of of crime to ignore: ', ignoreList.length);
 
 		for (var i = 0; i < crime.length; i++) {
 			for (var j = 0; j < ignoreList.length; j++) {
@@ -123,7 +123,12 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 			classifierLog.notice("There were " + crimeLength + " filtered from ", crime.length);
 			console.log("There were " + crimeLength + " filtered from ", crime.length);
 			classifierLog.notice('Begining of Pinpoint');
-			pinpoint(new GeoCoordinate(filtered[0].getLatitude(), filtered[0].getLongitude()), onPinpoint);
+			if(crimeLength == 0) {
+				onBatchComplete();
+			}
+			else {
+				pinpoint(new GeoCoordinate(filtered[0].getLatitude(), filtered[0].getLongitude()), filtered[0].getPage(), filtered[0].getOffset(), onPinpoint);
+			}
 	}
 	
 	/**
@@ -131,8 +136,13 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	 * @param zoneID: Zone id of the zone to be update.
 	 * @param update_callback: Callback function use when the zone is updated.
 	 */
-	var updateDictonary = function(zoneID, update_callback) {
-		storage.updateCrimeCount(zoneID, update_callback)
+	var updateDictonary = function(zoneID, page, offset, update_callback) {
+		if ((currentCrimeIndex + 1) >= crimeLength) {
+			storage.updateCrimeCount(zoneID, (page + 1), null, update_callback)
+		}
+		else {
+			storage.updateCrimeCount(zoneID, page, offset, update_callback)
+		}
 	}
 
 	/**
@@ -140,7 +150,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	 * @param coodinate: Location of the crime.
 	 * @param pinpoint_callback: Callback function when pinpoint is done.
 	 */
-	var pinpoint = function(coordinate, pinpoint_callback) {
+	var pinpoint = function(coordinate, page, offset, pinpoint_callback) {
 		if(coordinate.getLongitude() != null || coordinate.getLatitude() != null) {
 			var location = {
 				latitude : parseFloat(coordinate.getLatitude()),
@@ -151,10 +161,10 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 				if(found[0] != undefined){
 					pinpointCount++;
 					classifierLog.debug('The crime with coordinate: (' + coordinate.getLongitude() + ', ' + coordinate.getLatitude() + ') was pinpointed in zone: ' + found[0].zone_id + '. ' + (currentCrimeIndex + 1) + ' of ', crimeLength);
-					updateDictonary(parseInt(found[0].zone_id), pinpoint_callback);
+					updateDictonary(parseInt(found[0].zone_id), page, offset, pinpoint_callback);
 				}
 				else {
-					classifierLog.warning('The crime with coordinate: (' + coordinate.getLongitude() + ', ' + coordinate.getLatitude() + ') was NOT pinpointed into any zone');
+					classifierLog.alert('The crime with coordinate: (' + coordinate.getLongitude() + ', ' + coordinate.getLatitude() + ') was NOT pinpointed into any zone');
 					notPinpointed++;
 					pinpoint_callback();
 				}
@@ -162,7 +172,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 			});
 		}
 		else {
-			classifierLog.alert('The crime with coordinate: (' + coordinate.getLongitude() + ', ' + coordinate.getLatitude() + ') was NOT pinpointed');
+			classifierLog.warning('The crime with coordinate: (' + coordinate.getLongitude() + ', ' + coordinate.getLatitude() + ') was NOT pinpointed');
 			notPinpointed++;
 			pinpoint_callback();
 		}
@@ -202,12 +212,12 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	 * @param parameter_callback: Callback function use when parameter are set.
 	 */
 	this.getParameter = function(parameter_callback) {
-		classifierLog.notice('Getting Parameter for classification');
+		classifierLog.info('Getting Parameter for classification');
 		storage.getMaxMin(function(err, max, min) {
 			if(!err) {
 				maxZone = max;
 				minZone = min;
-				classifierLog.info("The maximun crime count within the zone is " +maxZone+ " and minimun crime count within the zone is ", minZone);
+				classifierLog.notice("The maximun crime count within the zone is " +maxZone+ " and minimun crime count within the zone is ", minZone);
 				parameter_callback();
 			}
 		})
@@ -221,6 +231,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 		storage.getZoneCount(count, function(err, result) {
 			if(!err) {
 				strategy.classify(maxZone, minZone, result, function(level, totalCrime) {
+					classifierLog.debug('zone: ' + count + ', level: ' + level + ', Total Crime: ', totalCrime);
 					classifiedZone.push({zone: count, level: level, totalCrime: totalCrime});
 					classificationCount++;
 					that.beginClassification(onClassification);

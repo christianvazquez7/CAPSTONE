@@ -150,9 +150,10 @@ function onParameterPrepare() {
     dataProvider = new DataProvider(marshall, pgClient);
     
     log.info('Parsing of parameter and initialization Complete.');
-    //console.log("HELlo!!!: ", source, appToken, re);
     constructGrid();
 }
+
+
 
 /**
  * Method to initialize Geozone Manager and construct grid.
@@ -162,9 +163,8 @@ function constructGrid() {
 	log.info('Creating Geozone Manager for Grid Construction');
 
 	// Initialization of Geozone Manager.
-	geo = new GeozoneManager(pgClient, mClient, geozoneComplete, log);
+	geo = new GeozoneManager(pgClient, mClient, clearData, log);
 	geo.buildGrid(new coordinate(nwLatitude, nwLongitude), new coordinate(seLatitude, seLongitude), area, beginDataCollection);
-	geo.clearClassificationData();
 }
 
 /**
@@ -183,7 +183,6 @@ function beginDataCollection() {
  * Callback method when batch is complete.
  */
 function batchComplete(){
-	
 	dataProvider.getData(onRecords,onExtractionEnd);
 }
 
@@ -203,7 +202,12 @@ function onProviderReady() {
 function onRecords(data) {
 	console.log('Got batch');
 	log.info('Got Batch');
-	geo.feedCrime(data, marshall,batchComplete);
+	if(data.length != 0) {
+		geo.feedCrime(data, marshall,batchComplete);
+	}
+	else {
+		log.emergency('Crime Array Empty');
+	}
 }
 
 /**
@@ -220,14 +224,26 @@ function onExtractionEnd() {
  */
 function toClassify() {
 	console.log("Classifying...");
-	log.notice('On Classifying');
+	log.info('On Classifying');
 	geo.classify();
+}
+
+/**
+ * Method use to clear classification data.
+ */
+function clearData() {
+	geo.clearClassificationData(function(err, result) {
+		if(!err) {
+			console.log(result);
+			toGeozoneEnd();
+		}
+	});
 }
 
 /**
  * Method use when the building get completed.
  */
-function geozoneComplete() {
+function toGeozoneEnd() {
 	mClient.close();
 	pgClient.end();
 	log.notice('KYA Building Completed');

@@ -21,7 +21,6 @@ module.exports = function Converter (log) {
 	 * @return Tile based on the coordinate
 	 */
 	this.coordinateToTile = function(coordinate, area) {
-		console.log("Coordinate are: ", coordinate)
 		var x = (Math.floor((coordinate.longitude + 180) / 360 * Math.pow(2, area)));
 		var y = (Math.floor((1 - Math.log(Math.tan(coordinate.latitude * Math.PI / 180) + 1 / Math.cos(coordinate.latitude * Math.PI / 180)) /Math.PI) / 2 * Math.pow(2, area)));
 		var area = area;

@@ -30,7 +30,7 @@ module.exports = function GeozoneStorage (log){
 	this.init = function(geozone, mongoClient, persisting_Callback) {
 		mGeozone = geozone;
 		mongo = new MongoManager(mongoClient, storageLog);
-		storageLog.info('Finish Initialization of Geozone Storage');
+		storageLog.notice('Finish Initialization of Geozone Storage');
 		persisting_Callback();
 	}
 
@@ -88,7 +88,7 @@ module.exports = function GeozoneStorage (log){
 	this.persistClassification = function(classifier, classifier_callback) {
 		gClassifier = classifier;
 		console.log("Persisting Classification: ", gClassifier.length);
-		storageLog.critical('Persisting Classification: ', gClassifier.length);
+		storageLog.info('Persisting Classification: ', gClassifier.length);
 		geozoneLength = classifier.length;
 		geozoneCount = 0;
 		onClassified = classifier_callback;
@@ -103,7 +103,7 @@ module.exports = function GeozoneStorage (log){
 	function onZoneAdded(index, callback) {
 		geozoneCount++;
 		console.log('Adding Geozone ', index);
-		storageLog.notice('Adding Geozone ', index);
+		storageLog.info('Adding Geozone ', index);
 		mongo.addGeozone(mGeozone[index].getZone(), callback);
 	}
 
@@ -115,7 +115,7 @@ module.exports = function GeozoneStorage (log){
 	function onZoneUpdated(index, callback) {
 		geozoneCount++;
 		console.log('Updating Classification of Geozone ', index);
-		storageLog.notice('Updating Classification of Geozone ', index);
+		storageLog.info('Updating Classification of Geozone ', index);
 		mongo.updateGeozone(gClassifier[index], callback);
 	}
 }

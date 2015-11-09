@@ -57,7 +57,7 @@ module.exports = function GridBuilder (log) {
     	zoneID = 0;
 
 		// now loop between these tiles to get every other tile contained in the bounding box
-		gridLog.critical('Creating Geozone and storing them in a object array');
+		gridLog.info('Creating Geozone and storing them in a object array');
 		for(var x = nwTile.getX(); x <= seTile.getX(); x++) {
 			for(var y = nwTile.getY(); y <= seTile.getY(); y++) {
 				createTilePolygon(new GridPoint(x, y), edge, zoneID++, function(found) {
@@ -67,7 +67,7 @@ module.exports = function GridBuilder (log) {
 			}
 		}
 		console.log("Number of zones created: ", result.length);
-		gridLog.info('Successful insertion of ', result.length);
+		gridLog.notice('Successful insertion of ', result.length);
 		
 		return result
 	}
@@ -79,15 +79,16 @@ module.exports = function GridBuilder (log) {
 	 * @return Return a boolean value if it was ready created or not.
 	 */
 	this.isGridCreated = function(coordinate, area) {
+		gridLog.info('Check if the grid is created');
 		if (nwLat == coordinate.getLatitude()) {
 			if (nwLon == coordinate.getLongitude()) {
 				if (edge == converter.translateArea(area)) {
-					gridLog.info('There is a grid created of ', coordinate);
+					gridLog.notice('There is a grid created of ', coordinate);
 					return true
 				}
 			}
 		}
-		gridLog.info('There is not grid created yet');
+		gridLog.notice('There is not grid created yet');
 		return false;
 	}
 
