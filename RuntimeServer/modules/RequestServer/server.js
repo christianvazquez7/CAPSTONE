@@ -6,7 +6,7 @@ module.exports = function Server() {
   // Imports
   var express = require('express');
   var routes = require('./routes.js');
-  var logger = require('./utils/logger.js');
+  var logger = require('../../utils/logger.js');
   var path    = require("path");
   
   var app = express();

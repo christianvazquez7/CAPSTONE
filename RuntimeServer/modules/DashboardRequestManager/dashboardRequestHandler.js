@@ -10,7 +10,7 @@ module.exports = function DashboardRequestHandler() {
 	 */
 	var MongoClient = require('mongodb').MongoClient;
 	var ProtoBuf = require("../../node_modules/protobufjs");
-	var logger = require('../../resources/utils/logger.js');
+	var logger = require('../../utils/logger.js');
 	var coordinate = require('../../../Class_Skeletons/GeoCoordinate.js');
 	var GridController = require('../DashboardManager/gridController.js');
 	var ZonesManager = require('../DashboardManager/zonesManager.js');
@@ -25,9 +25,10 @@ module.exports = function DashboardRequestHandler() {
 	var gridController;
 
 	// URL for Mondo db 
-	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';
-	// var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/ChicagoGeozone';
-	// var url = 'mongodb://localhost:27017/Geozone';
+	// var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';			// Puerto Rico's geozones db
+	// var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/ChicagoGeozone';	// Chicago's geozones db
+	// var url = 'mongodb://localhost:27017/Geozone';	// Local PR database
+	var url = 'mongodb://localhost:27017/TestGeozone';	// Test database
 	
 	/**
 	 * Fetch the current crime statistics from KYA DB.
@@ -57,8 +58,9 @@ module.exports = function DashboardRequestHandler() {
 						logger.error(err);
 					}
 					else if (result.length) {
+						logger.info('Crime statistics');
 						maxCrime = result[0].totalCrime;
-						logger.info('Max crimes: ', maxCrime);
+						logger.info('\tMax crimes: ', maxCrime);
 						collection.find().sort({"totalCrime":1}).limit(1).toArray(function (err, result) 
 						{
 							if (err) {
@@ -66,7 +68,7 @@ module.exports = function DashboardRequestHandler() {
 							}
 							else if (result.length) {
 								minCrime = result[0].totalCrime;
-								logger.info('Min crimes: ', minCrime);
+								logger.info('\tMin crimes: ', minCrime);
 								collection.aggregate([{$group: {_id:null, crimeAverage: {$avg:"$totalCrime"} } }]).toArray(function (err, result)
 								{
 									if (err) {
@@ -74,8 +76,9 @@ module.exports = function DashboardRequestHandler() {
 									}
 									else if (result.length) {
 										crimeAverage = result[0].crimeAverage;
-										logger.info('Crime rate: ', crimeAverage);
-										db.close();                    
+										logger.info('\tCrime rate: ', crimeAverage);
+										db.close();  
+										logger.debug('Mongodb connection closed.');                  
 										var result = encodeStats(maxCrime, minCrime, crimeAverage);
 										callback(err, result)
 									}
@@ -86,6 +89,7 @@ module.exports = function DashboardRequestHandler() {
 					else {
 						logger.error('No document(s) found with defined "find" criteria!');
 						db.close();
+						logger.debug('Mongodb connection closed.');
 					}
 				});
 			}
@@ -108,7 +112,11 @@ module.exports = function DashboardRequestHandler() {
 		var nePoint = [gridBounds.boundaries[2].longitude, gridBounds.boundaries[2].latitude];
 		var sePoint = [gridBounds.boundaries[3].longitude, gridBounds.boundaries[3].latitude];
 
-		console.log('GET zones in: ', swPoint, nwPoint, nePoint, sePoint, swPoint);
+		logger.info('GET zones in: ');
+		logger.info('\tSW Point', swPoint);
+		logger.info('\tNW Point', nwPoint);
+		logger.info('\tNE Point', nePoint);
+		logger.info('\tSE Point', sePoint);
 		
 		MongoClient.connect(url, function (err, db) {
 			// Documents collection
@@ -134,27 +142,66 @@ module.exports = function DashboardRequestHandler() {
 							callback(err, zones);
 				    	}
 				    	db.close();
+				    	logger.debug('Mongodb connection closed.');
 				    });
 			}
 		});
 	};
 
+	/**
+	 * Creates a new grid given some parameters.
+	 *
+	 * @param swLat: the south west latitude
+	 * @param swLng: the south west longitude
+	 * @param neLat: the north east latitude
+	 * @param neLng: the north east longitude
+	 * @param area: the size for the grids
+	 * @param callback: Callback function to be called when the grids have been created
+	 */
 	this.requestGrids = function(swLat, swLng, neLat, neLng, area, callback) {
-		result = gridController.buildGrids(new coordinate(swLat, swLng), new coordinate(neLat, neLng), area);
-		callback(result);
+		if (typeof swLat === 'undefined' || 
+			typeof swLng === 'undefined' || 
+			typeof neLat === 'undefined' || 
+			typeof neLng === 'undefined' || 
+			typeof area === 'undefined') {
+			// Error -  undefined value
+			callback(new Error("Undefined parameter"))
+		}
+		else {
+			result = gridController.buildGrids(new coordinate(swLat, swLng), new coordinate(neLat, neLng), area);
+			callback(null, result);
+		}
 	};
 
+	/**
+	 * Verifies if we are ready to fetch the zones. 
+	 *
+	 * @param area: the current size of the clicked grid
+	 * @param callback: Callback function to be called to send the response
+	 */
 	this.isReady = function(area, callback) {
-		console.log(area);
-		result = gridController.isReadyToFetch(area);
-		callback(result);
+		if (typeof area === 'undefined') {
+			// Error - Area is undefined
+			callback(new Error("Area is undefined"))
+		}
+		else {
+			result = gridController.isReadyToFetch(area);
+			callback(null, result);
+		}
 	};
 
+	/**
+	 * Sets the threshold value that indicates when to fetch the zones.
+	 *
+	 * @param threshold: the threshold value
+	 * @param callback: Callback function to be called when the threshold have been set
+	 */
 	this.setThreshold = function(threshold, callback) {
 		try {
 			var thresholdBuf = Threshold.decode(threshold);
 			var areaThreshold = thresholdBuf.threshold;
 			gridController = new GridController(areaThreshold);
+			logger.info('Setting threshold: ', areaThreshold);
 			callback(null, 'SUCCESS');
 		}
 		catch(err) {

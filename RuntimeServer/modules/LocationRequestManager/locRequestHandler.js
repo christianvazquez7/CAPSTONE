@@ -9,8 +9,14 @@ module.exports = function LocationRequestHandler(latitude,longitude,velocity,cli
 	/**
 	 * Module imports.
 	 */
+	var ProtoBuf = require("../../node_modules/protobufjs");
 	var RequestScheduler = require('./requestScheduler.js');
 	var Point = require('./point.js');
+
+	//Protocol buffer initialization
+	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
+	var KYA = protoBuilder.build("KYA");
+	var CheckIn = KYA.CheckIn;
 	
 	var mClientID = clientID;
 	var mLocation = new Point(latitude,longitude);
@@ -21,7 +27,9 @@ module.exports = function LocationRequestHandler(latitude,longitude,velocity,cli
 	 * Call functions required to schedule the next request	
 	 */
 	this.handleRequest = function(checkInBuffer, callback) {
-	
+		var checkIn = CheckIn.decode(checkInBuffer);
+		console.log('Checkin record handle:')
+		console.log(checkIn);
 		callback('SUCCESS');
 	};
 

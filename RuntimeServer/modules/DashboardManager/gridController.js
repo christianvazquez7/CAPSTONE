@@ -8,9 +8,10 @@ module.exports = function GridController(threshold) {
 	/**
 	 * Module imports.
 	 */
+	var logger = require('../../utils/logger.js');
 	var turf = require('../../node_modules/turf');
 
-	// Minimun area to fetch zone in kilometers
+	// Minimum area to fetch zone in kilometers
 	var areaThreshold = threshold;
 	
 	/**
@@ -24,35 +25,44 @@ module.exports = function GridController(threshold) {
 	 * @return GeoJSON: a GeoJSON containing the grids
 	 */
 	this.buildGrids = function(swCoordinate, neCoordinate, area) {
+		if (typeof swCoordinate === 'undefined' || 
+			typeof neCoordinate === 'undefined' || 
+			typeof area === 'undefined') {
 
-		console.log('swCoordinate = ', swCoordinate.getLatitude(), swCoordinate.getLongitude());
-		console.log('neCoordinate = ', neCoordinate.getLatitude(), neCoordinate.getLongitude());
-		console.log('area = ', area);
-		var extent = [
-						parseFloat(swCoordinate.getLongitude()), 
-						parseFloat(swCoordinate.getLatitude()), 
-						parseFloat(neCoordinate.getLongitude()), 
-						parseFloat(neCoordinate.getLatitude()),
-					];
-		var cellWidth = area;
-		var units = 'kilometers';
+			throw new Error("Incorrect parameter")
+		}
+		else {
+			logger.info("Grid requested: ");
+			logger.info('\tSW coordinate: ', swCoordinate.getLatitude(), swCoordinate.getLongitude());
+			logger.info('\tNE coordinate: ', neCoordinate.getLatitude(), neCoordinate.getLongitude());
+			logger.info('\tGrid width: ', area);
 
-		squareGrid = turf.squareGrid(extent, cellWidth, units);
-		console.log('LENGTH = ', 	squareGrid.features.length);
-			squareGrid.features.forEach(function (feature) {
+			var extent = [
+							parseFloat(swCoordinate.getLongitude()), 
+							parseFloat(swCoordinate.getLatitude()), 
+							parseFloat(neCoordinate.getLongitude()), 
+							parseFloat(neCoordinate.getLatitude()),
+						];
+			var cellWidth = area;
+			var units = 'kilometers';
 
-				var polyCoord = [
-				    {lat: feature.geometry.coordinates[0][0][1], lng: feature.geometry.coordinates[0][0][0]}, // swPoint
-				    {lat: feature.geometry.coordinates[0][1][1], lng: feature.geometry.coordinates[0][1][0]}, // nwPoint
-				    {lat: feature.geometry.coordinates[0][2][1], lng: feature.geometry.coordinates[0][2][0]}, // nePoint
-				    {lat: feature.geometry.coordinates[0][3][1], lng: feature.geometry.coordinates[0][3][0]}  // sePoint
-  				];
+			squareGrid = turf.squareGrid(extent, cellWidth, units);
+			logger.info('Grid result: ');
+			logger.info('\tTotal grids: ', squareGrid.features.length);
+				squareGrid.features.forEach(function (feature) {
 
-			    feature.properties['polyCoord'] = polyCoord;
-			    feature.properties["area"] = area;
-			});
+					var polyCoord = [
+					    {lat: feature.geometry.coordinates[0][0][1], lng: feature.geometry.coordinates[0][0][0]}, // swPoint
+					    {lat: feature.geometry.coordinates[0][1][1], lng: feature.geometry.coordinates[0][1][0]}, // nwPoint
+					    {lat: feature.geometry.coordinates[0][2][1], lng: feature.geometry.coordinates[0][2][0]}, // nePoint
+					    {lat: feature.geometry.coordinates[0][3][1], lng: feature.geometry.coordinates[0][3][0]}  // sePoint
+	  				];
 
-			return squareGrid;
+				    feature.properties['polyCoord'] = polyCoord;
+				    feature.properties["area"] = area;
+				});
+				return squareGrid;
+		}
 	};
 	
 	/**
@@ -66,11 +76,13 @@ module.exports = function GridController(threshold) {
 			// fetch zones
 			return 'true';
 		}
-		else {
+		else if (parseFloat(gridArea) > areaThreshold){
 			// not ready
 			// build new grid
 			return 'false';
 		}
+		else {
+			throw new Error("Incorrect parameter")
+		}
 	};
-	
 };

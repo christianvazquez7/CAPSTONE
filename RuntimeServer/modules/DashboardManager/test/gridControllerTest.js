@@ -1,45 +1,79 @@
-var unit = require('unit.js');
-var GridController = require('../gridController.js');
-var coordinate = require('../../../../Class_Skeletons/GeoCoordinate.js');
+var expect = require('chai').expect;
+var turf = require('../../../node_modules/turf');
 
-function readyToFetch() {
-	var gridController = new GridController(0.2);
-	unit.value(gridController.isReadyToFetch(0.2)).isEqualTo('true');
-}
+var GridController = require('../gridController.js'),
+	coordinate = require('../../../../Class_Skeletons/GeoCoordinate.js');
 
-function notReadyToFetch() {
-	var gridController = new GridController(0.2);
-	unit.value(gridController.isReadyToFetch(20)).isEqualTo('false');
-}
+describe('GridController', function() {
+	this.timeout(5000);
 
-function buildGrid() {
-	var swLat = 17.918636,
-		swLng = -67.299500,
-		neLat = 18.536909,
-		neLng = -65.176392,
-		area = 20;
+	describe('isReadyToFetch()', function() {
+		it('it should return true when area is 0.2', function(done) {
+			var gridController = new GridController(0.2);
+			expect(gridController.isReadyToFetch(0.2)).to.be.equal('true');
+			done();
+	    });
 
-	var gridController = new GridController(0.2);
-	result = gridController.buildGrids(new coordinate(swLat, swLng), new coordinate(neLat, neLng), area);
-	unit.value(result.features.length).isEqualTo(48);
-}
+	    it('it should return false when area is not 0.2', function(done) {
+			var gridController = new GridController(0.2);
+			expect(gridController.isReadyToFetch(20)).to.be.equal('false');
+			done();
+	    });
 
-function buildGridIncorrectLatLng() {
-	var swLat = -15,
-		swLng = 17.918636,
-		neLat = -65.176392,
-		neLng = 10,
-		area = 20;
+	    it('it should throw error if you don\'t specify the area', function(done) {
+			var gridController = new GridController(0.2);
+			expect(function(){
+				gridController.isReadyToFetch();
+			}).to.throw('Incorrect parameter');
+			
+			done();
+	    });
+	});
 
-	var gridController = new GridController(0.2);
-	result = gridController.buildGrids(new coordinate(swLat, swLng), new coordinate(neLat, neLng), area);
-	unit.value(result.features.length).isNotEqualTo(48);
-}
+	describe('buildGrids()', function() {
+	    it('should return a FeautureCollection', function(done) {
+			var swLatPoint = 17.918636,
+				swLngPoint = -67.299500,
+				neLatPoint = 18.536909,
+				neLngPoint = -65.176392,
+				area = 20;
 
-suite('GridController', function() {
-	test('Veryfying if we are ready to fetch zones, it should return true.', readyToFetch);
-	test('Verifying if we are ready to fecth zones, it should return false.', notReadyToFetch);
-	test('Building grid with correct coordinates.', buildGrid);
-	test('Building grid with incorrect coordinates.', buildGridIncorrectLatLng);
-});
+			var gridController = new GridController(0.2);
+			result = gridController.buildGrids(new coordinate(swLatPoint, swLngPoint), new coordinate(neLatPoint, neLngPoint), area);
+			expect(result.type).to.be.equal('FeatureCollection');
+        	expect(result.features).to.have.length(48);
+			done();
+	    });
 
+	    it('should contain grids of area ~= 20,000 m2', function(done) {
+			var swLatPoint = 17.918636,
+				swLngPoint = -67.299500,
+				neLatPoint = 18.536909,
+				neLngPoint = -65.176392,
+				area = 20;
+
+			var gridController = new GridController(0.2);
+			result = gridController.buildGrids(new coordinate(swLatPoint, swLngPoint), new coordinate(neLatPoint, neLngPoint), area);
+			var length = result.features.length
+			for (var i = 0; i < length; i++) {
+				grid = result.features[i];
+				var area = turf.area(grid);
+				var intArea =   parseInt(area/1000000);
+				expect(intArea).not.to.be.greaterThan(400);
+				expect(intArea).not.to.be.lessThan(399);
+			};
+
+			done();
+	    });
+
+	    it('should throw error if you don\'t specify the parameters', function(done) {
+
+			var gridController = new GridController(0.2);
+			
+			expect(function(){
+				result = gridController.buildGrids();
+			}).to.throw('Incorrect parameter');
+			done();
+	    });
+	});
+ });

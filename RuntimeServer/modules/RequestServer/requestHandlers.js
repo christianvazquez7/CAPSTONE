@@ -5,7 +5,7 @@
 module.exports = function RequestHandlers() {
 
 	// Imports
-	var logger = require('../../resources/utils/logger.js');
+	var logger = require('../../utils/logger.js');
 	var TelemetryRequestHandler = require('../TelemetryManager/telemetryRequestHandler.js');
 	var DashboardRequestHandler = require('../DashboardRequestManager/dashboardRequestHandler.js');
 	var LocationRequestHandler = require('../LocationRequestManager/locRequestHandler.js')
@@ -32,7 +32,7 @@ module.exports = function RequestHandlers() {
 			}
 			else {
 				res.send(result);
-				// logger.info('Stats result --> ', result);
+				// logger.info('Stats buffer result --> ', result);
 			}
 		});
 	}
@@ -154,9 +154,15 @@ module.exports = function RequestHandlers() {
 		neLat = req.query.neLat;
 		neLng = req.query.neLng;
 		gridArea = req.query.area;
-		mDashboardHandler.requestGrids(swLat, swLng, neLat, neLng, gridArea, function(result){
-			res.send(result);
-				// logger.info('Checkin result --> ', result);
+		mDashboardHandler.requestGrids(swLat, swLng, neLat, neLng, gridArea, function(err, result){
+			if (err) {
+				res.statusCode = 400;
+				res.send(err);
+			}
+			else {
+				res.send(result);
+			}
+				// logger.info('Get grids result --> ', result);
 		});
 	}
 
@@ -185,9 +191,14 @@ module.exports = function RequestHandlers() {
 	this.isReady = function(req, res) {
 		logger.debug("GET --> Is ready handle");
 		gridArea = req.query.gridArea;
-		console.log(gridArea);
-		mDashboardHandler.isReady(gridArea, function(result){
-			res.send(result);
+		mDashboardHandler.isReady(gridArea, function(err, result){
+			if (err) {
+				res.statusCode = 400;
+				res.send(err);
+			}
+			else {
+				res.send(result);
+			}
 		});
 	}
 };
