@@ -14,7 +14,7 @@ body {
 }
 
 #body2 {
-	padding-top: 70px;
+/* 	padding-top: 90px; */
 	padding-bottom:80px;   /* Height of the footer */
 }
 #footer2 {
@@ -26,32 +26,46 @@ body {
 
 .team-name {
 	font-size: 20px;
+	color: #474747;
 	margin-bottom: 0px;
 	padding-bottom: 0px;
 }
 
-hr {
-	margin: 0px;
-}
 
 .left-photo-team {
 	float: left;
+}
+
+.right-photo-team {
+	float: right;
+	margin-left: 20px;
 }
 
 p.right-description-team {
 	float: left;
 }
 
-.right-team-text {
-	text-align: justify;
+.team-text {
+/* 	text-align: justify; */
 	color: #333;
 }
 
+
+
 div.left-photo-team {
-	width: 150px;
-	height: 150px;
 	float: left;
 	margin-top: 10px;
 	margin-right: 20px;
-	background: #555 url('../images/divider.png') center center no-repeat;
+}
+
+.team-image {
+	width: 140px;
+}
+
+hr {
+	margin: 0;
+	width: 924px;
+	border: none;
+	height: 0.05em;
+	background: #333;	
 }

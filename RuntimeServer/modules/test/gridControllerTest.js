@@ -1,8 +1,8 @@
 var expect = require('chai').expect;
-var turf = require('../../../node_modules/turf');
+var turf = require('../../node_modules/turf');
 
-var GridController = require('../gridController.js'),
-	coordinate = require('../../../../Class_Skeletons/GeoCoordinate.js');
+var GridController = require('../DashboardManager/gridController.js'),
+	coordinate = require('../../../Class_Skeletons/GeoCoordinate.js');
 
 describe('GridController', function() {
 	this.timeout(5000);

@@ -1,12 +1,12 @@
-var ProtoBuf = require("../../../node_modules/protobufjs");
-var turf = require('../../../node_modules/turf');
+var ProtoBuf = require("../../node_modules/protobufjs");
+var turf = require('../../node_modules/turf');
 
 var should = require('chai').should(),
     expect = require('chai').expect,
     supertest = require('supertest'),
     api = supertest('http://localhost:3000');
 
-var builder = ProtoBuf.loadProtoFile("../../resources/kya.proto"),
+var builder = ProtoBuf.loadProtoFile("../resources/kya.proto"),
     KYA = builder.build("KYA"),
     Telemetry = KYA.Telemetry;
     GridBounds = KYA.GridBounds,
@@ -130,7 +130,7 @@ describe('Dashboard', function() {
       });
     });
 
-    it('should have a 200 status when accesing /grids/ready with query string', function(done) {
+    it('should have a 200 status when accesing /grids with query string', function(done) {
       var swLatPoint = 17.918636,
           swLngPoint = -67.299500,
           neLatPoint = 18.536909,
@@ -146,7 +146,7 @@ describe('Dashboard', function() {
         });
     });
 
-    it('should have a 400 status when accesing /grids/ready with missing query string', function(done) {
+    it('should have a 400 status when accesing /grids0 with missing query string', function(done) {
       api.get('/grids')
         .end(function(err, res) {
           expect(res).to.have.property('status');
@@ -258,7 +258,7 @@ describe('Dashboard', function() {
 
       it('should have a 400 status when accesing /grids/ready without query string', function(done) {
         api.get('/grids/ready')
-        .expect(200)
+        .expect(400)
         .end(function(err, res) {
           expect(res).to.have.property('status');
           expect(res.status).to.equal(400);
@@ -317,9 +317,27 @@ describe('Dashboard', function() {
       var buffer2 = gridBounds2.encode();
       var bodyBuffer2 = buffer2.toBuffer();
 
-      it('should return a 200 response when accesing /zones', function() {
-        api.get('/zones')
-        .expect(200);
+      it('should return a 200 response when accesing /zones', function(done) {
+        api.post('/zones')
+        .set('Content-Type', 'application/octet-stream')
+        .send(bodyBuffer)
+        .expect(200)
+        .end(function(err, res) {
+          expect(res).to.have.property('status');
+          expect(res.status).to.equal(200);
+          done();
+        });
+      });
+
+      it('should return a 400 response when accesing /zones with missing payload', function(done) {
+        api.post('/zones')
+        .expect(400)
+        .set('Content-Type', 'application/octet-stream')
+        .end(function(err, res) {
+          expect(res).to.have.property('status');
+          expect(res.status).to.equal(400);
+          done();
+        });
       });
 
       it('should return a FeatureCollection', function(done) {

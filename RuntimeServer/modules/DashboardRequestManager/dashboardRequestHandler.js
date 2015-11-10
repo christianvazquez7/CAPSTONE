@@ -25,10 +25,10 @@ module.exports = function DashboardRequestHandler() {
 	var gridController;
 
 	// URL for Mondo db 
-	// var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';			// Puerto Rico's geozones db
+	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';			// Puerto Rico's geozones db
 	// var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/ChicagoGeozone';	// Chicago's geozones db
 	// var url = 'mongodb://localhost:27017/Geozone';	// Local PR database
-	var url = 'mongodb://localhost:27017/TestGeozone';	// Test database
+	// var url = 'mongodb://localhost:27017/TestGeozone';	// Test database
 	
 	/**
 	 * Fetch the current crime statistics from KYA DB.
@@ -105,47 +105,52 @@ module.exports = function DashboardRequestHandler() {
 	 * @param callback: Callback function to be called when the zones have been fetched from the database.
 	 */
 	this.requestZones = function(gridBoundsBuffer, callback) {
-		var gridBounds = GridBounds.decode(gridBoundsBuffer);
+		try {
+			var gridBounds = GridBounds.decode(gridBoundsBuffer);
 
-		var swPoint = [gridBounds.boundaries[0].longitude, gridBounds.boundaries[0].latitude];
-		var nwPoint = [gridBounds.boundaries[1].longitude, gridBounds.boundaries[1].latitude];
-		var nePoint = [gridBounds.boundaries[2].longitude, gridBounds.boundaries[2].latitude];
-		var sePoint = [gridBounds.boundaries[3].longitude, gridBounds.boundaries[3].latitude];
+			var swPoint = [gridBounds.boundaries[0].longitude, gridBounds.boundaries[0].latitude];
+			var nwPoint = [gridBounds.boundaries[1].longitude, gridBounds.boundaries[1].latitude];
+			var nePoint = [gridBounds.boundaries[2].longitude, gridBounds.boundaries[2].latitude];
+			var sePoint = [gridBounds.boundaries[3].longitude, gridBounds.boundaries[3].latitude];
 
-		logger.info('GET zones in: ');
-		logger.info('\tSW Point', swPoint);
-		logger.info('\tNW Point', nwPoint);
-		logger.info('\tNE Point', nePoint);
-		logger.info('\tSE Point', sePoint);
-		
-		MongoClient.connect(url, function (err, db) {
-			// Documents collection
-			var collection = db.collection('Geozone');
-			if (err) {
-				logger.error('Unable to connect to the mongoDB server. Error:', err);
-			} 
-			else {
-			    // Connected
-			    logger.debug('Connection established to', url);
+			logger.info('GET zones in: ');
+			logger.info('\tSW Point', swPoint);
+			logger.info('\tNW Point', nwPoint);
+			logger.info('\tNE Point', nePoint);
+			logger.info('\tSE Point', sePoint);
+			
+			MongoClient.connect(url, function (err, db) {
+				// Documents collection
+				var collection = db.collection('Geozone');
+				if (err) {
+					logger.error('Unable to connect to the mongoDB server. Error:', err);
+				} 
+				else {
+				    // Connected
+				    logger.debug('Connection established to', url);
 
-				collection.find( { loc : 
-	                  { $geoWithin : 
-	                    { $geometry : 
-	                      { type : "Polygon",
-	                        coordinates : [ [ swPoint , nwPoint , nePoint , sePoint , swPoint ] ]
-	                } } } } ).toArray(function (err, result) {
-	                	if (err) {
-							logger.error(err);
-						}
-						else {
-							zones = zonesManager.getGeoJson(result);
-							callback(err, zones);
-				    	}
-				    	db.close();
-				    	logger.debug('Mongodb connection closed.');
-				    });
-			}
-		});
+					collection.find( { loc : 
+		                  { $geoWithin : 
+		                    { $geometry : 
+		                      { type : "Polygon",
+		                        coordinates : [ [ swPoint , nwPoint , nePoint , sePoint , swPoint ] ]
+		                } } } } ).toArray(function (err, result) {
+		                	if (err) {
+								logger.error(err);
+							}
+							else {
+								zones = zonesManager.getGeoJson(result);
+								callback(err, zones);
+					    	}
+					    	db.close();
+					    	logger.debug('Mongodb connection closed.');
+					    });
+				}
+			});
+		}
+		catch(err) {
+			callback(new Error("Undefined parameter"))
+		}
 	};
 
 	/**

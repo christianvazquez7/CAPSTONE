@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 
-var ZoneManager = require('../zonesManager.js');
+var ZoneManager = require('../DashboardManager/zonesManager.js');
 
 describe('ZoneManager', function() {
 	this.timeout(5000);

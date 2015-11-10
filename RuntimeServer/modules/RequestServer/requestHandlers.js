@@ -54,8 +54,14 @@ module.exports = function RequestHandlers() {
 		gridBounds = req.body;
 
 		mDashboardHandler.requestZones(gridBounds, function(err, result) {
-			res.send(result);
-			// logger.info(result);
+			if (err) {
+				res.statusCode = 400;
+				res.send(err);
+			}
+			else {
+				res.send(result);
+				// logger.info(result);
+			}
 		});
 	}
 

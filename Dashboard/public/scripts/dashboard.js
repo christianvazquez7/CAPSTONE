@@ -40,6 +40,14 @@ $(document).ready(function() {
 	var mapLocLat = 18.210952,
 		mapLocLng = -66.492914;
 
+	// var swLat = 41.588743,
+	// 	swLng = -87.967529,
+	// 	neLat = 42.051332,
+	// 	neLng = -87.377014;
+
+	// var mapLocLat = 41.8369,
+	// 	mapLocLng = -87.6847;
+
 	// Initial grid size
 	var initialArea = 20;
 
