@@ -45,6 +45,7 @@ public class KYANotificationService extends Service {
     private static final String MUTE_PREFERENCE = "mute_preference";
     private static final String CURRENT_ZONE_PREFERENCE = "CURRENT_ZONE";
     private final static String SELECTED_EXTRA = "SELECTED_ID";
+    private final static String ZONE_ID_EXTRA = "ZONE_ID";
     private static final long LOCATION_TIMEOUT = 1500;
     private static final long RETRY_CHECKIN_PERIOD_SECONDS = 5; /// 5 seconds
     private static final long RESPONSE_TIMEOUT = 10000; /// 5 seconds
@@ -144,7 +145,8 @@ public class KYANotificationService extends Service {
                 String id = intent.getExtras().getString(EXTRA_ID);
                 String date = intent.getExtras().getString(LAST_UPDATED);
                 double rate = intent.getExtras().getDouble(CRIME_RATE);
-                KYANotificationService.this.notify(id, rating, rate, date,true);
+                int currentZoneId = intent.getExtras().getInt(ZONE_ID_EXTRA);
+                KYANotificationService.this.notify(id, rating, rate, date,true,currentZoneId);
             }
         });
     }
@@ -177,20 +179,22 @@ public class KYANotificationService extends Service {
                 String id = intent.getExtras().getString(EXTRA_ID);
                 String date = intent.getExtras().getString(LAST_UPDATED);
                 double rate = intent.getExtras().getDouble(CRIME_RATE);
+                int currentZoneId = intent.getExtras().getInt(ZONE_ID_EXTRA);
 
                 KYA.Telemetry.Survey survey = KYA.Telemetry.Survey.newBuilder().setPerceivedRisk(selected).setActualRisk(rating).build();
                 KYA.Telemetry.Builder builder = KYA.Telemetry.newBuilder().setUserID(Utils.getUserId(KYANotificationService.this));
                 builder.setSurvey(survey);
                 builder.setNotificationID(id);
-                builder.setZoneID(1);
+                builder.setZoneID(currentZoneId);
                 PhoneInterface.getInstance(KYANotificationService.this).sendMessageSurvey(builder.build().toByteArray());
-                KYANotificationService.this.notify(id, rating, rate, date,true);
+                KYANotificationService.this.notify(id, rating, rate, date,true,currentZoneId);
             }
         });
     }
 
 
     private void sendHeartbeat(final Intent intent) {
+        final int currentZoneId = intent.getExtras().getInt(ZONE_ID_EXTRA);
         HandlerThread handlerThread = new HandlerThread("hbHandler");
         handlerThread.start();
         Handler heartBeatHandler = new Handler(handlerThread.getLooper());
@@ -204,7 +208,7 @@ public class KYANotificationService extends Service {
                     KYA.Telemetry.Builder builder = KYA.Telemetry.newBuilder().setUserID(Utils.getUserId(KYANotificationService.this));
                     builder.setHeartRate(hr);
                     builder.setNotificationID(intent.getExtras().getString(EXTRA_ID));
-                    builder.setZoneID(1);
+                    builder.setZoneID(currentZoneId);
                     PhoneInterface.getInstance(KYANotificationService.this).sendMessageHeartBeat(builder.build().toByteArray());
                 } catch (ExecutionException | InterruptedException e) {
                     Log.d(TAG,"Error fetching heartbeat: " + e.getMessage());
@@ -233,7 +237,9 @@ public class KYANotificationService extends Service {
                         mLastSpeed = location.getSpeed();
                     }
                     KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
-                    KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setUserId(Utils.getUserId(KYANotificationService.this));
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(KYANotificationService.this);
+                    boolean negativeDelta = preferences.getBoolean("lower_preference",true);
+                    KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setNegDelta(negativeDelta).setUserId(Utils.getUserId(KYANotificationService.this));
                     builder.setLocation(point);
                     builder.setSpeed(location.getSpeed());
 
@@ -271,22 +277,23 @@ public class KYANotificationService extends Service {
             timeoutTimer = null;
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        KYA.KYAResponse response = null;
+        KYA.CheckInResponse response = null;
         try {
-            response = KYA.KYAResponse.parseFrom(proto);
+            response = KYA.CheckInResponse.parseFrom(proto);
         } catch (InvalidProtocolBufferException e) {
             Log.e(TAG,e.getMessage());
         }
-        long nextCheckInSeconds = response.getNextRequestTimeInSeconds();
-        int currentZone = response.getNewLevel();
+        double nextCheckInSeconds = response.getNextRequestTimeInSeconds();
+        int currentZone = response.getCurrentZone().getLevel();
         String currentZoneDate = response.getCurrentZone().getUpdated();
         boolean doSurvey = response.getRequestFeedback();
-        double crimeRate = response.getCurrentZone().getNumberOfCrimes();
+        double crimeRate = response.getCurrentZone().getTotalCrime();
         boolean muted = preferences.getBoolean(MUTE_PREFERENCE,true);
         boolean negativeDelta = preferences.getBoolean("lower_preference",true);
         int prevZone =  preferences.getInt(CURRENT_ZONE_PREFERENCE,1);
         int threshold = preferences.getInt(THRESHOLD_PREFERENCE,1);
         preferences.edit().putInt(CURRENT_ZONE_PREFERENCE,currentZone).commit();
+        int currentZoneId = response.getCurrentZone().getZoneID();
         mAlarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         scheduleCheckIn(nextCheckInSeconds);
         if (((currentZone > prevZone && currentZone > threshold) || (currentZone < prevZone && negativeDelta)) && !muted) {
@@ -295,9 +302,9 @@ public class KYANotificationService extends Service {
             mCurrentNotificationId = userId + System.currentTimeMillis();
             boolean higher = currentZone > prevZone;
             if(doSurvey && higher) {
-                startSurvey(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate);
+                startSurvey(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate,currentZoneId);
             } else {
-                notify(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate,higher);
+                notify(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate,higher,currentZoneId);
             }
         }
     }
@@ -322,7 +329,7 @@ public class KYANotificationService extends Service {
      * Schedules the next notification based on the amount of time sent back in response.
      * @param timeInSeconds Time delta in seconds for next check in.
      */
-    private void scheduleCheckIn(long timeInSeconds) {
+    private void scheduleCheckIn(double timeInSeconds) {
         synchronized (this) {
             if(speedTracker == null) {
                 speedTracker = new Timer();
@@ -333,7 +340,7 @@ public class KYANotificationService extends Service {
                 Intent intentAlarm = new Intent();
                 intentAlarm.setAction("com.nvbyte.kya.CHECK_IN");
                 mNextCheckIn = PendingIntent.getBroadcast(this, 0, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
-                mAlarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000 * timeInSeconds,mNextCheckIn);
+                mAlarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,(long) (SystemClock.elapsedRealtime() + 1000 * timeInSeconds),mNextCheckIn);
             }
         }
     }
@@ -343,7 +350,7 @@ public class KYANotificationService extends Service {
      * @param notificationId Id of notification session (timestamp + phoneId).
      * @param classification Classification level for notification.
      */
-    private void notify(final String notificationId, final int classification, final double crimeRate, final String date, final boolean higher) {
+    private void notify(final String notificationId, final int classification, final double crimeRate, final String date, final boolean higher,final int currentZoneId) {
         Utils.acquire(this);
         HandlerThread handlerThread = new HandlerThread("handleBeat");
         handlerThread.start();
@@ -360,7 +367,7 @@ public class KYANotificationService extends Service {
                         KYA.Telemetry.Builder builder = KYA.Telemetry.newBuilder().setUserID(Utils.getUserId(KYANotificationService.this));
                         builder.setHeartRate(hr);
                         builder.setNotificationID(notificationId);
-                        builder.setZoneID(1);
+                        builder.setZoneID(currentZoneId);
                         PhoneInterface.getInstance(KYANotificationService.this).sendMessageHeartBeat(builder.build().toByteArray());
                     } catch (ExecutionException | InterruptedException e) {
                         Log.d(TAG, "Error fetching heartbeat: " + e.getMessage());
@@ -383,12 +390,13 @@ public class KYANotificationService extends Service {
                 notificationActivity.putExtra(LAST_UPDATED,date);
                 notificationActivity.putExtra(EXTRA_ID,notificationId);
                 notificationActivity.putExtra("HIGHER",higher);
+                notificationActivity.putExtra(ZONE_ID_EXTRA,currentZoneId);
                 startActivity(notificationActivity);
             }
         });
     }
 
-    private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate){
+    private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate,int currentZoneId){
         Utils.acquire(this);
         Intent surveyActivity = new Intent(getApplicationContext(),SurveyActivity.class);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -397,6 +405,7 @@ public class KYANotificationService extends Service {
         surveyActivity.putExtra(RATING,currentZone);
         surveyActivity.putExtra(CRIME_RATE,crimeRate);
         surveyActivity.putExtra(LAST_UPDATED,currentZoneDate);
+        surveyActivity.putExtra(ZONE_ID_EXTRA,currentZoneId);
         startActivity(surveyActivity);
     }
 

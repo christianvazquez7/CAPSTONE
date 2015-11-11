@@ -46,6 +46,8 @@ public class SurveyActivity extends FragmentActivity {
     private static final String CRIME_RATE = "CRIME_RATE";
     private static final String LAST_UPDATED = "LAST_UPDATED";
     private static final String EXTRA_ID = "NOTIFICATION_ID";
+    private final static String ZONE_ID_EXTRA = "ZONE_ID";
+
     private static final int VIBRATION_PERIOD = 1000;
     private boolean sentSurvey = false;
 
@@ -188,6 +190,7 @@ public class SurveyActivity extends FragmentActivity {
         intent.putExtra(RATING, this.getIntent().getExtras().getInt(RATING));
         intent.putExtra(CRIME_RATE,this.getIntent().getExtras().getDouble(CRIME_RATE));
         intent.putExtra(LAST_UPDATED,this.getIntent().getExtras().getString(LAST_UPDATED));
+        intent.putExtra(ZONE_ID_EXTRA,this.getIntent().getExtras().getInt(ZONE_ID_EXTRA));
         return intent;
     }
 

@@ -17,12 +17,12 @@ public class RequestManager {
     private RequestQueue mRequestQueue;
     private static RequestManager mRequestManager;
     private static final String IP = "192.168.1.2";
-    private static final String SURVEY_ROUTE = "http://"+IP+":5000/survey";
-    private static final String HEART_BEAT_ROUTE = "http://"+IP+":5000/heartbeat";
-    private static final String CHECK_IN_ROUTE = "http://"+IP+":5000/checkIn";
-    private static final String CURRENT_ZONE_ROUTE = "http://"+IP+":5000/currentZone";
-    private static final String MOVEMENT_ROUTE = "http://"+IP+":5000/movement";
-    private static final String RETRY_ROUTE = "http://"+IP+":5000/retry";
+    private static final String SURVEY_ROUTE = "http://"+IP+":3000/telemetry/survey";
+    private static final String HEART_BEAT_ROUTE = "http://"+IP+":3000/telemetry/heartbeat";
+    private static final String CHECK_IN_ROUTE = "http://"+IP+":3000/location/checkin";
+    private static final String CURRENT_ZONE_ROUTE = "http://"+IP+":3000/zones/current/";
+    private static final String MOVEMENT_ROUTE = "http://"+IP+":3000/telemetry/movement";
+    private static final String RETRY_ROUTE = "http://"+IP+":3000/location/checkin";
 
 
     private Context mContext;
