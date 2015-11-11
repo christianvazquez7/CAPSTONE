@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="level1">#4ABA3A</color>
+    <color name="level2">#4FC7B9</color>
+    <color name="level3">#59ABC7</color>
+    <color name="level4">#59ABC7</color>
+    <color name="level5">#1C4587</color>
+    <color name="level6">#D4D4D4</color>
+    <color name="level7">#F9F737</color>
+    <color name="level8">#F0F147</color>
+    <color name="level9">#F37904</color>
+    <color name="level10">#F93324</color>
+    <color name="white">#FFFFFF</color>
+
+
+    <color name="level1transluscent">#804ABA3A</color>
+    <color name="level2transluscent">#804FC7B9</color>
+    <color name="level3transluscent">#8059ABC7</color>
+    <color name="level4transluscent">#8059ABC7</color>
+    <color name="level5transluscent">#801C4587</color>
+    <color name="level6transluscent">#80D4D4D4</color>
+    <color name="level7transluscent">#80F9F737</color>
+    <color name="level8transluscent">#80F0F147</color>
+    <color name="level9transluscent">#80F37904</color>
+    <color name="level10transluscent">#80F93324</color>
+</resources>
