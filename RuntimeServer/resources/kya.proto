@@ -4,21 +4,50 @@ package KYA;
 message Telemetry {
     
     //Heartbeat
-    message Heartbeat {
+    message HeartRate {
+
+        //Measurement before user being notified
         required int32 before = 1;
+        
+        //Measurement after user being notified
         required int32 after = 2;
     }
     
     //Survey
     message Survey {
-        required int32 zoneID = 1;
+        //Risk calculated by KYA
         required int32 actualRisk = 2;
+
+        //Risk perceived by the user
         required int32 perceivedRisk = 3;
     }
-    
-    required  int32  userID  = 1;                 
-    required  int32  notificationID = 2;          
-    optional  Heartbeat  heartbeat  = 3;
-    optional  Survey  survey = 4;
 
+    //Identifier of the device where the telemetry was captured
+    required  int32  userID  = 1;                 
+    
+    //Identifier of a notification
+    required  int32  notificationID = 2;     
+     
+    // Zone where the record was captured or obtained
+    required  int32  zoneID = 3;     
+    
+    //Heart rate mesaurement record that may come in a telemetry record
+    optional  HeartRate  heartRate  = 4;
+    
+    //Survey response record that may come in a telemetry record
+    optional  Survey  survey = 5;
 }
+
+// Contains a latitude and longitude that represents a location in space. 
+message GeoPoint {
+    
+    //Identifier of the device where the telemetry was captured
+    required int32 userID = 1;
+
+    // Latitude coordinate in physical space.
+    required double latitude = 2;
+
+    // Longitude coordinate in physical space.
+    required double longitude = 3;
+}
+        
