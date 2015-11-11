@@ -64,11 +64,15 @@ module.exports = function RequestScheduler() {
 		});
 
 		var currentZone = analyzer.getCurrentZone(locationGeoJSON,geoZones);
-		if(currentZone == null) mResponseCallback(new Error("Zone not found"));
+		if(!currentZone) mResponseCallback(new Error("Zone not found"));
 		
 		surveyFlag = (Math.random() > (1-probability));
 		
 		var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag); 
+		if(!response){
+			mResponseCallback(new Error("Missing parameters for response"));
+			return;
+		}
 		mResponseCallback(null, response);
 		
 	};	

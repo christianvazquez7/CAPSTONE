@@ -2,6 +2,7 @@
 var expect = require('chai').expect;
 var ZoneFetcher = require('../zoneFetcher.js');
 
+
 var fetcherTest = new ZoneFetcher();
 var location = 
 {
@@ -51,9 +52,9 @@ var numRings = 1;
 fetcherTest.fetchByLocation(location.NWCorner, numRings, function(err, result){
         zones = result;
         for(var i = 0; i<zones.length; i++){
-          zones[i].totalCrime Math.floor((Math.random() * 10) + 1); = 
+          zones[i].totalCrime = Math.floor((Math.random() * 10) + 1);
         }
-        console.log(zones);
+        console.log(zones[0]);
 });
 */
 

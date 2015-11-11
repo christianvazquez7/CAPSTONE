@@ -7,10 +7,10 @@ message Telemetry {
     message HeartRate {
 
         //Measurement before user being notified
-        required int32 before = 1;
+        optional int32 before = 1;
         
         //Measurement after user being notified
-        required int32 after = 2;
+        optional int32 after = 2;
     }
     
     //Survey
@@ -43,7 +43,7 @@ message GeoPoint {
     
     //Identifier of the device where the telemetry was captured (optional as 
     //it is only required when working with telemtry)
-    required string userID = 1;
+    optional string userID = 1;
 
     // Latitude coordinate in physical space.
     required double latitude = 2;
@@ -69,7 +69,7 @@ message CheckIn {
     // Speed at which user is moving. This can be used to determine the what is 
     // the most efficient request interval, along with the user distance from 
     // the closest risk zone increase.
-    required double speed = 3;
+    optional double speed = 3;
 
     // A flag to identify if the user is expecting notifications to be triggered
     // when he/she moves from a higer risk zone to a lower risk zone.
@@ -100,7 +100,7 @@ message GeoZone {
 
     // Crime rate for this particular GeoZone, for statistical purposes. This
     // information can be included as part of info in admin dashboard detail.
-    required string totalCrime = 3;
+    required int32 totalCrime = 3;
 
     // Boundaries of the classified zone. This will always contain exactly 
     // four GeoPoints.

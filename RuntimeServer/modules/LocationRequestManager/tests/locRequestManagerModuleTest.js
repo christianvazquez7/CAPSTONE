@@ -1,13 +1,18 @@
 var LocRequestHandler = require('../locRequestHandler.js');
 var ZoneFetcher = require('../ZoneFetcher.js');
 var expect = require('chai').expect;
+var process = require('process'); 
+
 /*------------------Encoding message to test---------------------------------------------------------*/
+
 var ProtoBuf = require('protobufjs');
+
 
 var testedFetcher = new ZoneFetcher();	
 var reqHandler = new LocRequestHandler();
 
-var builder = ProtoBuf.loadProtoFile('C:/Users/LuisR/Documents/GitHub/CAPSTONE/RuntimeServer/resources/kya.proto'),
+process.chdir(__dirname);
+var builder = ProtoBuf.loadProtoFile('../../../resources/kya.proto'),
 	KYA = builder.build("KYA"),
 	CheckIn = KYA.CheckIn,
 	CheckInResponse = KYA.CheckInResponse,

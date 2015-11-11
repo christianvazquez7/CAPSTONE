@@ -7,12 +7,13 @@ module.exports = function ResponseBuilder() {
 	/**
 	 * Module imports.
 	 */	
-	var ProtoBuf = require("../../node_modules/protobufjs");
+	var ProtoBuf = require('protobufjs');
+	
 	/**
 	 * Protocol buffer decoding imports
 	 */ 
-	 //TODO: Absolute paths?
-	var builder = ProtoBuf.loadProtoFile('C:/Users/LuisR/Documents/GitHub/CAPSTONE/RuntimeServer/resources/kya.proto'),
+	process.chdir(__dirname);
+	var builder = ProtoBuf.loadProtoFile('../../resources/kya.proto'),
 		KYA = builder.build("KYA"),
 		CheckInResponse = KYA.CheckInResponse,
 		GeoZone = KYA.GeoZone,
@@ -26,6 +27,9 @@ module.exports = function ResponseBuilder() {
 	 * @return: encoded message to send to client
 	 */
 	this.build = function (currentZone, nextRequestTime, surveyFlag) {
+		if(!currentZone || !nextRequestTime){
+			return null;
+		}
 		var geoPointsAr = [];
 		for(var i = 0 ; i < currentZone.loc.coordinates[0].length - 1; i ++){
 			geoPointsAr.push(new GeoPoint('', currentZone.loc.coordinates[0][i][1], currentZone.loc.coordinates[0][i][0]));
