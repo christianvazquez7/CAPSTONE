@@ -1,3 +1,5 @@
+package KYA;
+
 // Message sent from server to wear device, when a check in occurs.
 // The notification logic is deferred to the Android device. The folloing
 // scenarios can occur during the application's runtime:
