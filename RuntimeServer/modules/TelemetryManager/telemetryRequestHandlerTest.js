@@ -9,8 +9,8 @@ var expect = require('chai').expect;
 
 /*-----------------Record with only a survey response------------------------*/
 var telRecord1 = new Telemetry({
-	"userID" : 50,
-	"notificationID" : 50,
+	"userID" : '50',
+	"notificationID" : '50',
 	"zoneID": 50,
 	"survey" : {
 			"actualRisk" : 50,
@@ -23,8 +23,8 @@ var messagegpb1 = buffer1.toBuffer();
 
 /*------------------Record with only heart rate data------------------------*/
 var telRecord2 = new Telemetry({
-	"userID" : 50,
-	"notificationID" : 50,
+	"userID" : '50',
+	"notificationID" : '50',
 	"zoneID": 50,
 	"heartRate" : {
 			"before" : 50,
@@ -37,8 +37,8 @@ var messagegpb2 = buffer2.toBuffer();
 
 /*------------------Record with both heart rate and survey------------------*/
 var telRecord3 = new Telemetry({
-	"userID" : 70,
-	"notificationID" : 70,
+	"userID" : '70',
+	"notificationID" : '70',
 	"zoneID": 7,
 	"heartRate" : {
 			"before" : 700,
@@ -65,7 +65,7 @@ var messagegpb4 = buffer4.toBuffer();
 
 /*-----------------Location data for movement tracking---------------------*/
 var locRecord = new GeoPoint({
-	"userID" : 80,
+	"userID" : '80',
 	"latitude" : 80.8888,
 	"longitude" : 80.888	
  });
