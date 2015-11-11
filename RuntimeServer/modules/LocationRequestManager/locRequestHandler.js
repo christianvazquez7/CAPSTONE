@@ -11,13 +11,13 @@ module.exports = function LocationRequestHandler() {
 	 * Module imports.
 	 */
 	var RequestScheduler = require('./requestScheduler.js');
-	var ProtoBuf = require('protobufjs');
+	var ProtoBuf = require(__dirname + '/../../node_modules/protobufjs');
 	
 	/**
 	 * Protobuffer message decoding variables
 	 */
-	//TODO: Check path 
-	var protoBuilder = ProtoBuf.loadProtoFile('C:/Users/LuisR/Documents/GitHub/CAPSTONE/RuntimeServer/resources/kya.proto');
+	process.chdir(__dirname);
+	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
 	var KYA = protoBuilder.build("KYA");
 	var CheckIn = KYA.CheckIn;
 	var GeoPoint = KYA.GeoPoint;

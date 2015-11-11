@@ -106,3 +106,22 @@ message GeoZone {
     // four GeoPoints.
     repeated GeoPoint boundaries = 4;
 }
+
+// Contains the bounds of a grid
+message GridBounds {
+    
+    // LatLng of the north-west corner
+    repeated GeoPoint boundaries = 1;
+}
+
+// Stats
+message Stats {
+    required double maxNumOfCrimes = 1;
+    required double minNumOfCrimes = 2;
+    required double crimeAverage = 3;
+}
+
+// Threshold
+message Threshold {
+    required double threshold = 1;
+}

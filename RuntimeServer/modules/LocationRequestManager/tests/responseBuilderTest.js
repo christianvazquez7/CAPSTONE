@@ -4,7 +4,8 @@ var ProtoBuf = require('protobufjs');
 var expect = require('chai').expect;
 
 //TODO: Check path 
-var builder = ProtoBuf.loadProtoFile('C:/Users/LuisR/Documents/GitHub/CAPSTONE/RuntimeServer/resources/kya.proto');
+process.chdir(__dirname);
+var builder = ProtoBuf.loadProtoFile("../../../resources/kya.proto");
 
 var KYA = builder.build("KYA");
 var CheckInResponse = KYA.CheckInResponse,

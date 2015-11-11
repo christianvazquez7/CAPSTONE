@@ -11,8 +11,8 @@ module.exports = function ResponseBuilder() {
 	/**
 	 * Protocol buffer decoding imports
 	 */ 
-	 //TODO: Absolute paths?
-	var builder = ProtoBuf.loadProtoFile('C:/Users/LuisR/Documents/GitHub/CAPSTONE/RuntimeServer/resources/kya.proto'),
+	process.chdir(__dirname);
+	var builder = ProtoBuf.loadProtoFile('../../resources/kya.proto'),
 		KYA = builder.build("KYA"),
 		CheckInResponse = KYA.CheckInResponse,
 		GeoZone = KYA.GeoZone,

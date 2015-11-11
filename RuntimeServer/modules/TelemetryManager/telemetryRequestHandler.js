@@ -11,6 +11,7 @@ module.exports = function TelemetryRequestHandler() {
 	var ProtoBuf = require("../../node_modules/protobufjs");
 	
 	//Protocol buffer initialization
+	process.chdir(__dirname);
 	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
 	var KYA = protoBuilder.build("KYA");
 	var Telemetry = KYA.Telemetry;

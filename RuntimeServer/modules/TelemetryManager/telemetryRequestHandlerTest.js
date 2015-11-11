@@ -1,5 +1,6 @@
 var ProtoBuf = require("../../node_modules/protobufjs");
 
+process.chdir(__dirname);
 var builder = ProtoBuf.loadProtoFile("../../resources/kya.proto"),
 	KYA = builder.build("KYA"),
 	Telemetry = KYA.Telemetry,
@@ -55,8 +56,8 @@ var messagegpb3 = buffer3.toBuffer();
 
 /*-----------------Record with only a survey response------------------------*/
 var telRecord4 = new Telemetry({
-	"userID" : 50,
-	"notificationID" : 50,
+	"userID" : '50',
+	"notificationID" : '50',
 	"zoneID": 50
  });
 

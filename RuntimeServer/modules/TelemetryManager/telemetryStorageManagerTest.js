@@ -1,5 +1,6 @@
 var ProtoBuf = require("../../node_modules/protobufjs");
 
+process.chdir(__dirname);
 var builder = ProtoBuf.loadProtoFile("../../resources/kya.proto"),
 	KYA = builder.build("KYA"),
 	Telemetry = KYA.Telemetry,
@@ -9,8 +10,8 @@ var expect = require('../../node_modules/chai').expect
 
 /*-----------------Record with only a survey response------------------------*/
 var telRecord1 = new Telemetry({
-	"userID" : 999,
-	"notificationID" : 999,
+	"userID" : '999',
+	"notificationID" : '999',
 	"zoneID": 999,
 	"survey" : {
 			"actualRisk" : 9,
@@ -20,8 +21,8 @@ var telRecord1 = new Telemetry({
 
 /*------------------Record with only heart rate data------------------------*/
 var telRecord2 = new Telemetry({
-	"userID" : 888,
-	"notificationID" : 888,
+	"userID" : '888',
+	"notificationID" : '888',
 	"zoneID": 888,
 	"heartRate" : {
 			"before" : 8,
@@ -31,8 +32,8 @@ var telRecord2 = new Telemetry({
 
 /*------------------Record with both heart rate and survey------------------*/
 var telRecord3 = new Telemetry({
-	"userID" : 777,
-	"notificationID" : 777,
+	"userID" : '777',
+	"notificationID" : '777',
 	"zoneID": 777,
 	"heartRate" : {
 			"before" : 77,
@@ -46,15 +47,15 @@ var telRecord3 = new Telemetry({
 
 /*-----------------Record with no data------------------------------------*/
 var telRecord4 = new Telemetry({
-	"userID" : 555,
-	"notificationID" : 555,
+	"userID" : '555',
+	"notificationID" : '555',
 	"zoneID": 555	
  });
 
 
 /*-----------------Location data for movement tracking---------------------*/
 var locRecord = new GeoPoint({
-	"userID" : 444,
+	"userID" : '444',
 	"latitude" : 80.8888,
 	"longitude" : 80.888	
  });

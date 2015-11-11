@@ -5,22 +5,16 @@
 //        areas of the same risk level.
 //  (ii)  lastLevel < newLevel : User moving in the direciton of risk!
 //  (iii) lastLevel > newLevel : User moving away from risk.
-message KYAResponse {
-
-	// Last risk zone level classification in which the user was present.
-	required int32 lastLevel = 1;
-
-	// New risk zone level classification in which the user is currently in.
-	required int32 newLevel = 2;
+message CheckInResponse {
 
 	// Next suggested time delta for check in.
-	required int32 nextRequestTimeInSeconds = 3;
+	required double nextRequestTimeInSeconds = 1;
 
 	// True if feedback should be requested from user. False otherwise.
-	required bool requestFeedback = 4;
+	required bool requestFeedback = 2;
 
 	// The current geozone on which the user is.
-	required GeoZone currentZone = 5;
+	required GeoZone currentZone = 3;
 }
 
 // Telemetry
@@ -39,10 +33,10 @@ message Telemetry {
     //Survey
     message Survey {
         //Risk calculated by KYA
-        required int32 actualRisk = 2;
+        required int32 actualRisk = 1;
 
         //Risk perceived by the user
-        required int32 perceivedRisk = 3;
+        required int32 perceivedRisk = 2;
     }
 
     //Identifier of the device where the telemetry was captured
@@ -65,7 +59,7 @@ message Telemetry {
 message GeoPoint {
     
     //Identifier of the device where the telemetry was captured
-    required string userID = 1;
+    optional string userID = 1;
 
     // Latitude coordinate in physical space.
     required double latitude = 2;
@@ -92,34 +86,57 @@ message CheckIn {
 	// the most efficient request interval, along with the user distance from 
 	// the closest risk zone increase.
 	optional double speed = 3;
+
+    // A flag to identify if the user is expecting notifications to be triggered
+    // when he/she moves from a higer risk zone to a lower risk zone.
+    required bool negDelta = 4;
 }
 
 // A zone classified with a specific risk level. The KYA Geozone representation
 // uses grid thematic mapping. Therefore, our Geozone will be defined by four 
 // GeoPoints.
 message GeoZone {
-
 	// Risk zone classification for this particular area. This number will be
 	// between 1 and 10. 
-	required int32 classification = 1;
+	required int32 level = 1;
 
 	// Crime level for this particular GeoZone, for statistical purposes. This
 	// information can be included as part of info in admin dashboard detail.
-	required double numberOfCrimes = 2;
+	required int32 totalCrime = 2;
+
+	// Date of last update.
+	optional string updated = 3;
+
+	required int32 zoneID = 4;
 
 	// Boundaries of the classified zone. This will always contain exactly 
 	// four GeoPoints.
-	repeated GeoPoint boundaries = 3;
-
-	// Date of last update.
-	optional string updated = 4;
+	repeated GeoPoint boundaries = 5;
 }
 
 // Grid of zones requested by the admin dashboard. This grid should contain 
 // all the risk areas for a subset of the area of study. Message will be a 
 // list of geozones that can be mapped to Google Map API.
 message Grid {
-	
 	// List of geozones in the area currently visualized.
 	repeated GeoZone tiles = 1;
+}
+
+// Contains the bounds of a grid
+message GridBounds {
+    
+    // LatLng of the north-west corner
+    repeated GeoPoint boundaries = 1;
+}
+
+// Stats
+message Stats {
+    required double maxNumOfCrimes = 1;
+    required double minNumOfCrimes = 2;
+    required double crimeAverage = 3;
+}
+
+// Threshold
+message Threshold {
+    required double threshold = 1;
 }
