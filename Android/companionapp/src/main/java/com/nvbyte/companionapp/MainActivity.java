@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -39,10 +40,12 @@ public class MainActivity extends Activity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestManager.getInstance(MainActivity.this).sendMovement(new byte[0]);
+                EditText latt = (EditText) findViewById(R.id.latitude);
+                EditText lont = (EditText) findViewById(R.id.longitude);
+                WearInterface.getInstance(MainActivity.this).sendMock(latt.getText().toString(),lont.getText().toString());
+
             }
         });
-        mMessage = (TextView) findViewById(R.id.message);
     }
 
     @Override

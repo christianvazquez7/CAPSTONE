@@ -29,6 +29,7 @@ public class WearInterface implements MessageApi.MessageListener, GoogleApiClien
     private static final String RESPONSE_CHECK_IN = "/RESPONSE_CHECK_IN";
     private static final String RESPONSE_GET_ZONE = "/RESPONSE_GET_ZONE";
     private static final String RESPONSE_ERROR = "/RESPONSE_ERROR";
+    private static final String MOCK = "/MOCK";
 
 
     /**
@@ -43,6 +44,10 @@ public class WearInterface implements MessageApi.MessageListener, GoogleApiClien
         return singleton;
     }
 
+    public  void sendMock(String lat, String lon) {
+        String send = lat + "p"+ lon;
+        sendMessage(MOCK,send.getBytes());
+    }
     /**
      * Send error message to watch to notify a problem occurred trying to communicate with the
      * remote runtime server.

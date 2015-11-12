@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,6 +31,8 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
     private Context mContext;
     private static LocationProvider singleton;
     private GoogleApiClient mGoogleApiClient;
+    private boolean DEBUG = true;
+
 
     /**
      * Static factory that lazily instantiates a singleton instance of the LocationProvider.
@@ -41,6 +44,18 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
             singleton = new LocationProvider(context);
         }
         return singleton;
+    }
+
+    public void setMockLocation(String lat, String lon) {
+        Location mockLocation = new Location("network");
+        long currentTime = System.currentTimeMillis();
+        long elapsedTimeNanos = SystemClock.elapsedRealtimeNanos();
+        mockLocation.setElapsedRealtimeNanos(elapsedTimeNanos);
+        mockLocation.setTime(currentTime);
+        mockLocation.setLatitude(Double.parseDouble(lat));
+        mockLocation.setLongitude(Double.parseDouble(lon));
+        mockLocation.setAccuracy(3.0f);
+        LocationServices.FusedLocationApi.setMockLocation(mGoogleApiClient,mockLocation);
     }
 
     /**
@@ -59,6 +74,20 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
 
         if( mGoogleApiClient != null && !( mGoogleApiClient.isConnected() || mGoogleApiClient.isConnecting() ) )
             mGoogleApiClient.blockingConnect();
+        if(DEBUG) {
+            LocationServices.FusedLocationApi.setMockMode(mGoogleApiClient,true);
+            Location mockLocation = new Location("network");
+            long currentTime = System.currentTimeMillis();
+            long elapsedTimeNanos = SystemClock.elapsedRealtimeNanos();
+            mockLocation.setElapsedRealtimeNanos(elapsedTimeNanos);
+            mockLocation.setTime(currentTime);
+            mockLocation.setLatitude(18.200775);
+            mockLocation.setLongitude(-67.144758);
+            mockLocation.setAccuracy(3.0f);
+            LocationServices.FusedLocationApi.setMockLocation(mGoogleApiClient,mockLocation);
+        } else {
+            LocationServices.FusedLocationApi.setMockMode(mGoogleApiClient,false);
+        }
     }
 
     /**
@@ -79,23 +108,6 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
             Log.d("TAG","ERROR WITH THREAD");
         }
         return actualLocation;
-    }
-
-    /**
-     * Fetches the user speed using location services from Google and Gps.
-     * @param timeout The amount of time to wait for accurate speed estimate.
-     * @return The speed at which the device is traveling. Can be null.
-     */
-    public double getSpeed(long timeout) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<Location> location = executor.submit(new FutureLocation(mContext, mGoogleApiClient, timeout, false));
-        Location actualLocation = null;
-        try {
-            actualLocation = location.get();
-        } catch (Exception e) {
-            Log.d("TAG","ERROR WITH THREAD");
-        }
-        return actualLocation.getSpeed();
     }
 
     @Override

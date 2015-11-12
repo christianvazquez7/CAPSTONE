@@ -10,6 +10,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.SensorEvent;
 import android.location.Location;
+import android.location.LocationListener;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -54,6 +56,8 @@ public class KYANotificationService extends Service {
     private PendingIntent mNextCheckIn;
     private Timer timeoutTimer;
     private double mLastSpeed = 0;
+    private Location currentLocation;
+    private long lastLocationTime = System.currentTimeMillis();
 
     private Timer  speedTracker;
 
@@ -63,15 +67,15 @@ public class KYANotificationService extends Service {
             public void run() {
                 Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
                 if(location != null) {
-                    if(location.hasSpeed())
-                        Log.d(TAG,"LOCATION SPEED: "+location.getSpeed());
-                    else {
-                        Log.d(TAG,"LOCATION HAS NO SPEED");
+                    long currentTime = System.currentTimeMillis();
+                    double timeDelta = (currentTime - lastLocationTime)/1000;
+                    if(currentLocation != null) {
+                        double speed = location.distanceTo(currentLocation)/timeDelta;
+                        Utils.appendLog("The estimated speed is: " + speed );
+                        Log.d("TAG","The estimated speed is: " +speed);
                     }
-                    if(location.getSpeed() > mLastSpeed) {
-                        mLastSpeed = location.getSpeed();
-                        checkIn();
-                    }
+                    currentLocation = location;
+                    lastLocationTime = currentTime;
                 }
             }
         };
