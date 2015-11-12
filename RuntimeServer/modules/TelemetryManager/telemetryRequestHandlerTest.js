@@ -1,8 +1,8 @@
-var ProtoBuf = require("../../node_modules/protobufjs");
+var ProtoBuf = require('protobufjs');
 
 process.chdir(__dirname);
-var builder = ProtoBuf.loadProtoFile("../../resources/kya.proto"),
-	KYA = builder.build("KYA"),
+var builder = ProtoBuf.loadProtoFile("../../../proto/KYA.proto"),
+	KYA = builder.build("com.nvbyte.kya"),
 	Telemetry = KYA.Telemetry,
 	GeoPoint = KYA.GeoPoint;
 
@@ -10,12 +10,12 @@ var expect = require('chai').expect;
 
 /*-----------------Record with only a survey response------------------------*/
 var telRecord1 = new Telemetry({
-	"userID" : '50',
-	"notificationID" : '50',
-	"zoneID": 50,
+	"userID" : '123',
+	"notificationID" : '456',
+	"zoneID": 1,
 	"survey" : {
-			"actualRisk" : 50,
-			"perceivedRisk" : 50
+			"actualRisk" : 1,
+			"perceivedRisk" : 1
 	}
  });
 
@@ -24,54 +24,67 @@ var messagegpb1 = buffer1.toBuffer();
 
 /*------------------Record with only heart rate data------------------------*/
 var telRecord2 = new Telemetry({
-	"userID" : '50',
-	"notificationID" : '50',
-	"zoneID": 50,
+	"userID" : '234',
+	"notificationID" : '567',
+	"zoneID": 2,
 	"heartRate" : {
-			"before" : 50,
-			"after" : 50
+			"before" : 220			
 	}
  });
+
 
 var buffer2 = telRecord2.encode();
 var messagegpb2 = buffer2.toBuffer();
 
-/*------------------Record with both heart rate and survey------------------*/
+/*------------------Record with only heart rate data------------------------*/
 var telRecord3 = new Telemetry({
-	"userID" : '70',
-	"notificationID" : '70',
-	"zoneID": 7,
+	"userID" : '234',
+	"notificationID" : '567',
+	"zoneID": 2,
 	"heartRate" : {
-			"before" : 700,
-			"after" : 777
-	},
-	"survey" : {
-			"actualRisk" : 70,
-			"perceivedRisk" : 70
+			"after" : 230
 	}
  });
 
 var buffer3 = telRecord3.encode();
 var messagegpb3 = buffer3.toBuffer();
 
-/*-----------------Record with only a survey response------------------------*/
+/*------------------Record with both heart rate and survey------------------*/
 var telRecord4 = new Telemetry({
-	"userID" : '50',
-	"notificationID" : '50',
-	"zoneID": 50
+	"userID" : '345',
+	"notificationID" : '678',
+	"zoneID": 3,
+	"heartRate" : {
+			"before" : 45
+	},
+	"survey" : {
+			"actualRisk" : 2,
+			"perceivedRisk" : 2
+	}
  });
 
 var buffer4 = telRecord4.encode();
 var messagegpb4 = buffer4.toBuffer();
 
+/*-----------------Record with no data------------------------------------*/
+var telRecord5 = new Telemetry({
+	"userID" : '555',
+	"notificationID" : '555',
+	"zoneID": 4	
+ });
+
+var buffer5 = telRecord5.encode();
+var messagegpb5 = buffer5.toBuffer();
+
 /*-----------------Location data for movement tracking---------------------*/
 var locRecord = new GeoPoint({
-	"userID" : '80',
+	"userID" : '123',
 	"latitude" : 80.8888,
 	"longitude" : 80.888	
  });
-var buffer5 = locRecord.encode();
-var messagegpb5 = buffer5.toBuffer();
+
+var buffer6 = locRecord.encode();
+var messagegpb6 = buffer6.toBuffer();
 
 /*-----------------Objects for testing--------------------------------------*/
 
@@ -82,9 +95,11 @@ var handler2 = new TelemetryRequestHandler();
 var handler3 = new TelemetryRequestHandler();
 var handler4 = new TelemetryRequestHandler();
 var handler5 = new TelemetryRequestHandler();
+var handler6 = new TelemetryRequestHandler();
 
 /*---------------------Telemetry request handler mocha test-------------------------------*/
 describe('Telemetry Request Handler', function() {
+	this.timeout(20000);
 	describe('#handleTelemetryData(telemetryDataBuffer, callback)', function () {
 			    	
     	it('should decode and store telemetry data for a record (survey response)' , function (done) {
@@ -95,7 +110,7 @@ describe('Telemetry Request Handler', function() {
 			});
     	});    
 
-    	it("should decode and store telemetry data for a record (heart rate measure)", function (done) {
+    	it("should decode and store telemetry data for a record (heart rate measure before)", function (done) {
     		handler2.handleTelemetryData(messagegpb2, function(err,ack){
 				expect(err).to.be.null;
 				expect(ack).to.equal('Success');
@@ -103,8 +118,16 @@ describe('Telemetry Request Handler', function() {
 			});
     	});
 
-    	it("should decode and store telemetry data for a record (survey and heart rate)", function (done) {
+    	it("should decode and store telemetry data for a record (heart rate measure after)", function (done) {
     		handler3.handleTelemetryData(messagegpb3, function(err,ack){
+				expect(err).to.be.null;
+				expect(ack).to.equal('Success');
+				done();
+			});
+    	});
+
+		it("should decode and store telemetry data for a record (survey and heart rate)", function (done) {
+    		handler4.handleTelemetryData(messagegpb4, function(err,ack){
 				expect(err).to.be.null;
 				expect(ack).to.equal('Success');
 				done();
@@ -121,7 +144,7 @@ describe('Telemetry Request Handler', function() {
     });
     describe('#handleMovementData(GeoPointBuffer, callback)', function () {
     	it("should decode and store a GeoPoint to visualize a user's movement" , function (done) {
-			handler5.handleMovementData(messagegpb5, function(err, ack){
+			handler6.handleMovementData(messagegpb6, function(err, ack){
     			expect(err).to.be.null;
     			expect(ack).to.equal('Success');
     			done();

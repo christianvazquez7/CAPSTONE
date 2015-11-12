@@ -10,52 +10,60 @@ var expect = require('../../node_modules/chai').expect
 
 /*-----------------Record with only a survey response------------------------*/
 var telRecord1 = new Telemetry({
-	"userID" : '999',
-	"notificationID" : '999',
-	"zoneID": 999,
+	"userID" : '123',
+	"notificationID" : '456',
+	"zoneID": 1,
 	"survey" : {
-			"actualRisk" : 9,
-			"perceivedRisk" : 9
+			"actualRisk" : 1,
+			"perceivedRisk" : 1
 	}
  });
 
 /*------------------Record with only heart rate data------------------------*/
 var telRecord2 = new Telemetry({
-	"userID" : '888',
-	"notificationID" : '888',
-	"zoneID": 888,
+	"userID" : '234',
+	"notificationID" : '567',
+	"zoneID": 2,
 	"heartRate" : {
-			"before" : 8,
-			"after" : 8
+			"before" : 220			
+	}
+ });
+
+/*------------------Record with only heart rate data------------------------*/
+var telRecord3 = new Telemetry({
+	"userID" : '234',
+	"notificationID" : '567',
+	"zoneID": 2,
+	"heartRate" : {
+			"after" : 230
 	}
  });
 
 /*------------------Record with both heart rate and survey------------------*/
-var telRecord3 = new Telemetry({
-	"userID" : '777',
-	"notificationID" : '777',
-	"zoneID": 777,
+var telRecord4 = new Telemetry({
+	"userID" : '345',
+	"notificationID" : '678',
+	"zoneID": 3,
 	"heartRate" : {
-			"before" : 77,
-			"after" : 77
+			"before" : 45
 	},
 	"survey" : {
-			"actualRisk" : 7,
-			"perceivedRisk" : 7
+			"actualRisk" : 2,
+			"perceivedRisk" : 2
 	}
  });
 
 /*-----------------Record with no data------------------------------------*/
-var telRecord4 = new Telemetry({
+var telRecord5 = new Telemetry({
 	"userID" : '555',
 	"notificationID" : '555',
-	"zoneID": 555	
+	"zoneID": 4	
  });
 
 
 /*-----------------Location data for movement tracking---------------------*/
 var locRecord = new GeoPoint({
-	"userID" : '444',
+	"userID" : '123',
 	"latitude" : 80.8888,
 	"longitude" : 80.888	
  });
@@ -69,8 +77,16 @@ var manager2 = new TelemetryStorageManager();
 var manager3 = new TelemetryStorageManager();
 var manager4 = new TelemetryStorageManager();
 var manager5 = new TelemetryStorageManager();
-
+var manager6 = new TelemetryStorageManager();
+/*------------------------------------Node test-------------------------------------------*/
+/*
+manager.processRecord(telRecord2, false, true, function(err,ack){
+	console.log("Err: " + err);
+	console.log("Result: " + ack);
+});
+*/
 /*---------------------Telemetry request manager mocha test-------------------------------*/
+
 describe('Telemetry Storage Manager', function() {
 	describe('#processRecord(telemetryRecord, surveyFlag, heartRateFlag, callback)', function () {
 		
@@ -82,7 +98,7 @@ describe('Telemetry Storage Manager', function() {
 			});
     	});    
 
-    	it("should store telemetry data for a record (heart rate measure)", function (done) {
+    	it("should store telemetry data for a record (heart rate before measure)", function (done) {
     		manager2.processRecord(telRecord2, false, true, function(err,ack){
 				expect(err).to.equal(null);
 				expect(ack).to.equal('Success');
@@ -90,8 +106,16 @@ describe('Telemetry Storage Manager', function() {
 			});
     	});
 
+    	it("should store telemetry data for a record (heart rate after measure)", function (done) {
+    		manager3.processRecord(telRecord3, false, true, function(err,ack){
+				expect(err).to.equal(null);
+				expect(ack).to.equal('Success');
+				done();
+			});
+    	});
+
     	it("should store telemetry data for a record (survey and heart rate)", function (done) {
-    		manager3.processRecord(telRecord3, true, true, function(err,ack){
+    		manager4.processRecord(telRecord4, true, true, function(err,ack){
 				expect(err).to.equal(null);
 				expect(ack).to.equal('Success');
 				done();
@@ -99,7 +123,7 @@ describe('Telemetry Storage Manager', function() {
     	});
 
     	it("should throw error for a record when no flags have been set", function (done) {
-    		manager4.processRecord(telRecord4, false, false, function(err, ack){
+    		manager5.processRecord(telRecord5, false, false, function(err, ack){
     			expect(err).to.be.an('error');
     			expect(ack).to.equal(undefined);
     			done();
@@ -108,7 +132,7 @@ describe('Telemetry Storage Manager', function() {
     });
     describe('#storeMovementData(GeoPoint, callback)', function () {
     	it("should decode and store a GeoPoint to visualize a user's movement" , function (done) {
-			manager5.storeMovementData(locRecord, function(err, ack){
+			manager6.storeMovementData(locRecord, function(err, ack){
     			expect(err).to.equal(null);
     			expect(ack).to.equal('Success');
     			done();
