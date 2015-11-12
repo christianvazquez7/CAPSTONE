@@ -37,6 +37,7 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
     private View loading;
     private View content;
     private TextView mAreaRatingTextView;
+
     private Handler handler = new Handler(Looper.getMainLooper());
     private static final String TAG = "CurrentZoneFragment";
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
@@ -53,8 +54,8 @@ public class CurrentZoneFragment extends android.support.v4.app.Fragment {
                         Log.e(TAG,e.getMessage());
                     }
                     if(zone != null) {
-                        mBackgroundView.setBackgroundColor(getResources().getColor(Utils.getColorByLevel(zone.getClassification())));
-                        mAreaRatingTextView.setText(""+ zone.getClassification());
+                        mBackgroundView.setBackgroundColor(getResources().getColor(Utils.getColorByLevel(zone.getLevel())));
+                        mAreaRatingTextView.setText(""+ zone.getLevel());
                         loading.setVisibility(View.GONE);
                         content.setVisibility(View.VISIBLE);
                     }

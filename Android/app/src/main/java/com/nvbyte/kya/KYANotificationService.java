@@ -63,7 +63,11 @@ public class KYANotificationService extends Service {
             public void run() {
                 Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
                 if(location != null) {
-                    Log.d(TAG,"LOCATION SPEED: "+location.getSpeed());
+                    if(location.hasSpeed())
+                        Log.d(TAG,"LOCATION SPEED: "+location.getSpeed());
+                    else {
+                        Log.d(TAG,"LOCATION HAS NO SPEED");
+                    }
                     if(location.getSpeed() > mLastSpeed) {
                         mLastSpeed = location.getSpeed();
                         checkIn();

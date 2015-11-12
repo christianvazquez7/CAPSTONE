@@ -13,7 +13,7 @@ module.exports = function TelemetryRequestHandler() {
 	//Protocol buffer initialization
 	process.chdir(__dirname);
 	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
-	var KYA = protoBuilder.build("KYA");
+	var KYA = protoBuilder.build("com.nvbyte.kya");
 	var Telemetry = KYA.Telemetry;
 	var GeoPoint = KYA.GeoPoint;
 

@@ -17,7 +17,7 @@ module.exports = function DashboardRequestHandler() {
 
 	// Protocol buffer initialization
 	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
-	var KYA = protoBuilder.build("KYA");
+	var KYA = protoBuilder.build("com.nvbyte.kya");
 	var GridBounds = KYA.GridBounds;
 	var Stats = KYA.Stats;
 	var Threshold = KYA.Threshold;

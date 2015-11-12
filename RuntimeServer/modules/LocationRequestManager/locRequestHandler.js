@@ -12,15 +12,19 @@ module.exports = function LocationRequestHandler() {
 	 */
 	var RequestScheduler = require('./requestScheduler.js');
 	var ProtoBuf = require(__dirname + '/../../node_modules/protobufjs');
+	var ZoneFetcher = require('../LocationRequestManager/zoneFetcher.js');
+
 	
 	/**
 	 * Protobuffer message decoding variables
 	 */
 	process.chdir(__dirname);
 	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
-	var KYA = protoBuilder.build("KYA");
+	var KYA = protoBuilder.build("com.nvbyte.kya");
 	var CheckIn = KYA.CheckIn;
 	var GeoPoint = KYA.GeoPoint;
+	var GeoZone = KYA.GeoZone;
+
 
 	/**
 	 * Call functions required to schedule the next request	
@@ -32,4 +36,23 @@ module.exports = function LocationRequestHandler() {
 		scheduler.scheduleNextRequest(checkIn, callback);
 	};
 
+	/**
+	 * Fetch current zone and deliver it to server.
+	 */
+	this.handleZoneRequest = function(geoBuffer,callback) {
+		var geopoint = GeoPoint.decode(geoBuffer);
+		var fetcher = new ZoneFetcher();
+		fetcher.fetchByLocation(geopoint,0, function(err,zone){
+			if(err) callback(err);
+			else {
+				var geoPointsAr = [];
+				for(var i = 0 ; i < zone[0].loc.coordinates[0].length - 1; i ++){
+					geoPointsAr.push(new GeoPoint('', zone[0].loc.coordinates[0][i][1], zone[0].loc.coordinates[0][i][0]));
+				}
+				var currentZoneObj = new GeoZone(zone[0].level, +zone[0].totalCrime, '10/10/2015',zone[0].zone_id, geoPointsAr);
+				var response = currentZoneObj.encode().toBuffer();
+				callback(null,response);
+			}
+		});
+	};
 };

@@ -78,7 +78,7 @@ module.exports = function RequestHandlers() {
 	this.handleCheckIn = function(req, res) {
 		logger.debug("POST --> Checkin handle");
 		var locationData = req.body;
-		mLocationHandler.handleRequest(locationData, function(result) {
+		mLocationHandler.handleRequest(locationData, function(err,result) {
 			res.send(result);
 			// logger.info('Checkin result --> ', result);
 		});
@@ -139,7 +139,9 @@ module.exports = function RequestHandlers() {
 	 */
 	this.handleCurrentZone = function(req, res) {
 		logger.debug("POST --> Current zone handle");
-		res.send('SUCCESS');
+		mLocationHandler.handleZoneRequest(req.body,function(err,result){
+			res.send(result);
+		});
 	}
 
 	/**
