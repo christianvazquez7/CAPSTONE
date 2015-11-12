@@ -17,7 +17,7 @@ module.exports = function TelemetryStorageManager() {
   
   //Remote
   //var conString = "postgres://kyadb:CapstoneProject2015@postgresql-kya.cch3ie56ioks.us-west-2.rds.amazonaws.com:5432/KYA_SQL_DB"; 
-	var client = new pg.Client(conString);
+	var client;
 
 	/**
 	 * Function to process record containing a survey response, the heartbeat measurement or both
@@ -29,6 +29,8 @@ module.exports = function TelemetryStorageManager() {
 	 */	
 	this.processRecord = function(telemetryRecord, surveyFlag, heartRateFlag, callback) {
 		
+    client = new pg.Client(conString);
+
 		var surveyID,
 			  heartRateID;
 		if(!surveyFlag && !heartRateFlag){
@@ -114,7 +116,8 @@ module.exports = function TelemetryStorageManager() {
 	 * @param callback: Callback function to call after processing record
 	 */
 	this.storeMovementData = function(GeoPoint, callback) {
-
+    client = new pg.Client(conString);
+    
 		client.connect(function(err) {
         
         if(err) {

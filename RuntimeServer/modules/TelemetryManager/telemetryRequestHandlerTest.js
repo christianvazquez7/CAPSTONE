@@ -91,11 +91,6 @@ var messagegpb6 = buffer6.toBuffer();
 var TelemetryRequestHandler = require("./telemetryRequestHandler.js");
 
 var handler = new TelemetryRequestHandler();
-var handler2 = new TelemetryRequestHandler();
-var handler3 = new TelemetryRequestHandler();
-var handler4 = new TelemetryRequestHandler();
-var handler5 = new TelemetryRequestHandler();
-var handler6 = new TelemetryRequestHandler();
 
 /*---------------------Telemetry request handler mocha test-------------------------------*/
 describe('Telemetry Request Handler', function() {
@@ -111,7 +106,7 @@ describe('Telemetry Request Handler', function() {
     	});    
 
     	it("should decode and store telemetry data for a record (heart rate measure before)", function (done) {
-    		handler2.handleTelemetryData(messagegpb2, function(err,ack){
+    		handler.handleTelemetryData(messagegpb2, function(err,ack){
 				expect(err).to.be.null;
 				expect(ack).to.equal('Success');
 				done();
@@ -119,7 +114,7 @@ describe('Telemetry Request Handler', function() {
     	});
 
     	it("should decode and store telemetry data for a record (heart rate measure after)", function (done) {
-    		handler3.handleTelemetryData(messagegpb3, function(err,ack){
+    		handler.handleTelemetryData(messagegpb3, function(err,ack){
 				expect(err).to.be.null;
 				expect(ack).to.equal('Success');
 				done();
@@ -127,7 +122,7 @@ describe('Telemetry Request Handler', function() {
     	});
 
 		it("should decode and store telemetry data for a record (survey and heart rate)", function (done) {
-    		handler4.handleTelemetryData(messagegpb4, function(err,ack){
+    		handler.handleTelemetryData(messagegpb4, function(err,ack){
 				expect(err).to.be.null;
 				expect(ack).to.equal('Success');
 				done();
@@ -135,7 +130,7 @@ describe('Telemetry Request Handler', function() {
     	});
 
     	it("should throw error for a record with no data", function (done) {
-    		handler4.handleTelemetryData(messagegpb4, function(err, ack){
+    		handler.handleTelemetryData(messagegpb5, function(err, ack){
     			expect(err).to.be.an('error');
     			expect(ack).to.be.undefined;
     			done();
@@ -144,7 +139,7 @@ describe('Telemetry Request Handler', function() {
     });
     describe('#handleMovementData(GeoPointBuffer, callback)', function () {
     	it("should decode and store a GeoPoint to visualize a user's movement" , function (done) {
-			handler6.handleMovementData(messagegpb6, function(err, ack){
+			handler.handleMovementData(messagegpb6, function(err, ack){
     			expect(err).to.be.null;
     			expect(ack).to.equal('Success');
     			done();

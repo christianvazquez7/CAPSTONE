@@ -73,11 +73,7 @@ var locRecord = new GeoPoint({
 var TelemetryStorageManager = require("./telemetryStorageManager.js");
 
 var manager = new TelemetryStorageManager();
-var manager2 = new TelemetryStorageManager();
-var manager3 = new TelemetryStorageManager();
-var manager4 = new TelemetryStorageManager();
-var manager5 = new TelemetryStorageManager();
-var manager6 = new TelemetryStorageManager();
+
 /*------------------------------------Node test-------------------------------------------*/
 /*
 manager.processRecord(telRecord2, false, true, function(err,ack){
@@ -98,16 +94,16 @@ describe('Telemetry Storage Manager', function() {
 			});
     	});    
 
-    	it("should store telemetry data for a record (heart rate before measure)", function (done) {
-    		manager2.processRecord(telRecord2, false, true, function(err,ack){
+    	it("should store telemetry data for a record (heart rate before measure before)", function (done) {
+    		manager.processRecord(telRecord2, false, true, function(err,ack){
 				expect(err).to.equal(null);
 				expect(ack).to.equal('Success');
 				done();
 			});
     	});
 
-    	it("should store telemetry data for a record (heart rate after measure)", function (done) {
-    		manager3.processRecord(telRecord3, false, true, function(err,ack){
+    	it("should store telemetry data for a record (heart rate after measure after)", function (done) {
+    		manager.processRecord(telRecord3, false, true, function(err,ack){
 				expect(err).to.equal(null);
 				expect(ack).to.equal('Success');
 				done();
@@ -115,7 +111,7 @@ describe('Telemetry Storage Manager', function() {
     	});
 
     	it("should store telemetry data for a record (survey and heart rate)", function (done) {
-    		manager4.processRecord(telRecord4, true, true, function(err,ack){
+    		manager.processRecord(telRecord4, true, true, function(err,ack){
 				expect(err).to.equal(null);
 				expect(ack).to.equal('Success');
 				done();
@@ -123,7 +119,7 @@ describe('Telemetry Storage Manager', function() {
     	});
 
     	it("should throw error for a record when no flags have been set", function (done) {
-    		manager5.processRecord(telRecord5, false, false, function(err, ack){
+    		manager.processRecord(telRecord5, false, false, function(err, ack){
     			expect(err).to.be.an('error');
     			expect(ack).to.equal(undefined);
     			done();
@@ -132,7 +128,7 @@ describe('Telemetry Storage Manager', function() {
     });
     describe('#storeMovementData(GeoPoint, callback)', function () {
     	it("should decode and store a GeoPoint to visualize a user's movement" , function (done) {
-			manager6.storeMovementData(locRecord, function(err, ack){
+			manager.storeMovementData(locRecord, function(err, ack){
     			expect(err).to.equal(null);
     			expect(ack).to.equal('Success');
     			done();
