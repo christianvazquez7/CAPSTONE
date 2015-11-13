@@ -46,7 +46,7 @@ module.exports = function TelemetryRequestHandler() {
 	/**
 	 * Function to decode protobuffer message containg location data from the client to track movement
 	 *
-	 * @param GeoPointBuffer: Buffer contaning GeoPoint (lat,lon,timestamp)
+	 * @param GeoPointBuffer: Buffer contaning GeoPoint (userID, lat,lon)
 	 */ 
 	this.handleMovementData = function(GeoPointBuffer, callback) {
 		
