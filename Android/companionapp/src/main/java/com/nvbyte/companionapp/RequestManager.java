@@ -16,7 +16,7 @@ import com.android.volley.toolbox.Volley;
 public class RequestManager {
     private RequestQueue mRequestQueue;
     private static RequestManager mRequestManager;
-    private static final String IP = "192.168.1.100";
+    private static final String IP = "192.168.2.140";
     private static final String SURVEY_ROUTE = "http://"+IP+":3000/telemetry/survey";
     private static final String HEART_BEAT_ROUTE = "http://"+IP+":3000/telemetry/heartbeat";
     private static final String CHECK_IN_ROUTE = "http://"+IP+":3000/location/checkin";

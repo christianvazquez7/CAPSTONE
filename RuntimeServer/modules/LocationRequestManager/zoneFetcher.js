@@ -15,7 +15,7 @@ module.exports = function ZoneFetcher() {
 	var turf = require('turf');
 
 	//Database URL
-	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/Geozone';
+	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';
 
 	// Sets the size of the zones
 	var mZoneSize = 200;

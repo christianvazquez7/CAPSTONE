@@ -10,10 +10,10 @@ module.exports = function TelemetryStorageManager() {
 	var pg = require('../../node_modules/pg');
   
   //Luis
-	var conString = "postgres://postgres:kyateam@localhost:5432/KYA_SQL_DB";
+	//var conString = "postgres://postgres:kyateam@localhost:5432/KYA_SQL_DB";
 
   //Christian
-  //var conString = "postgres://postgres:Aguaseka7!@localhost:5433/KYA_SQL_DB";
+  var conString = "postgres://postgres:Aguaseka7!@localhost:5433/KYA_SQL_DB";
   
   //Remote
   //var conString = "postgres://kyadb:CapstoneProject2015@postgresql-kya.cch3ie56ioks.us-west-2.rds.amazonaws.com:5432/KYA_SQL_DB"; 
@@ -118,6 +118,7 @@ module.exports = function TelemetryStorageManager() {
 		client.connect(function(err) {
         
         if(err) {
+          console.log('Error result --> ', err);
     			callback(err);
   			}
   				
@@ -129,6 +130,7 @@ module.exports = function TelemetryStorageManager() {
         client.query(query, function(err, result) {
 
     			if(err) {
+            console.log('Error result --> ', err);
             callback(err);
 	   			}
 	    			          
