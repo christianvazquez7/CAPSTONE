@@ -25,6 +25,9 @@ module.exports = function ZoneAnalyzer() {
 	 * @return long containing time (in seconds) it will take to reach closest higher risk zone
 	 */
 	this.calculateTimeToHRZone = function(speed,locationGeoJSON, zonesToAnalyze, negDelta, errCallback) {            
+            if (typeof(speed) == 'undefined' || speed == null){
+                return 10;
+            }
             if(speed <= 0){
                 return 120;
             }
