@@ -49,7 +49,7 @@ module.exports = function TelemetryStorageManager() {
   				
             //Query to insert or update telemetry record with survey ID
             var surveyQuery = 'INSERT INTO telemetry_record (user_id, notification_id, zone_id, s_actual_risk, s_perceived_risk, r_timestamp) ' +
-                 'VALUES (' + telemetryRecord.userID + ', ' + telemetryRecord.notificationID + ', ' + telemetryRecord.zoneID + ', ' + telemetryRecord.survey.actualRisk + 
+                 "VALUES ('" + telemetryRecord.userID + "', '" + telemetryRecord.notificationID + "', " + telemetryRecord.zoneID + ', ' + telemetryRecord.survey.actualRisk + 
                   ', ' + telemetryRecord.survey.perceivedRisk + ', NOW() ) ' +
                  'ON CONFLICT (user_id, notification_id) ' + 
                  'DO UPDATE SET s_actual_risk = EXCLUDED.s_actual_risk, s_perceived_risk = EXCLUDED.s_perceived_risk ';
@@ -81,14 +81,14 @@ module.exports = function TelemetryStorageManager() {
   				var hrQuery;
           if(telemetryRecord.heartRate.before){
               hrQuery = 'INSERT INTO telemetry_record (user_id, notification_id, zone_id, hr_before, r_timestamp) ' +
-                         'VALUES (' + telemetryRecord.userID + ', ' + telemetryRecord.notificationID + ', ' + telemetryRecord.zoneID + ', ' + telemetryRecord.heartRate.before + ', NOW() )' +
+                         "VALUES ('" + telemetryRecord.userID + "', '" + telemetryRecord.notificationID + "', " + telemetryRecord.zoneID + ', ' + telemetryRecord.heartRate.before + ', NOW() )' +
                          'ON CONFLICT (user_id, notification_id) ' + 
                          'DO UPDATE SET hr_before = EXCLUDED.hr_before';
           }
           else{
 
               hrQuery = 'INSERT INTO telemetry_record (user_id, notification_id, zone_id, hr_after, r_timestamp) ' +
-                         'VALUES (' + telemetryRecord.userID + ', ' + telemetryRecord.notificationID + ', ' + telemetryRecord.zoneID + ', ' + telemetryRecord.heartRate.after + ', NOW() ) ' +
+                         "VALUES ('" + telemetryRecord.userID + "', '" + telemetryRecord.notificationID + "', " + telemetryRecord.zoneID + ', ' + telemetryRecord.heartRate.after + ', NOW() ) ' +
                          'ON CONFLICT (user_id, notification_id) ' + 
                          'DO UPDATE SET hr_after = EXCLUDED.hr_after';
           }
@@ -124,9 +124,8 @@ module.exports = function TelemetryStorageManager() {
     			callback(err);
   			}
   				
-  			//Query to insert survey record
-  			//Returns survey record's auto-generated id to use it when creating or updating the telemetry record in the database 
-  			var query = 'INSERT INTO movement (user_id, geo_point, capture_time) VALUES (' + GeoPoint.userID + ', POINT(' + GeoPoint.latitude + ', ' + GeoPoint.longitude +'), NOW() ) ' +
+  			//Query to insert movement record  			
+  			var query = "INSERT INTO movement (user_id, geo_point, capture_time) VALUES ( '" + GeoPoint.userID + "' , POINT( " + GeoPoint.latitude + ', ' + GeoPoint.longitude +'), NOW() ) ' +
                     'RETURNING movement_id';
         
         client.query(query, function(err, result) {
