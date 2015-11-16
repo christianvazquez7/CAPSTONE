@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
  */
 public class OrientationActivity extends Activity implements OnMapReadyCallback,GoogleMap.OnMapLongClickListener {
     private DismissOverlayView mDismissOverlay;
+    private final static String CURRENT_GEOZONE_EXTRA = "CURRENT_GEOZONE";
 
     @Override
     /**
@@ -75,29 +76,41 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                         CameraUpdate zoom=CameraUpdateFactory.zoomTo(16);
                         map.moveCamera(center);
                         map.animateCamera(zoom);
-                        LatLng nw = new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 100));
-                        LatLng ne = new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), 100));
-                        LatLng se =  new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), -100));
-                        LatLng sw =new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), -100));
+                        KYA.GeoZone dangerZone = (KYA.GeoZone) getIntent().getExtras().getSerializable(CURRENT_GEOZONE_EXTRA);
+                        Object saferZoneObject = getIntent().getExtras().getSerializable("PREV_GEO");
+                        KYA.GeoZone saferZone = null;
+                        if (saferZoneObject != null) {
+                            saferZone = (KYA.GeoZone) saferZoneObject;
+                        }
 
-                        LatLng nw2 = new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 300));
-                        LatLng ne2 = new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), 300));
-                        LatLng se2 =  new LatLng(LatOffset(l.getLatitude(), 100), LongOffset(l.getLongitude(), l.getLatitude(), 100));
-                        LatLng sw2 =new LatLng(LatOffset(l.getLatitude(), -100), LongOffset(l.getLongitude(), l.getLatitude(), 100));
-                        int level = getIntent().getIntExtra("CLASS",1);
+                        if(dangerZone != null) {
+                            LatLng nw = new LatLng(dangerZone.getBoundaries(0).getLatitude(), dangerZone.getBoundaries(0).getLongitude());
+                            LatLng ne = new LatLng(dangerZone.getBoundaries(1).getLatitude(), dangerZone.getBoundaries(1).getLongitude());
+                            LatLng se = new LatLng(dangerZone.getBoundaries(2).getLatitude(), dangerZone.getBoundaries(2).getLongitude());
+                            LatLng sw = new LatLng(dangerZone.getBoundaries(3).getLatitude(), dangerZone.getBoundaries(3).getLongitude());
+                            int level = getIntent().getIntExtra("CLASS", 1);
 
-                        Polygon polygon = map.addPolygon(new PolygonOptions()
-                                .add(nw, ne, se, sw)
-                                .fillColor(getResources().getColor(Utils.getAlphaColorByLevel(level)))
-                                .strokeWidth(0.7f)
-                                .strokeColor(getResources().getColor(Utils.getColorByLevel(level))));
+                            Polygon polygon = map.addPolygon(new PolygonOptions()
 
-                        int safe = level==1? 1:level - 1;
-                        Polygon safer = map.addPolygon(new PolygonOptions()
-                                .add(nw2, ne2, se2, sw2)
-                                .fillColor(getResources().getColor(Utils.getAlphaColorByLevel(safe)))
-                                .strokeWidth(0.7f)
-                                .strokeColor(getResources().getColor(Utils.getColorByLevel(safe))));
+                                    .add(nw, ne, se, sw)
+                                    .fillColor(getResources().getColor(Utils.getAlphaColorByLevel(level)))
+                                    .strokeWidth(0.7f)
+                                    .strokeColor(getResources().getColor(Utils.getColorByLevel(level))));
+
+                        }
+
+                        if(saferZone != null) {
+                            LatLng nw2 = new LatLng(saferZone.getBoundaries(0).getLatitude(), saferZone.getBoundaries(0).getLongitude());
+                            LatLng ne2 = new LatLng(saferZone.getBoundaries(1).getLatitude(), saferZone.getBoundaries(1).getLongitude());
+                            LatLng se2 = new LatLng(saferZone.getBoundaries(2).getLatitude(), saferZone.getBoundaries(2).getLongitude());
+                            LatLng sw2 = new LatLng(saferZone.getBoundaries(3).getLatitude(), saferZone.getBoundaries(3).getLongitude());
+
+                            Polygon safer = map.addPolygon(new PolygonOptions()
+                                    .add(nw2, ne2, se2, sw2)
+                                    .fillColor(getResources().getColor(Utils.getAlphaColorByLevel(saferZone.getLevel())))
+                                    .strokeWidth(0.7f)
+                                    .strokeColor(getResources().getColor(Utils.getColorByLevel(saferZone.getLevel()))));
+                        }
                     }
                 });
 

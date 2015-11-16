@@ -95,8 +95,9 @@ module.exports = function RequestHandlers() {
 	this.handleHeartBeat = function(req, res) {
 		logger.debug("POST --> Heartbeat handle");
 		var telemetryData = req.body;
-		mTelemetryHandler.handleTelemetryData(telemetryData);
-		res.send('SUCCESS');
+		mTelemetryHandler.handleTelemetryData(telemetryData,function(err,result){
+			res.send('SUCCESS');
+		});
 	}
 
 	/**
@@ -110,8 +111,9 @@ module.exports = function RequestHandlers() {
 	this.handleSurvey = function(req, res) {
 		logger.debug("POST --> Survey handle");
 		var telemetryData = req.body;
-		mTelemetryHandler.handleTelemetryData(telemetryData);
-		res.send('SUCCESS');
+		mTelemetryHandler.handleTelemetryData(telemetryData,function(err,result){
+			res.send('SUCCESS');
+		});
 	}
 	
 	/**
@@ -125,8 +127,9 @@ module.exports = function RequestHandlers() {
 	this.handleMovement = function(req, res) {
 		logger.debug("POST --> Movement handle");
 		var telemetryData = req.body;
-		mTelemetryHandler.handleMovementData(telemetryData);
-		res.send('SUCCESS');
+		mTelemetryHandler.handleMovementData(telemetryData,function(err,result){
+			res.send('SUCCESS');
+		});
 	}
 
 	/**
