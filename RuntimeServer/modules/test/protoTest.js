@@ -6,8 +6,8 @@ var should = require('chai').should(),
     supertest = require('supertest'),
     api = supertest('http://localhost:3000');
 
-var builder = ProtoBuf.loadProtoFile("../resources/kya.proto"),
-    KYA = builder.build("KYA"),
+var builder = ProtoBuf.loadProtoFile("../../../proto/KYA.proto"),
+    KYA = builder.build("com.nvbyte.kya"),
     Telemetry = KYA.Telemetry;
     GridBounds = KYA.GridBounds,
     GeoPoint = KYA.GeoPoint,
