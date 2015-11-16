@@ -15,11 +15,13 @@ module.exports = function ZoneAnalyzer() {
 	var reference = {'NW':1, 'N':2, 'NE':3, 'W':4, 'L':5, 'E':6, 'SW':7, 'S':8, 'SE':9};
     var that = this;
     var minTimeForResponse = 1;
+    var logger = require('../../utils/logger.js');
+
 
 	/**
 	 * Calculates time for next location request from Client finding an estimate time to reach the closest
 	 * higher risk zone or obtaining a default time in case the are no higher risk zone surrounding the area.
-	 *  //Zones sorted by longitude (increasing) and by latitude (decreasing)
+	 * //Zones sorted by longitude (increasing) and by latitude (decreasing)
 	 * @param speed: Current speed of device
 	 * @param location: Current location of device
 	 * @param nearbyHigherRiskZones: List of higher risk zones surrounding the current location
@@ -32,16 +34,25 @@ module.exports = function ZoneAnalyzer() {
             var mDistance = getDistance(locationGeoJSON, zonesToAnalyze, negDelta, errCallback);
             
             if(speed >= 0 && speed <= 1){
+                if(mDistance < 1){
+                    return 1;
+                }
                 return mDistance;
             }
             if(speed > 50){
+                if(mDistance < 1){
+                    return 1;
+                }
                 return mDistance;
             }
-            if(mDistance/speed < 1){
+
+            var time = mDistance/speed;
+
+            if(time < 1){
                 return 1;
             }
-
-            return mDistance/speed;
+            //logger.log('info', 'Time: ' + time);
+            return time;
 	};
 
 	this.getCurrentZone = function(locationGeoJSON, zonesToAnalyze) {

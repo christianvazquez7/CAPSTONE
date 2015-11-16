@@ -1,5 +1,6 @@
-var winston = require('winston');
 var path = require('path');
+var winston = require('winston');
+
 
 winston.emitErrs = true;
 
@@ -38,7 +39,7 @@ var logger = new (winston.Logger)({
     })
   ]
 });
-
+logger.remove(winston.transports.Console);
 module.exports = logger;
 
 module.exports.stream = {
