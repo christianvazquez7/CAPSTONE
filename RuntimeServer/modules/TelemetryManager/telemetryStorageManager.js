@@ -77,16 +77,13 @@ module.exports = function TelemetryStorageManager() {
   			//Checks if there is heart rate data to process
   			if(heartRateFlag){
   				var hrQuery;
-          console.log(telemetryRecord);
           if(telemetryRecord.heartRate.before !== null){
-              console.log('SETTING HEART BEFORE');
               hrQuery = "INSERT INTO telemetry_record (user_id, notification_id, zone_id, hr_before, r_timestamp) " +
                          "VALUES ('" + telemetryRecord.userID + "', '" + telemetryRecord.notificationID + "', " + telemetryRecord.zoneID + ", " + telemetryRecord.heartRate.before + ", NOW() )" +
                          "ON CONFLICT (user_id, notification_id) " + 
                          "DO UPDATE SET hr_before = EXCLUDED.hr_before";
           }
           else{
-              console.log('SETTING HEART AFTER');
               hrQuery = "INSERT INTO telemetry_record (user_id, notification_id, zone_id, hr_after, r_timestamp) " +
                          "VALUES ('" + telemetryRecord.userID + "', '" + telemetryRecord.notificationID + "', " + telemetryRecord.zoneID + ", " + telemetryRecord.heartRate.after + ", NOW() ) " +
                          "ON CONFLICT (user_id, notification_id) " + 
@@ -121,8 +118,8 @@ module.exports = function TelemetryStorageManager() {
 		client.connect(function(err) {
         
         if(err) {
-          console.log('Error result --> ', err);
     			callback(err);
+          return;
   			}
 
   			//Query to insert survey record
@@ -134,8 +131,9 @@ module.exports = function TelemetryStorageManager() {
         client.query(query, function(err, result) {
 
     			if(err) {
-            console.log('Error result --> ', err);
+            client.end();
             callback(err);
+            return;
 	   			}
 	    			          
           //Close the connection  

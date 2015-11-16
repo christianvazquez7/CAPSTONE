@@ -45,21 +45,29 @@ var location =
 
 
 var numRings = 1;
-
+var testZoneID = 5;
 //Node test
 /*
 fetcherTest.fetchByLocation(location.NWCorner, numRings, function(err, result){
         zones = result;
         for(var i = 0; i<zones.length; i++){
-          zones[i].totalCrime Math.floor((Math.random() * 10) + 1); = 
+          zones[i].totalCrime = Math.floor((Math.random() * 10) + 1); 
         }
         console.log(zones);
 });
 */
 
+fetcherTest.fetchByID(5, function(err, result){
+        if(err){
+          console.error("Error: " + err);
+        }
+        zone = result;
+        console.log(zone);
+});
+
 /*---------------------------------------------------------------------------------*/
 /* Zone fetcher Mocha test */
-
+/*
 describe('Zone Fetcher', function() {
   this.timeout(20000);
   
@@ -413,3 +421,4 @@ describe('Zone Fetcher', function() {
     }); 
   });
 });
+*/

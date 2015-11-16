@@ -17,6 +17,8 @@ message CheckInResponse {
 
 	// The current geozone on which the user is.
 	required GeoZone currentZone = 3;
+
+    optional GeoZone prevZone = 4;
 }
 
 // Telemetry

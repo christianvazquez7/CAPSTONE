@@ -7,7 +7,7 @@ var expect = require('chai').expect;
 process.chdir(__dirname);
 var builder = ProtoBuf.loadProtoFile("../../../resources/kya.proto");
 
-var KYA = builder.build("KYA");
+var KYA = builder.build("com.nvbyte.kya");
 var CheckInResponse = KYA.CheckInResponse,
 	GeoZone = KYA.GeoZone,
 	GeoPoint = KYA.GeoPoint;
