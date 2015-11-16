@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 
 //TODO: Check path 
 process.chdir(__dirname);
-var builder = ProtoBuf.loadProtoFile("../../../resources/kya.proto");
+var builder = ProtoBuf.loadProtoFile("../../../../proto/KYA.proto");
 
 var KYA = builder.build("com.nvbyte.kya");
 var CheckInResponse = KYA.CheckInResponse,
@@ -16,7 +16,18 @@ var CheckInResponse = KYA.CheckInResponse,
 var currentZone = {
 	zone_id: 10,
 	level: 6,	
-	totalCrime: '190',
+	totalCrime: 190,
+	loc: 
+	{	
+		type:'Polygon',
+		coordinates:[[[-67.3,18],[-67.3,18.00179807875453],[-67.29810938811335,18.00179807875453],[-67.29810938811335,18],[-67.3,18]]]								
+	}
+};
+
+var previousZone = {
+	zone_id: 9,
+	level: 5,	
+	totalCrime: 200,
 	loc: 
 	{	
 		type:'Polygon',
@@ -35,8 +46,9 @@ var mockGeoPointsAr =
 	new GeoPoint('', 18, -67.29810938811335)
 ];
 
-var currentZoneMessage = new GeoZone(10, 6, '190', mockGeoPointsAr);
-var response = new CheckInResponse(currentZoneMessage,nextRequestTime,surveyFlag);
+var currentZoneObj = new GeoZone(currentZone.level, currentZone.totalCrime, '10/10/2015', currentZone.zone_id, mockGeoPointsAr);
+var previousZoneObj = new GeoZone(previousZone.level, previousZone.totalCrime, '10/10/2015', previousZone.zone_id, mockGeoPointsAr);
+var response = new CheckInResponse(nextRequestTime, surveyFlag, currentZoneObj, previousZoneObj);
 var responseMessage = response.encode().toBuffer();
 
 var resBuilder = new ResponseBuilder();
@@ -47,7 +59,7 @@ var resBuilder = new ResponseBuilder();
 describe('Response Builder', function() {
   describe('#build()', function () {
     it('should return encoded message', function () {
-		expect(responseMessage).to.eql(resBuilder.build(currentZone, nextRequestTime, surveyFlag));
+		expect(responseMessage).to.eql(resBuilder.build(currentZone, previousZone, nextRequestTime, surveyFlag));
     });
   });
 });

@@ -73,26 +73,24 @@ module.exports = function RequestScheduler() {
 			return;	
 		} 
 		
+		//Generate survey flag accirding to probability assigned
+		surveyFlag = (Math.random() > (1-probability));
+
 		//Get the previous zone from the id provided in the checkIn
-		var prevZone;
-		fetcher.fetchByID(checkIn.prevZoneId, function (err, zone){
+
+		fetcher.fetchByID(mCheckIn.prevZoneId, function (err, previousZone){
 			if(err){
 				mResponseCallback(new Error("Error fetching previous zone"));
 				return;	
 			}
-			previousZone = zone; 
-		});
-
-		//Generate survey flag accirding to probability assigned
-		surveyFlag = (Math.random() > (1-probability));
-
+			var response = responseBuilder.build(currentZone, previousZone, timeForNextRequest, surveyFlag);
+			
+			if(!response){
+				mResponseCallback(new Error("Could not get response"));		
+				return;
+			}
 		
-		var response = responseBuilder.build(currentZone, previousZone, timeForNextRequest, surveyFlag);
-		if(!response){
-			mResponseCallback(new Error("Could not get response"));		
-			return;
-		}
-		
-		mResponseCallback(null, response);		
+			mResponseCallback(null, response);		
+		});		
 	};	
 };

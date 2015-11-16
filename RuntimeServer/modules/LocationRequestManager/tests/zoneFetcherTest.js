@@ -55,19 +55,20 @@ fetcherTest.fetchByLocation(location.NWCorner, numRings, function(err, result){
         }
         console.log(zones);
 });
-*/
 
-fetcherTest.fetchByID(5, function(err, result){
+
+fetcherTest.fetchByID(testZoneID, function(err, result){
         if(err){
           console.error("Error: " + err);
         }
         zone = result;
         console.log(zone);
 });
+*/
 
 /*---------------------------------------------------------------------------------*/
 /* Zone fetcher Mocha test */
-/*
+
 describe('Zone Fetcher', function() {
   this.timeout(20000);
   
@@ -397,6 +398,23 @@ describe('Zone Fetcher', function() {
       });
     });
 
+    describe('#fetchByLocation(location, numRings, zonesCallback)', function () {
+      it('should fetch the correct zone given a zone id' , function (done) {
+        fetcherTest.fetchByID(testZoneID, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+          done();
+        });
+      });
+      it('should fetch no zones if the given a zone id is -1' , function (done) {
+        fetcherTest.fetchByID(-1, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.be.undefined;
+          done();
+        });
+      });
+    });
+
     describe('Different number of rings ', function () {
       var zones = [];      
       it('should fetch only one zone if 0 number of rings are requested' , function (done) {
@@ -421,4 +439,3 @@ describe('Zone Fetcher', function() {
     }); 
   });
 });
-*/
