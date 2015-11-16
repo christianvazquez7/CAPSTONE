@@ -17,6 +17,9 @@ message CheckInResponse {
 
 	// The current geozone on which the user is.
 	required GeoZone currentZone = 3;
+
+    // The previous geozone on which the user was.
+    optional GeoZone prevZone = 4;
 }
 
 // Telemetry
@@ -92,6 +95,9 @@ message CheckIn {
     // A flag to identify if the user is expecting notifications to be triggered
     // when he/she moves from a higer risk zone to a lower risk zone.
     required bool negDelta = 4;
+
+    // Id of previous zone.
+    optional int32 prevZoneId = 5;
 }
 
 // A zone classified with a specific risk level. The KYA Geozone representation
