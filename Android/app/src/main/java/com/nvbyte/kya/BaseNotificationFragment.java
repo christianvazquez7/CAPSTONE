@@ -19,6 +19,7 @@ public class BaseNotificationFragment extends Fragment {
     private View mBackgroundView;
     public static final String CLASS_PARAM = "CLASS";
     public static final String BACKGROUND_COLOR_PARAM = "COLOR";
+    private final static String CURRENT_GEOZONE_EXTRA = "CURRENT_GEOZONE";
 
     /**
      * Creates a BaseNotificationFragment with a classification bundled in its params.
@@ -57,11 +58,13 @@ public class BaseNotificationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent orientationActivity = new Intent();
+                orientationActivity.putExtra(CURRENT_GEOZONE_EXTRA,getActivity().getIntent().getExtras().getSerializable(CURRENT_GEOZONE_EXTRA));
                 orientationActivity.setClass(getActivity(),OrientationActivity.class);
                 orientationActivity.putExtra("CLASS",getArguments().getInt(CLASS_PARAM));
                 startActivity(orientationActivity);
             }
         });
+
 
         return rootView;
     }

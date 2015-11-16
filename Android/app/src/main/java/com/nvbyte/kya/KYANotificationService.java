@@ -10,6 +10,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.SensorEvent;
 import android.location.Location;
+import android.location.LocationListener;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -18,6 +20,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.util.Timer;
@@ -46,6 +49,8 @@ public class KYANotificationService extends Service {
     private static final String CURRENT_ZONE_PREFERENCE = "CURRENT_ZONE";
     private final static String SELECTED_EXTRA = "SELECTED_ID";
     private final static String ZONE_ID_EXTRA = "ZONE_ID";
+    private final static String CURRENT_GEOZONE_EXTRA = "CURRENT_GEOZONE";
+
     private static final long LOCATION_TIMEOUT = 1500;
     private static final long RETRY_CHECKIN_PERIOD_SECONDS = 5; /// 5 seconds
     private static final long RESPONSE_TIMEOUT = 10000; /// 5 seconds
@@ -54,6 +59,8 @@ public class KYANotificationService extends Service {
     private PendingIntent mNextCheckIn;
     private Timer timeoutTimer;
     private double mLastSpeed = 0;
+    private Location currentLocation;
+    private long lastLocationTime = System.currentTimeMillis();
 
     private Timer  speedTracker;
 
@@ -63,11 +70,15 @@ public class KYANotificationService extends Service {
             public void run() {
                 Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
                 if(location != null) {
-                    Log.d(TAG,"LOCATION SPEED: "+location.getSpeed());
-                    if(location.getSpeed() > mLastSpeed) {
-                        mLastSpeed = location.getSpeed();
-                        checkIn();
+                    long currentTime = System.currentTimeMillis();
+                    double timeDelta = (currentTime - lastLocationTime)/1000;
+                    if(currentLocation != null) {
+                        double speed = location.distanceTo(currentLocation)/timeDelta;
+                        Utils.appendLog("The estimated speed is: " + speed );
+                        Log.d("TAG","The estimated speed is: " +speed);
                     }
+                    currentLocation = location;
+                    lastLocationTime = currentTime;
                 }
             }
         };
@@ -146,7 +157,9 @@ public class KYANotificationService extends Service {
                 String date = intent.getExtras().getString(LAST_UPDATED);
                 double rate = intent.getExtras().getDouble(CRIME_RATE);
                 int currentZoneId = intent.getExtras().getInt(ZONE_ID_EXTRA);
-                KYANotificationService.this.notify(id, rating, rate, date,true,currentZoneId);
+                KYA.GeoZone zone = (KYA.GeoZone) intent.getExtras().getSerializable(CURRENT_GEOZONE_EXTRA);
+                KYA.GeoZone prevGeo = (KYA.GeoZone) intent.getExtras().getSerializable("PREV_GEO");
+                KYANotificationService.this.notify(id, rating, rate, date,true,currentZoneId,zone,prevGeo);
             }
         });
     }
@@ -187,7 +200,9 @@ public class KYANotificationService extends Service {
                 builder.setNotificationID(id);
                 builder.setZoneID(currentZoneId);
                 PhoneInterface.getInstance(KYANotificationService.this).sendMessageSurvey(builder.build().toByteArray());
-                KYANotificationService.this.notify(id, rating, rate, date,true,currentZoneId);
+                KYA.GeoZone zone = (KYA.GeoZone) intent.getExtras().getSerializable(CURRENT_GEOZONE_EXTRA);
+                KYA.GeoZone prevGeo = (KYA.GeoZone) intent.getExtras().getSerializable("PREV_GEO");
+                KYANotificationService.this.notify(id, rating, rate, date,true,currentZoneId,zone,prevGeo);
             }
         });
     }
@@ -292,19 +307,29 @@ public class KYANotificationService extends Service {
         boolean negativeDelta = preferences.getBoolean("lower_preference",true);
         int prevZone =  preferences.getInt(CURRENT_ZONE_PREFERENCE,1);
         int threshold = preferences.getInt(THRESHOLD_PREFERENCE,1);
-        preferences.edit().putInt(CURRENT_ZONE_PREFERENCE,currentZone).commit();
+        preferences.edit().putInt(CURRENT_ZONE_PREFERENCE, currentZone).commit();
+        Gson gson = new Gson();
+        String prevGeoString = preferences.getString("PREV_GEO", "");
+        KYA.GeoZone prevGeo = null;
+        if(!prevGeoString.equals("")) {
+            prevGeo = gson.fromJson(prevGeoString, KYA.GeoZone.class);
+            Log.d(TAG,prevGeo.getBoundaries(0).getLongitude()+" woahhh");
+        }
+        String newestZone = gson.toJson(response.getCurrentZone());
+        Log.d(TAG,newestZone);
+        preferences.edit().putString("PREV_GEO",newestZone).commit();
         int currentZoneId = response.getCurrentZone().getZoneID();
         mAlarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         scheduleCheckIn(nextCheckInSeconds);
         if (((currentZone > prevZone && currentZone > threshold) || (currentZone < prevZone && negativeDelta)) && !muted) {
             Log.d(TAG,"Notification Needed!");
             String userId  = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
-            mCurrentNotificationId = userId + System.currentTimeMillis();
+            String mCurrentNotificationId = userId + System.currentTimeMillis();
             boolean higher = currentZone > prevZone;
             if(doSurvey && higher) {
-                startSurvey(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate,currentZoneId);
+                startSurvey(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate,currentZoneId,response.getCurrentZone(),prevGeo);
             } else {
-                notify(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate,higher,currentZoneId);
+                notify(mCurrentNotificationId, currentZone, crimeRate, currentZoneDate, higher, currentZoneId, response.getCurrentZone(),prevGeo);
             }
         }
     }
@@ -350,7 +375,7 @@ public class KYANotificationService extends Service {
      * @param notificationId Id of notification session (timestamp + phoneId).
      * @param classification Classification level for notification.
      */
-    private void notify(final String notificationId, final int classification, final double crimeRate, final String date, final boolean higher,final int currentZoneId) {
+    private void notify(final String notificationId, final int classification, final double crimeRate, final String date, final boolean higher,final int currentZoneId,final KYA.GeoZone zone, final KYA.GeoZone prevGeo) {
         Utils.acquire(this);
         HandlerThread handlerThread = new HandlerThread("handleBeat");
         handlerThread.start();
@@ -391,21 +416,30 @@ public class KYANotificationService extends Service {
                 notificationActivity.putExtra(EXTRA_ID,notificationId);
                 notificationActivity.putExtra("HIGHER",higher);
                 notificationActivity.putExtra(ZONE_ID_EXTRA,currentZoneId);
+                if(zone != null)
+                    notificationActivity.putExtra(CURRENT_GEOZONE_EXTRA,zone);
+                //if(prevGeo != null)
+                    //notificationActivity.putExtra("PREV_GEO",prevGeo);
+
                 startActivity(notificationActivity);
             }
         });
     }
 
-    private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate,int currentZoneId){
+    private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate,int currentZoneId, KYA.GeoZone zone, KYA.GeoZone prevGeo){
         Utils.acquire(this);
         Intent surveyActivity = new Intent(getApplicationContext(),SurveyActivity.class);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        surveyActivity.putExtra(EXTRA_ID,notificationId);
+        surveyActivity.putExtra(EXTRA_ID, notificationId);
         surveyActivity.putExtra(RATING,currentZone);
         surveyActivity.putExtra(CRIME_RATE,crimeRate);
         surveyActivity.putExtra(LAST_UPDATED,currentZoneDate);
         surveyActivity.putExtra(ZONE_ID_EXTRA,currentZoneId);
+        surveyActivity.putExtra(CURRENT_GEOZONE_EXTRA,zone);
+        //if(prevGeo != null)
+            //surveyActivity.putExtra("PREV_GEO",prevGeo);
+
         startActivity(surveyActivity);
     }
 

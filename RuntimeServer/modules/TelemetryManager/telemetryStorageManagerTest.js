@@ -2,7 +2,7 @@ var ProtoBuf = require("../../node_modules/protobufjs");
 
 process.chdir(__dirname);
 var builder = ProtoBuf.loadProtoFile("../../resources/kya.proto"),
-	KYA = builder.build("KYA"),
+	KYA = builder.build("com.nvbyte.kya"),
 	Telemetry = KYA.Telemetry,
 	GeoPoint = KYA.GeoPoint;
 

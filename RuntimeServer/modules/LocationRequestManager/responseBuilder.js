@@ -13,7 +13,7 @@ module.exports = function ResponseBuilder() {
 	 */ 
 	process.chdir(__dirname);
 	var builder = ProtoBuf.loadProtoFile('../../resources/kya.proto'),
-		KYA = builder.build("KYA"),
+		KYA = builder.build("com.nvbyte.kya"),
 		CheckInResponse = KYA.CheckInResponse,
 		GeoZone = KYA.GeoZone,
 		GeoPoint = KYA.GeoPoint;
@@ -30,8 +30,9 @@ module.exports = function ResponseBuilder() {
 		for(var i = 0 ; i < currentZone.loc.coordinates[0].length - 1; i ++){
 			geoPointsAr.push(new GeoPoint('', currentZone.loc.coordinates[0][i][1], currentZone.loc.coordinates[0][i][0]));
 		}
-		var currentZoneObj = new GeoZone(currentZone.zone_id, currentZone.level, currentZone.totalCrime, geoPointsAr);
-		var response = new CheckInResponse(currentZoneObj,nextRequestTime,surveyFlag);
+		var currentZoneObj = new GeoZone(currentZone.level, +currentZone.totalCrime, '10/10/2015',currentZone.zone_id, geoPointsAr);
+		var response = new CheckInResponse(nextRequestTime,surveyFlag,currentZoneObj);
+		console.log(response);
 		var responseBuffer = response.encode().toBuffer();
 		return responseBuffer;	
 	}; 

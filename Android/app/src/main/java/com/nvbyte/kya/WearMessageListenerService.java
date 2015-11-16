@@ -1,6 +1,7 @@
 package com.nvbyte.kya;
 
 import android.content.Intent;
+import android.location.Location;
 import android.util.Log;
 
 import com.google.android.gms.wearable.MessageEvent;
@@ -19,6 +20,8 @@ public class WearMessageListenerService extends WearableListenerService {
     private static final String RESPONSE_CHECK_IN = "/RESPONSE_CHECK_IN";
     private static final String RESPONSE_GET_ZONE = "/RESPONSE_GET_ZONE";
     private static final String RESPONSE_ERROR = "/RESPONSE_ERROR";
+    private static final String MOCK = "/MOCK";
+
 
 
     @Override
@@ -43,6 +46,11 @@ public class WearMessageListenerService extends WearableListenerService {
             Intent intent = new Intent();
             intent.setAction("com.nvbyte.kya.ERROR");
             sendBroadcast(intent);
+        } else if (messageEvent.getPath().equals(MOCK)) {
+            String mix = new String(messageEvent.getData());
+            String[] part = mix.trim().split("p");
+
+            LocationProvider.getInstance(this).setMockLocation(part[0],part[1]);
         }
     }
 }

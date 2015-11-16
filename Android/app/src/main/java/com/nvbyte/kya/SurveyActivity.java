@@ -47,6 +47,7 @@ public class SurveyActivity extends FragmentActivity {
     private static final String LAST_UPDATED = "LAST_UPDATED";
     private static final String EXTRA_ID = "NOTIFICATION_ID";
     private final static String ZONE_ID_EXTRA = "ZONE_ID";
+    private final static String CURRENT_GEOZONE_EXTRA = "CURRENT_GEOZONE";
 
     private static final int VIBRATION_PERIOD = 1000;
     private boolean sentSurvey = false;
@@ -191,6 +192,8 @@ public class SurveyActivity extends FragmentActivity {
         intent.putExtra(CRIME_RATE,this.getIntent().getExtras().getDouble(CRIME_RATE));
         intent.putExtra(LAST_UPDATED,this.getIntent().getExtras().getString(LAST_UPDATED));
         intent.putExtra(ZONE_ID_EXTRA,this.getIntent().getExtras().getInt(ZONE_ID_EXTRA));
+        intent.putExtra(CURRENT_GEOZONE_EXTRA,this.getIntent().getExtras().getSerializable(CURRENT_GEOZONE_EXTRA));
+        intent.putExtra("PREV_GEO",this.getIntent().getExtras().getSerializable("PREV_GEO"));
         return intent;
     }
 

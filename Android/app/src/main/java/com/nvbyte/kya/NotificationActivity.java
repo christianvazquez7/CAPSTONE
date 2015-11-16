@@ -35,6 +35,7 @@ public class NotificationActivity extends FragmentActivity {
     private Vibrator mVibrator;
     private String mNotificationId;
     private static final int VIBRATION_PERIOD = 1000;
+    private final static String ZONE_ID_EXTRA = "ZONE_ID";
 
     static {
         mColorMap.put(1,R.color.level1);
@@ -61,7 +62,6 @@ public class NotificationActivity extends FragmentActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         String userId  = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
-        mNotificationId = userId + System.currentTimeMillis();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(preferences.getBoolean("vibrate_preference",true)) {
             mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -72,7 +72,8 @@ public class NotificationActivity extends FragmentActivity {
         if(isHigher) {
             Intent captureBeat = new Intent();
             captureBeat.setAction("com.nvbyte.kya.SEND_AFTER_BEAT");
-            captureBeat.putExtra(EXTRA_ID, mNotificationId);
+            captureBeat.putExtra(EXTRA_ID, getIntent().getExtras().getString(EXTRA_ID));
+            captureBeat.putExtra(ZONE_ID_EXTRA, getIntent().getExtras().getInt(ZONE_ID_EXTRA));
             sendBroadcast(captureBeat);
         }
 
