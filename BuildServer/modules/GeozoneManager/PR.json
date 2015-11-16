@@ -1,0 +1,20 @@
+{
+	"Location": "PR",																												/* LOCATION WHERE THE DATA WILL BE COLLECTED */
+	"SodaSource": "http://data.pr.gov/", 																							/* SODA DATA SOURCE */
+	"Token": "mxH22n8js0toWFnxPSEUDzVKi", 																							/* TOKEN USED TO CONNECT TO SODA DATA SOURCE */
+	"Resource": "3fy3-2bc5", 																										/* RESOURCE USED TO CONNECT TO SODA DATA SOURCE */
+	"From": "2013-01-01",  																											/* FROM WHICH DAY TO RETREIVE DATA */
+	"To": "2015-02-28", 																											/* TO WHICH DAT TO RETREIVE DATA */
+	"CrimesToIgnore": "Apropiacion Ilegal, Escalamiento, 9, Incendio Malicioso, Vehiculo Hurtado", 									/* LIST TYPE OF CRIMES TO IGNORE */
+	"NWCoordinate": "18.536909, -67.299500",																						/* NORTH-WEST COORDINATE FOR THE GRID */
+	"SECoordinate": "17.918636, -65.176392",																						/* SOUTH-EAST COORDINATE FOR THE GRID */
+	"Area": "1000",																													/* AREA OF THE GRID IN KILOMETERS SQUARE */
+	"Marshall": { 																													/* MARSHALL TO SET ATTRIBUTES OF SODA ENTITY*/
+					"Date": "fecha", 
+					"Time": "hora",
+					"Longitude": "point_y",
+					"Latitude": "point_x",
+					"Type": "delitos_code",
+					"Id": "delito"
+				}
+}

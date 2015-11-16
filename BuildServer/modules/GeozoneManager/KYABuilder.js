@@ -15,10 +15,10 @@ var argv 				= require('optimist').usage('File to Initialize KYA Builder.\nUsage
 var stripJsonComments 	= require('strip-json-comments');
 var GeozoneManager 		= require('./GeozoneManager.js');
 var coordinate 			= require('./GeoCoordinate.js');
-var Crime 				= require('./dataProvider/crime.js');
+var Crime 				= require('../DataProvider/crime.js');
 var fs 					= require('fs');
-var MarshallBuilder 	= require('./dataProvider/marshallBuilder.js');
-var DataProvider 		= require('./dataProvider/dataProvider.js');
+var MarshallBuilder 	= require('../DataProvider/marshallBuilder.js');
+var DataProvider 		= require('../DataProvider/dataProvider.js');
 var SQLClient 			= require('pg');
 var mongodb 			= require('mongodb');
 

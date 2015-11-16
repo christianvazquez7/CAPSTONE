@@ -106,6 +106,6 @@ module.exports = function GridBuilder (log) {
 		se = converter.tileToCoordinate(gridPoint.getX() + 1, gridPoint.getY() + 1, edge);
 		sw = converter.tileToCoordinate(gridPoint.getX(), gridPoint.getY() + 1, edge)
 
-		polygon_callback({ "zone_id": zoneID, "level": 0, "totalCrime": 0, "updated": null, "loc": { "type":"Polygon", "coordinates":[[[nw.getLongitude(), nw.getLatitude()], [ne.getLongitude(), ne.getLatitude()], [se.getLongitude(), se.getLatitude()], [sw.getLongitude(), sw.getLatitude()], [nw.getLongitude(), nw.getLatitude()]]]}});
+		polygon_callback({ "zone_id": zoneID, "level": 0, "totalCrime": 0, "updatedOn": null, "loc": { "type":"Polygon", "coordinates":[[[nw.getLongitude(), nw.getLatitude()], [ne.getLongitude(), ne.getLatitude()], [se.getLongitude(), se.getLatitude()], [sw.getLongitude(), sw.getLatitude()], [nw.getLongitude(), nw.getLatitude()]]]}});
 	}
 }
