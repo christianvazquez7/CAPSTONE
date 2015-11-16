@@ -2,6 +2,9 @@
  * MongoManager module is in charge of the storing the parse GeoZone.
  */
 
+var dateFormat = require('dateformat');
+var now = new Date();
+
 module.exports = function MongoManager (mongoClient, log){
 
 	var mongoLog = log;
@@ -56,7 +59,8 @@ module.exports = function MongoManager (mongoClient, log){
 	 * @param update_callback: Callback function when the updating is done.
 	 */
 	this.updateGeozone = function(classification, update_callback) {
-		client.collection('Geozone').update({zone_id: classification.zone}, { $set: { level: classification.level, totalCrime: parseInt(classification.totalCrime) }}, function(err, result) {
+		var dateUpdated = dateFormat(now, "mm/dd/yyyy");
+		client.collection('Geozone').update({zone_id: classification.zone}, { $set: { level: classification.level, totalCrime: parseInt(classification.totalCrime), updated: dateUpdated}}, function(err, result) {
 			if(!err) {
 				mongoLog.notice('Updated Geozone: ', classification);
 				update_callback();
