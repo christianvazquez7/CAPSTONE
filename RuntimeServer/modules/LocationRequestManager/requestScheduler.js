@@ -47,7 +47,6 @@ module.exports = function RequestScheduler() {
 		fetcher.fetchByLocation(mCheckIn.location, numberOfRingsToFetch, zonesFetchingCallback);
 	};
 	
-
 	/**
 	 * Callback function to be called when the current geo-zone has been fetched from the database
 	 *
@@ -55,21 +54,29 @@ module.exports = function RequestScheduler() {
 	 */	
 	zonesFetchingCallback = function onZonesFetched(error, geoZones) {
 		if(error) mResponseCallback(error);
-
+    
 		/*Analyze zone to obtain the time to schedule the next location request*/
 	 	var locationGeoJSON = turf.point([mCheckIn.location.longitude, mCheckIn.location.latitude]);	
 		
 		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON, geoZones, mCheckIn.negDelta, function (err){ 
 			mResponseCallback(err);
+			return;
 		});
-
+    
 		var currentZone = analyzer.getCurrentZone(locationGeoJSON,geoZones);
-		if(currentZone == null) mResponseCallback(new Error("Zone not found"));
+		if(currentZone == null){
+			mResponseCallback(new Error("Zone not found"));
+			return;	
+		} 
 		
 		surveyFlag = (Math.random() > (1-probability));
 		
-		var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag); 
-		mResponseCallback(null, response);
+		var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag);
+		if(!response){
+			mResponseCallback(new Error("Could not get response"));		
+			return;
+		}
 		
+		mResponseCallback(null, response);		
 	};	
 };

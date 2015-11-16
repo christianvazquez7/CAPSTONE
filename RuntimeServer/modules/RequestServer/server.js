@@ -16,7 +16,7 @@ module.exports = function Server() {
 
   // set static directories
   app.use(express.static(path.join(__dirname, 'public')));
-  app.use(express.static('/Users/omar91/Development/CAPSTONE/RuntimeServer/resources'));
+  app.use(express.static('/Users/omar91/Development/CAPSTONE/proto'));
 
 //Store all JS and CSS in Scripts folder.
   /**

@@ -25,8 +25,8 @@ var listenerHandle,
 
 // Protocol Buffers
 var ProtoBuf = dcodeIO.ProtoBuf,
-	builder = ProtoBuf.loadProtoFile("kya.proto"),
-	KYA = builder.build("KYA"),
+	builder = ProtoBuf.loadProtoFile("KYA.proto"),
+	KYA = builder.build("com.nvbyte.kya"),
 	Stats = KYA.Stats;
 
 /**
@@ -64,6 +64,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 	addMapViewer();
   	onHover();	// Listen for hover events
   	onDrag(dragCallback);	// Listen for hover events
+  	onClick(dragCallback);	// Listen for click events in the map viewer
 	styleMap(); // Add some style to the map
 	boundsControl(swPoint, nePoint);
 	backButtonControl(backButtonCallback);
@@ -240,6 +241,18 @@ this.onDrag = function(callback) {
 		mapMarker.setPosition(map.getCenter());
 	});
 };
+
+/**
+ * Function to be called when the user clicks on the map viewer.
+ *
+ */
+this.onClick = function(callback) {
+	mapViewer.addListener('click', function(event) {
+		map.setCenter(event.latLng);
+		callback();
+		mapMarker.setPosition(map.getCenter());
+	});
+}
 
 /**
  * Creates a rectangle object using the zone's coordinates

@@ -16,7 +16,8 @@ module.exports = function DashboardRequestHandler() {
 	var ZonesManager = require('../DashboardManager/zonesManager.js');
 
 	// Protocol buffer initialization
-	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
+	process.chdir(__dirname);
+	var protoBuilder = ProtoBuf.loadProtoFile("../../../proto/KYA.proto");
 	var KYA = protoBuilder.build("com.nvbyte.kya");
 	var GridBounds = KYA.GridBounds;
 	var Stats = KYA.Stats;

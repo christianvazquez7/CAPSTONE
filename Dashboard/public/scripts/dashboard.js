@@ -17,8 +17,8 @@ var swPoint,
 
 // Protocol Buffers
 var ProtoBuf = dcodeIO.ProtoBuf,
-	builder = ProtoBuf.loadProtoFile("kya.proto"),
-	KYA = builder.build("KYA"),
+	builder = ProtoBuf.loadProtoFile("KYA.proto"),
+	KYA = builder.build("com.nvbyte.kya"),
 	GridBounds = KYA.GridBounds,
 	GeoPoint = KYA.GeoPoint;
 	Threshold = KYA.Threshold;

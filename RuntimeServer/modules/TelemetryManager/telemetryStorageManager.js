@@ -129,6 +129,7 @@ module.exports = function TelemetryStorageManager() {
   			//Returns survey record's auto-generated id to use it when creating or updating the telemetry record in the database 
   			var query = "INSERT INTO movement (user_id, geo_point, capture_time) VALUES ('" + GeoPoint.userID + "', POINT(" + GeoPoint.latitude + ", " + GeoPoint.longitude +"), NOW() ) " +
                     "RETURNING movement_id";
+
         
         client.query(query, function(err, result) {
 
