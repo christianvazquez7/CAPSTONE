@@ -14,6 +14,7 @@ module.exports = function ZoneAnalyzer() {
 
 	var reference = {'NW':1, 'N':2, 'NE':3, 'W':4, 'L':5, 'E':6, 'SW':7, 'S':8, 'SE':9};
     var that = this;
+    var minTimeForResponse = 1;
 
 	/**
 	 * Calculates time for next location request from Client finding an estimate time to reach the closest
@@ -25,13 +26,21 @@ module.exports = function ZoneAnalyzer() {
 	 * @return long containing time (in seconds) it will take to reach closest higher risk zone
 	 */
 	this.calculateTimeToHRZone = function(speed,locationGeoJSON, zonesToAnalyze, negDelta, errCallback) {            
-            if (typeof(speed) == 'undefined' || speed == null){
-                return 10;
-            }
-            if(speed <= 0){
-                return 120;
+            if (typeof(speed) == 'undefined' || speed == null || speed < 0){
+                return 1;
             }
             var mDistance = getDistance(locationGeoJSON, zonesToAnalyze, negDelta, errCallback);
+            
+            if(speed >= 0 && speed <= 1){
+                return mDistance;
+            }
+            if(speed > 50){
+                return mDistance;
+            }
+            if(mDistance/speed < 1){
+                return 1;
+            }
+
             return mDistance/speed;
 	};
 
