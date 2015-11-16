@@ -1,24 +1,75 @@
 package com.nvbyte.kya;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.wearable.view.WatchViewStub;
-import android.widget.TextView;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 
-public class MainActivity extends Activity {
+import java.util.ArrayList;
+import java.util.List;
 
-    private TextView mTextView;
+
+/**
+ * Activity that is triggered by user opening app from the menu. In it, the user can see the current
+ * area of risk and modify settings for the KYA application.
+ */
+public class MainActivity extends FragmentActivity {
+
+
+    private ViewPager mMainContentPager;
+    private FragmentPagerAdapter mMainContentAdapter;
+    private CurrentZoneFragment mCurrentZoneFragment;
+    private SettingsFragment mSettingsFragment;
+
 
     @Override
+    /**
+     * Creates fragments if they do not exists and adds them to the ViewPager.
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+        setContentView(R.layout.round_activity_main);
+        HandlerThread backgroundThread = new HandlerThread("service");
+        backgroundThread.start();
+        Thread newThread = new Thread(new Runnable() {
             @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.text);
+            public void run() {
+                Intent service = new Intent(MainActivity.this,KYANotificationService.class);
+                startService(service);
             }
         });
+        newThread.start();
+        mMainContentPager = (ViewPager) findViewById(R.id.pager);
+        mCurrentZoneFragment = new CurrentZoneFragment();
+        mSettingsFragment = new SettingsFragment();
+        mMainContentAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                switch (position) {
+                    case 0: return mCurrentZoneFragment;
+                    case 1: return mSettingsFragment;
+                }
+                return null;
+            }
+
+            @Override
+            public int getCount() {
+                return 2;
+            }
+        };
+        mMainContentPager.setAdapter(mMainContentAdapter);
+    }
+
+    @Override
+    /**
+     * Calls refresh on the current zone fragment to fetch up to date information about location.
+     */
+    protected void onResume() {
+        super.onResume();
     }
 }

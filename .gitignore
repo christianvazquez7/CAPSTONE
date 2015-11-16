@@ -41,3 +41,14 @@ local.properties
 
 # Sandbox stuff
 _sandbox
+# log files
+*.log
+
+# test directory
+#RuntimeServer/modules/RequestServer/test
+
+# mongo data directory
+RuntimeServer/modules/RequestServer/data
+
+# Joel classes
+Class_Skeletons/

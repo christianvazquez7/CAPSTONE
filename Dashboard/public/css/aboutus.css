@@ -1,0 +1,71 @@
+html,
+body {
+   margin:0;
+   padding:0;
+   height:100%;
+}
+
+#container2 {
+   min-height:100%;
+   position:relative;
+}
+
+#header2 {
+}
+
+#body2 {
+/* 	padding-top: 90px; */
+	padding-bottom:80px;   /* Height of the footer */
+}
+#footer2 {
+   position:absolute;
+   bottom:0;
+   width:100%;
+   height:60px;   /* Height of the footer */
+}
+
+.team-name {
+	font-size: 20px;
+	color: #474747;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+
+.left-photo-team {
+	float: left;
+}
+
+.right-photo-team {
+	float: right;
+	margin-left: 20px;
+}
+
+p.right-description-team {
+	float: left;
+}
+
+.team-text {
+/* 	text-align: justify; */
+	color: #333;
+}
+
+
+
+div.left-photo-team {
+	float: left;
+	margin-top: 10px;
+	margin-right: 20px;
+}
+
+.team-image {
+	width: 140px;
+}
+
+hr {
+	margin: 0;
+	width: 924px;
+	border: none;
+	height: 0.05em;
+	background: #333;	
+}
