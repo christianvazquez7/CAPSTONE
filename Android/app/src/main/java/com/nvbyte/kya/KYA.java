@@ -72,6 +72,32 @@ public final class KYA {
      * </pre>
      */
     GeoZoneOrBuilder getCurrentZoneOrBuilder();
+
+    // optional .com.nvbyte.kya.GeoZone prevZone = 4;
+    /**
+     * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+     *
+     * <pre>
+     * The previous geozone on which the user was.
+     * </pre>
+     */
+    boolean hasPrevZone();
+    /**
+     * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+     *
+     * <pre>
+     * The previous geozone on which the user was.
+     * </pre>
+     */
+    GeoZone getPrevZone();
+    /**
+     * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+     *
+     * <pre>
+     * The previous geozone on which the user was.
+     * </pre>
+     */
+    GeoZoneOrBuilder getPrevZoneOrBuilder();
   }
   /**
    * Protobuf type {@code com.nvbyte.kya.CheckInResponse}
@@ -155,6 +181,19 @@ public final class KYA {
                 currentZone_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000004;
+              break;
+            }
+            case 34: {
+              GeoZone.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = prevZone_.toBuilder();
+              }
+              prevZone_ = input.readMessage(GeoZone.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(prevZone_);
+                prevZone_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
               break;
             }
           }
@@ -279,10 +318,45 @@ public final class KYA {
       return currentZone_;
     }
 
+    // optional .com.nvbyte.kya.GeoZone prevZone = 4;
+    public static final int PREVZONE_FIELD_NUMBER = 4;
+    private GeoZone prevZone_;
+    /**
+     * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+     *
+     * <pre>
+     * The previous geozone on which the user was.
+     * </pre>
+     */
+    public boolean hasPrevZone() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+     *
+     * <pre>
+     * The previous geozone on which the user was.
+     * </pre>
+     */
+    public GeoZone getPrevZone() {
+      return prevZone_;
+    }
+    /**
+     * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+     *
+     * <pre>
+     * The previous geozone on which the user was.
+     * </pre>
+     */
+    public GeoZoneOrBuilder getPrevZoneOrBuilder() {
+      return prevZone_;
+    }
+
     private void initFields() {
       nextRequestTimeInSeconds_ = 0D;
       requestFeedback_ = false;
       currentZone_ = GeoZone.getDefaultInstance();
+      prevZone_ = GeoZone.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -305,6 +379,12 @@ public final class KYA {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (hasPrevZone()) {
+        if (!getPrevZone().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -320,6 +400,9 @@ public final class KYA {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeMessage(3, currentZone_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, prevZone_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -341,6 +424,10 @@ public final class KYA {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, currentZone_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, prevZone_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -461,6 +548,7 @@ public final class KYA {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getCurrentZoneFieldBuilder();
+          getPrevZoneFieldBuilder();
         }
       }
       private static Builder create() {
@@ -479,6 +567,12 @@ public final class KYA {
           currentZoneBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000004);
+        if (prevZoneBuilder_ == null) {
+          prevZone_ = GeoZone.getDefaultInstance();
+        } else {
+          prevZoneBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -523,6 +617,14 @@ public final class KYA {
         } else {
           result.currentZone_ = currentZoneBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        if (prevZoneBuilder_ == null) {
+          result.prevZone_ = prevZone_;
+        } else {
+          result.prevZone_ = prevZoneBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -548,6 +650,9 @@ public final class KYA {
         if (other.hasCurrentZone()) {
           mergeCurrentZone(other.getCurrentZone());
         }
+        if (other.hasPrevZone()) {
+          mergePrevZone(other.getPrevZone());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -568,6 +673,12 @@ public final class KYA {
         if (!getCurrentZone().isInitialized()) {
           
           return false;
+        }
+        if (hasPrevZone()) {
+          if (!getPrevZone().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -840,6 +951,159 @@ public final class KYA {
           currentZone_ = null;
         }
         return currentZoneBuilder_;
+      }
+
+      // optional .com.nvbyte.kya.GeoZone prevZone = 4;
+      private GeoZone prevZone_ = GeoZone.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          GeoZone, GeoZone.Builder, GeoZoneOrBuilder> prevZoneBuilder_;
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      public boolean hasPrevZone() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      public GeoZone getPrevZone() {
+        if (prevZoneBuilder_ == null) {
+          return prevZone_;
+        } else {
+          return prevZoneBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      public Builder setPrevZone(GeoZone value) {
+        if (prevZoneBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          prevZone_ = value;
+          onChanged();
+        } else {
+          prevZoneBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      public Builder setPrevZone(
+          GeoZone.Builder builderForValue) {
+        if (prevZoneBuilder_ == null) {
+          prevZone_ = builderForValue.build();
+          onChanged();
+        } else {
+          prevZoneBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      public Builder mergePrevZone(GeoZone value) {
+        if (prevZoneBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              prevZone_ != GeoZone.getDefaultInstance()) {
+            prevZone_ =
+              GeoZone.newBuilder(prevZone_).mergeFrom(value).buildPartial();
+          } else {
+            prevZone_ = value;
+          }
+          onChanged();
+        } else {
+          prevZoneBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      public Builder clearPrevZone() {
+        if (prevZoneBuilder_ == null) {
+          prevZone_ = GeoZone.getDefaultInstance();
+          onChanged();
+        } else {
+          prevZoneBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      public GeoZone.Builder getPrevZoneBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getPrevZoneFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      public GeoZoneOrBuilder getPrevZoneOrBuilder() {
+        if (prevZoneBuilder_ != null) {
+          return prevZoneBuilder_.getMessageOrBuilder();
+        } else {
+          return prevZone_;
+        }
+      }
+      /**
+       * <code>optional .com.nvbyte.kya.GeoZone prevZone = 4;</code>
+       *
+       * <pre>
+       * The previous geozone on which the user was.
+       * </pre>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          GeoZone, GeoZone.Builder, GeoZoneOrBuilder>
+          getPrevZoneFieldBuilder() {
+        if (prevZoneBuilder_ == null) {
+          prevZoneBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              GeoZone, GeoZone.Builder, GeoZoneOrBuilder>(
+                  prevZone_,
+                  getParentForChildren(),
+                  isClean());
+          prevZone_ = null;
+        }
+        return prevZoneBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:com.nvbyte.kya.CheckInResponse)
@@ -4226,6 +4490,24 @@ public final class KYA {
      * </pre>
      */
     boolean getNegDelta();
+
+    // optional int32 prevZoneId = 5;
+    /**
+     * <code>optional int32 prevZoneId = 5;</code>
+     *
+     * <pre>
+     * Id of previous zone.
+     * </pre>
+     */
+    boolean hasPrevZoneId();
+    /**
+     * <code>optional int32 prevZoneId = 5;</code>
+     *
+     * <pre>
+     * Id of previous zone.
+     * </pre>
+     */
+    int getPrevZoneId();
   }
   /**
    * Protobuf type {@code com.nvbyte.kya.CheckIn}
@@ -4310,6 +4592,11 @@ public final class KYA {
             case 32: {
               bitField0_ |= 0x00000008;
               negDelta_ = input.readBool();
+              break;
+            }
+            case 40: {
+              bitField0_ |= 0x00000010;
+              prevZoneId_ = input.readInt32();
               break;
             }
           }
@@ -4504,11 +4791,36 @@ public final class KYA {
       return negDelta_;
     }
 
+    // optional int32 prevZoneId = 5;
+    public static final int PREVZONEID_FIELD_NUMBER = 5;
+    private int prevZoneId_;
+    /**
+     * <code>optional int32 prevZoneId = 5;</code>
+     *
+     * <pre>
+     * Id of previous zone.
+     * </pre>
+     */
+    public boolean hasPrevZoneId() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 prevZoneId = 5;</code>
+     *
+     * <pre>
+     * Id of previous zone.
+     * </pre>
+     */
+    public int getPrevZoneId() {
+      return prevZoneId_;
+    }
+
     private void initFields() {
       userId_ = "";
       location_ = GeoPoint.getDefaultInstance();
       speed_ = 0D;
       negDelta_ = false;
+      prevZoneId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -4550,6 +4862,9 @@ public final class KYA {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeBool(4, negDelta_);
       }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt32(5, prevZoneId_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -4574,6 +4889,10 @@ public final class KYA {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(4, negDelta_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, prevZoneId_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -4710,6 +5029,8 @@ public final class KYA {
         bitField0_ = (bitField0_ & ~0x00000004);
         negDelta_ = false;
         bitField0_ = (bitField0_ & ~0x00000008);
+        prevZoneId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -4758,6 +5079,10 @@ public final class KYA {
           to_bitField0_ |= 0x00000008;
         }
         result.negDelta_ = negDelta_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.prevZoneId_ = prevZoneId_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -4787,6 +5112,9 @@ public final class KYA {
         }
         if (other.hasNegDelta()) {
           setNegDelta(other.getNegDelta());
+        }
+        if (other.hasPrevZoneId()) {
+          setPrevZoneId(other.getPrevZoneId());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -5212,6 +5540,55 @@ public final class KYA {
       public Builder clearNegDelta() {
         bitField0_ = (bitField0_ & ~0x00000008);
         negDelta_ = false;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 prevZoneId = 5;
+      private int prevZoneId_ ;
+      /**
+       * <code>optional int32 prevZoneId = 5;</code>
+       *
+       * <pre>
+       * Id of previous zone.
+       * </pre>
+       */
+      public boolean hasPrevZoneId() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional int32 prevZoneId = 5;</code>
+       *
+       * <pre>
+       * Id of previous zone.
+       * </pre>
+       */
+      public int getPrevZoneId() {
+        return prevZoneId_;
+      }
+      /**
+       * <code>optional int32 prevZoneId = 5;</code>
+       *
+       * <pre>
+       * Id of previous zone.
+       * </pre>
+       */
+      public Builder setPrevZoneId(int value) {
+        bitField0_ |= 0x00000010;
+        prevZoneId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 prevZoneId = 5;</code>
+       *
+       * <pre>
+       * Id of previous zone.
+       * </pre>
+       */
+      public Builder clearPrevZoneId() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        prevZoneId_ = 0;
         onChanged();
         return this;
       }
@@ -9301,30 +9678,32 @@ public final class KYA {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\tKYA.proto\022\016com.nvbyte.kya\"z\n\017CheckInRe" +
-      "sponse\022 \n\030nextRequestTimeInSeconds\030\001 \002(\001" +
-      "\022\027\n\017requestFeedback\030\002 \002(\010\022,\n\013currentZone" +
-      "\030\003 \002(\0132\027.com.nvbyte.kya.GeoZone\"\216\002\n\tTele" +
-      "metry\022\016\n\006userID\030\001 \002(\t\022\026\n\016notificationID\030" +
-      "\002 \002(\t\022\016\n\006zoneID\030\003 \002(\005\0226\n\theartRate\030\004 \001(\013" +
-      "2#.com.nvbyte.kya.Telemetry.HeartRate\0220\n" +
-      "\006survey\030\005 \001(\0132 .com.nvbyte.kya.Telemetry" +
-      ".Survey\032*\n\tHeartRate\022\016\n\006before\030\001 \001(\005\022\r\n\005" +
-      "after\030\002 \001(\005\0323\n\006Survey\022\022\n\nactualRisk\030\001 \002(",
-      "\005\022\025\n\rperceivedRisk\030\002 \002(\005\"?\n\010GeoPoint\022\016\n\006" +
-      "userID\030\001 \001(\t\022\020\n\010latitude\030\002 \002(\001\022\021\n\tlongit" +
-      "ude\030\003 \002(\001\"f\n\007CheckIn\022\016\n\006userId\030\001 \002(\t\022*\n\010" +
-      "location\030\002 \002(\0132\030.com.nvbyte.kya.GeoPoint" +
-      "\022\r\n\005speed\030\003 \001(\001\022\020\n\010negDelta\030\004 \002(\010\"{\n\007Geo" +
-      "Zone\022\r\n\005level\030\001 \002(\005\022\022\n\ntotalCrime\030\002 \002(\005\022" +
-      "\017\n\007updated\030\003 \001(\t\022\016\n\006zoneID\030\004 \002(\005\022,\n\nboun" +
-      "daries\030\005 \003(\0132\030.com.nvbyte.kya.GeoPoint\"." +
-      "\n\004Grid\022&\n\005tiles\030\001 \003(\0132\027.com.nvbyte.kya.G" +
-      "eoZone\":\n\nGridBounds\022,\n\nboundaries\030\001 \003(\013",
-      "2\030.com.nvbyte.kya.GeoPoint\"M\n\005Stats\022\026\n\016m" +
-      "axNumOfCrimes\030\001 \002(\001\022\026\n\016minNumOfCrimes\030\002 " +
-      "\002(\001\022\024\n\014crimeAverage\030\003 \002(\001\"\036\n\tThreshold\022\021" +
-      "\n\tthreshold\030\001 \002(\001"
+      "\n\tKYA.proto\022\016com.nvbyte.kya\"\245\001\n\017CheckInR" +
+      "esponse\022 \n\030nextRequestTimeInSeconds\030\001 \002(" +
+      "\001\022\027\n\017requestFeedback\030\002 \002(\010\022,\n\013currentZon" +
+      "e\030\003 \002(\0132\027.com.nvbyte.kya.GeoZone\022)\n\010prev" +
+      "Zone\030\004 \001(\0132\027.com.nvbyte.kya.GeoZone\"\216\002\n\t" +
+      "Telemetry\022\016\n\006userID\030\001 \002(\t\022\026\n\016notificatio" +
+      "nID\030\002 \002(\t\022\016\n\006zoneID\030\003 \002(\005\0226\n\theartRate\030\004" +
+      " \001(\0132#.com.nvbyte.kya.Telemetry.HeartRat" +
+      "e\0220\n\006survey\030\005 \001(\0132 .com.nvbyte.kya.Telem" +
+      "etry.Survey\032*\n\tHeartRate\022\016\n\006before\030\001 \001(\005",
+      "\022\r\n\005after\030\002 \001(\005\0323\n\006Survey\022\022\n\nactualRisk\030" +
+      "\001 \002(\005\022\025\n\rperceivedRisk\030\002 \002(\005\"?\n\010GeoPoint" +
+      "\022\016\n\006userID\030\001 \001(\t\022\020\n\010latitude\030\002 \002(\001\022\021\n\tlo" +
+      "ngitude\030\003 \002(\001\"z\n\007CheckIn\022\016\n\006userId\030\001 \002(\t" +
+      "\022*\n\010location\030\002 \002(\0132\030.com.nvbyte.kya.GeoP" +
+      "oint\022\r\n\005speed\030\003 \001(\001\022\020\n\010negDelta\030\004 \002(\010\022\022\n" +
+      "\nprevZoneId\030\005 \001(\005\"{\n\007GeoZone\022\r\n\005level\030\001 " +
+      "\002(\005\022\022\n\ntotalCrime\030\002 \002(\005\022\017\n\007updated\030\003 \001(\t" +
+      "\022\016\n\006zoneID\030\004 \002(\005\022,\n\nboundaries\030\005 \003(\0132\030.c" +
+      "om.nvbyte.kya.GeoPoint\".\n\004Grid\022&\n\005tiles\030",
+      "\001 \003(\0132\027.com.nvbyte.kya.GeoZone\":\n\nGridBo" +
+      "unds\022,\n\nboundaries\030\001 \003(\0132\030.com.nvbyte.ky" +
+      "a.GeoPoint\"M\n\005Stats\022\026\n\016maxNumOfCrimes\030\001 " +
+      "\002(\001\022\026\n\016minNumOfCrimes\030\002 \002(\001\022\024\n\014crimeAver" +
+      "age\030\003 \002(\001\"\036\n\tThreshold\022\021\n\tthreshold\030\001 \002(" +
+      "\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -9336,7 +9715,7 @@ public final class KYA {
           internal_static_com_nvbyte_kya_CheckInResponse_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_com_nvbyte_kya_CheckInResponse_descriptor,
-              new String[] { "NextRequestTimeInSeconds", "RequestFeedback", "CurrentZone", });
+              new String[] { "NextRequestTimeInSeconds", "RequestFeedback", "CurrentZone", "PrevZone", });
           internal_static_com_nvbyte_kya_Telemetry_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_com_nvbyte_kya_Telemetry_fieldAccessorTable = new
@@ -9366,7 +9745,7 @@ public final class KYA {
           internal_static_com_nvbyte_kya_CheckIn_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_com_nvbyte_kya_CheckIn_descriptor,
-              new String[] { "UserId", "Location", "Speed", "NegDelta", });
+              new String[] { "UserId", "Location", "Speed", "NegDelta", "PrevZoneId", });
           internal_static_com_nvbyte_kya_GeoZone_descriptor =
             getDescriptor().getMessageTypes().get(4);
           internal_static_com_nvbyte_kya_GeoZone_fieldAccessorTable = new

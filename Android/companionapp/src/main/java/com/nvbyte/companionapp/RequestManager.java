@@ -16,13 +16,13 @@ import com.android.volley.toolbox.Volley;
 public class RequestManager {
     private RequestQueue mRequestQueue;
     private static RequestManager mRequestManager;
-    private static final String IP = "192.168.2.140";
-    private static final String SURVEY_ROUTE = "http://"+IP+":3000/telemetry/survey";
-    private static final String HEART_BEAT_ROUTE = "http://"+IP+":3000/telemetry/heartbeat";
-    private static final String CHECK_IN_ROUTE = "http://"+IP+":3000/location/checkin";
-    private static final String CURRENT_ZONE_ROUTE = "http://"+IP+":3000/zones/current/";
-    private static final String MOVEMENT_ROUTE = "http://"+IP+":3000/telemetry/movement";
-    private static final String RETRY_ROUTE = "http://"+IP+":3000/location/checkin";
+    private static final String IP = "52.24.21.205";
+    private static final String SURVEY_ROUTE = "http://"+IP+"/telemetry/survey";
+    private static final String HEART_BEAT_ROUTE = "http://"+IP+"/telemetry/heartbeat";
+    private static final String CHECK_IN_ROUTE = "http://"+IP+"/location/checkin";
+    private static final String CURRENT_ZONE_ROUTE = "http://"+IP+"/zones/current";
+    private static final String MOVEMENT_ROUTE = "http://"+IP+"/telemetry/movement";
+    private static final String RETRY_ROUTE = "http://"+IP+"/location/checkin";
 
 
     private Context mContext;

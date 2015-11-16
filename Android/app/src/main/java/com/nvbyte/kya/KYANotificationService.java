@@ -20,9 +20,10 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
@@ -51,16 +52,19 @@ public class KYANotificationService extends Service {
     private final static String ZONE_ID_EXTRA = "ZONE_ID";
     private final static String CURRENT_GEOZONE_EXTRA = "CURRENT_GEOZONE";
 
-    private static final long LOCATION_TIMEOUT = 1500;
-    private static final long RETRY_CHECKIN_PERIOD_SECONDS = 5; /// 5 seconds
-    private static final long RESPONSE_TIMEOUT = 10000; /// 5 seconds
+    private static final long LOCATION_TIMEOUT = 2000;
+    private static final long RETRY_CHECKIN_PERIOD_SECONDS = 10; /// 10 seconds
+    private static final long RESPONSE_TIMEOUT = 15000; /// 10 seconds
     private Timer mMovementTimer;
-    private String mCurrentNotificationId = "";
     private PendingIntent mNextCheckIn;
     private Timer timeoutTimer;
-    private double mLastSpeed = 0;
+    private double mLastSpeed = 10001;
     private Location currentLocation;
+    private double mLastCheckInSpeed = 10001;
     private long lastLocationTime = System.currentTimeMillis();
+
+    private boolean servingCheckIn;
+    private boolean delayedCheckIn;
 
     private Timer  speedTracker;
 
@@ -68,17 +72,19 @@ public class KYANotificationService extends Service {
         return new TimerTask(){
             @Override
             public void run() {
-                Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
-                if(location != null) {
-                    long currentTime = System.currentTimeMillis();
-                    double timeDelta = (currentTime - lastLocationTime)/1000;
-                    if(currentLocation != null) {
-                        double speed = location.distanceTo(currentLocation)/timeDelta;
-                        Utils.appendLog("The estimated speed is: " + speed );
-                        Log.d("TAG","The estimated speed is: " +speed);
+                synchronized (KYANotificationService.this) {
+                    Location location = LocationProvider.getInstance(KYANotificationService.this).getCurrentLocationForSpeed();
+                    double speed = setSpeed(location);
+                    mLastSpeed = speed;
+                    if (speed > mLastCheckInSpeed) {
+                        if(!servingCheckIn) {
+                            Utils.appendLog("Checkin again for higher speed: " + mLastCheckInSpeed + " new speed:" + mLastSpeed);
+                            checkIn();
+                        } else {
+                            delayedCheckIn = true;
+                            Utils.appendLog("Setting delayed checkIN Flag");
+                        }
                     }
-                    currentLocation = location;
-                    lastLocationTime = currentTime;
                 }
             }
         };
@@ -88,7 +94,6 @@ public class KYANotificationService extends Service {
         return new TimerTask(){
             @Override
             public void run() {
-
                 if(System.currentTimeMillis() - mTimeStartedCollecting >= COLLECT_PERIOD) {
                     synchronized (KYANotificationService.this) {
                         if(mMovementTimer != null)
@@ -111,6 +116,7 @@ public class KYANotificationService extends Service {
             @Override
             public void run() {
                     synchronized (KYANotificationService.this) {
+                        Utils.appendLog("Retry for timeout!");
                         if(timeoutTimer != null)
                             timeoutTimer.cancel();
                         timeoutTimer = null;
@@ -158,7 +164,7 @@ public class KYANotificationService extends Service {
                 double rate = intent.getExtras().getDouble(CRIME_RATE);
                 int currentZoneId = intent.getExtras().getInt(ZONE_ID_EXTRA);
                 KYA.GeoZone zone = (KYA.GeoZone) intent.getExtras().getSerializable(CURRENT_GEOZONE_EXTRA);
-                KYA.GeoZone prevGeo = (KYA.GeoZone) intent.getExtras().getSerializable("PREV_GEO");
+                KYA.GeoZone prevGeo = (KYA.GeoZone) intent.getExtras().getSerializable("OLD_GEO");
                 KYANotificationService.this.notify(id, rating, rate, date,true,currentZoneId,zone,prevGeo);
             }
         });
@@ -201,7 +207,7 @@ public class KYANotificationService extends Service {
                 builder.setZoneID(currentZoneId);
                 PhoneInterface.getInstance(KYANotificationService.this).sendMessageSurvey(builder.build().toByteArray());
                 KYA.GeoZone zone = (KYA.GeoZone) intent.getExtras().getSerializable(CURRENT_GEOZONE_EXTRA);
-                KYA.GeoZone prevGeo = (KYA.GeoZone) intent.getExtras().getSerializable("PREV_GEO");
+                KYA.GeoZone prevGeo = (KYA.GeoZone) intent.getExtras().getSerializable("OLD_GEO");
                 KYANotificationService.this.notify(id, rating, rate, date,true,currentZoneId,zone,prevGeo);
             }
         });
@@ -232,14 +238,15 @@ public class KYANotificationService extends Service {
         });
     }
 
-    private void checkIn(){
+    private synchronized void checkIn(){
         Log.d(TAG,"Performing check in");
-        synchronized (this) {
+        //synchronized (this) {
             if(mNextCheckIn != null) {
                 mAlarmManager.cancel(mNextCheckIn);
                 mNextCheckIn = null;
             }
-        }
+        //}
+
         HandlerThread handlerThread = new HandlerThread("checkIn");
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
@@ -248,15 +255,15 @@ public class KYANotificationService extends Service {
             public void run() {
                 Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
                 if(location != null) {
-                    if(location.hasSpeed()) {
-                        mLastSpeed = location.getSpeed();
-                    }
+                    mLastCheckInSpeed = mLastSpeed;
                     KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(KYANotificationService.this);
                     boolean negativeDelta = preferences.getBoolean("lower_preference",true);
+                    int previousId = preferences.getInt("PREV_ID",-1);
                     KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setNegDelta(negativeDelta).setUserId(Utils.getUserId(KYANotificationService.this));
                     builder.setLocation(point);
-                    builder.setSpeed(location.getSpeed());
+                    builder.setPrevZoneId(previousId);
+                    builder.setSpeed(mLastCheckInSpeed);
 
                     synchronized (KYANotificationService.this) {
                         if (timeoutTimer != null) {
@@ -265,19 +272,28 @@ public class KYANotificationService extends Service {
                         timeoutTimer = new Timer();
                     }
                     timeoutTimer.schedule(buildTimeoutTask(), RESPONSE_TIMEOUT);
-
+                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+                    Date resultdate = new Date(System.currentTimeMillis());
+                    Utils.appendLog("SENT CHECK IN at : " + sdf.format(resultdate));
+                    synchronized (KYANotificationService.this) {
+                        servingCheckIn = true;
+                    }
                     PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(builder.build().toByteArray(), new Runnable() {
                         @Override
                         public void run() {
                             synchronized (KYANotificationService.this) {
+                                Utils.appendLog("Setting delayed checkIN Flag");
+                                servingCheckIn = false;
                                 if(timeoutTimer != null)
                                     timeoutTimer.cancel();
                                 timeoutTimer = null;
+                                Utils.appendLog("Had to retry check in!");
+                                scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
                             }
-                            scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
                         }
                     });
                 } else {
+                    Utils.appendLog("Had to retry check in 2!");
                     scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
                 }
             }
@@ -286,10 +302,14 @@ public class KYANotificationService extends Service {
 
     private void onCheckInResponse(byte[] proto) {
         Log.d(TAG,"Handling response");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+        Date resultdate = new Date(System.currentTimeMillis());
+        Utils.appendLog("Got response at : " + sdf.format(resultdate));
         synchronized (KYANotificationService.this) {
             if(timeoutTimer != null)
                 timeoutTimer.cancel();
             timeoutTimer = null;
+            servingCheckIn = false;
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         KYA.CheckInResponse response = null;
@@ -299,6 +319,7 @@ public class KYANotificationService extends Service {
             Log.e(TAG,e.getMessage());
         }
         double nextCheckInSeconds = response.getNextRequestTimeInSeconds();
+        Utils.appendLog("Next check in should be:" + nextCheckInSeconds);
         int currentZone = response.getCurrentZone().getLevel();
         String currentZoneDate = response.getCurrentZone().getUpdated();
         boolean doSurvey = response.getRequestFeedback();
@@ -308,28 +329,30 @@ public class KYANotificationService extends Service {
         int prevZone =  preferences.getInt(CURRENT_ZONE_PREFERENCE,1);
         int threshold = preferences.getInt(THRESHOLD_PREFERENCE,1);
         preferences.edit().putInt(CURRENT_ZONE_PREFERENCE, currentZone).commit();
-        Gson gson = new Gson();
-        String prevGeoString = preferences.getString("PREV_GEO", "");
-        KYA.GeoZone prevGeo = null;
-        if(!prevGeoString.equals("")) {
-            prevGeo = gson.fromJson(prevGeoString, KYA.GeoZone.class);
-            Log.d(TAG,prevGeo.getBoundaries(0).getLongitude()+" woahhh");
+        KYA.GeoZone prev = null;
+        if(response.hasPrevZone()) {
+            Log.d(TAG,"HAS PREVIOUS ZONE!!");
+            prev = response.getPrevZone();
         }
-        String newestZone = gson.toJson(response.getCurrentZone());
-        Log.d(TAG,newestZone);
-        preferences.edit().putString("PREV_GEO",newestZone).commit();
         int currentZoneId = response.getCurrentZone().getZoneID();
+        preferences.edit().putInt("PREV_ID", currentZoneId).commit();
         mAlarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         scheduleCheckIn(nextCheckInSeconds);
+        synchronized (KYANotificationService.this) {
+            if(delayedCheckIn) {
+                delayedCheckIn = false;
+                checkIn();
+            }
+        }
         if (((currentZone > prevZone && currentZone > threshold) || (currentZone < prevZone && negativeDelta)) && !muted) {
             Log.d(TAG,"Notification Needed!");
             String userId  = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
             String mCurrentNotificationId = userId + System.currentTimeMillis();
             boolean higher = currentZone > prevZone;
             if(doSurvey && higher) {
-                startSurvey(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate,currentZoneId,response.getCurrentZone(),prevGeo);
+                startSurvey(mCurrentNotificationId,currentZone,crimeRate,currentZoneDate,currentZoneId,response.getCurrentZone(),prev);
             } else {
-                notify(mCurrentNotificationId, currentZone, crimeRate, currentZoneDate, higher, currentZoneId, response.getCurrentZone(),prevGeo);
+                notify(mCurrentNotificationId, currentZone, crimeRate, currentZoneDate, higher, currentZoneId, response.getCurrentZone(),prev);
             }
         }
     }
@@ -354,11 +377,11 @@ public class KYANotificationService extends Service {
      * Schedules the next notification based on the amount of time sent back in response.
      * @param timeInSeconds Time delta in seconds for next check in.
      */
-    private void scheduleCheckIn(double timeInSeconds) {
+    private synchronized void scheduleCheckIn(double timeInSeconds) {
         synchronized (this) {
             if(speedTracker == null) {
                 speedTracker = new Timer();
-                speedTracker.schedule(buildSpeedTask(),5000,10000);
+                speedTracker.schedule(buildSpeedTask(),5000,5000);
             }
             if(mNextCheckIn == null) {
                 Log.d(TAG, "Scheduling check in!");
@@ -375,7 +398,7 @@ public class KYANotificationService extends Service {
      * @param notificationId Id of notification session (timestamp + phoneId).
      * @param classification Classification level for notification.
      */
-    private void notify(final String notificationId, final int classification, final double crimeRate, final String date, final boolean higher,final int currentZoneId,final KYA.GeoZone zone, final KYA.GeoZone prevGeo) {
+    private void notify(final String notificationId, final int classification, final double crimeRate, final String date, final boolean higher,final int currentZoneId,final KYA.GeoZone zone, final KYA.GeoZone prev) {
         Utils.acquire(this);
         HandlerThread handlerThread = new HandlerThread("handleBeat");
         handlerThread.start();
@@ -418,15 +441,14 @@ public class KYANotificationService extends Service {
                 notificationActivity.putExtra(ZONE_ID_EXTRA,currentZoneId);
                 if(zone != null)
                     notificationActivity.putExtra(CURRENT_GEOZONE_EXTRA,zone);
-                //if(prevGeo != null)
-                    //notificationActivity.putExtra("PREV_GEO",prevGeo);
+                notificationActivity.putExtra("OLD_GEO",prev);
 
                 startActivity(notificationActivity);
             }
         });
     }
 
-    private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate,int currentZoneId, KYA.GeoZone zone, KYA.GeoZone prevGeo){
+    private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate,int currentZoneId, KYA.GeoZone zone, KYA.GeoZone prev){
         Utils.acquire(this);
         Intent surveyActivity = new Intent(getApplicationContext(),SurveyActivity.class);
         surveyActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -437,10 +459,28 @@ public class KYANotificationService extends Service {
         surveyActivity.putExtra(LAST_UPDATED,currentZoneDate);
         surveyActivity.putExtra(ZONE_ID_EXTRA,currentZoneId);
         surveyActivity.putExtra(CURRENT_GEOZONE_EXTRA,zone);
-        //if(prevGeo != null)
-            //surveyActivity.putExtra("PREV_GEO",prevGeo);
+        surveyActivity.putExtra("OLD_GEO",prev);
 
         startActivity(surveyActivity);
+    }
+
+    private synchronized double setSpeed(Location loc) {
+        if(loc != null) {
+            long currentTime = System.currentTimeMillis();
+            double timeDelta = (currentTime - lastLocationTime)/1000;
+            if(currentLocation != null) {
+                double speed = loc.distanceTo(currentLocation)/timeDelta;
+                currentLocation = loc;
+                lastLocationTime = currentTime;
+                return speed;
+            } else {
+                currentLocation = loc;
+                lastLocationTime = currentTime;
+                return 10000;
+            }
+        } else {
+            return 10000;
+        }
     }
 
     @Override

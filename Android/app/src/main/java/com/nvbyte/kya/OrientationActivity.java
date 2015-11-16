@@ -77,7 +77,7 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                         map.moveCamera(center);
                         map.animateCamera(zoom);
                         KYA.GeoZone dangerZone = (KYA.GeoZone) getIntent().getExtras().getSerializable(CURRENT_GEOZONE_EXTRA);
-                        Object saferZoneObject = getIntent().getExtras().getSerializable("PREV_GEO");
+                        Object saferZoneObject = getIntent().getExtras().getSerializable("OLD_GEO");
                         KYA.GeoZone saferZone = null;
                         if (saferZoneObject != null) {
                             saferZone = (KYA.GeoZone) saferZoneObject;

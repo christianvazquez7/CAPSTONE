@@ -193,7 +193,7 @@ public class SurveyActivity extends FragmentActivity {
         intent.putExtra(LAST_UPDATED,this.getIntent().getExtras().getString(LAST_UPDATED));
         intent.putExtra(ZONE_ID_EXTRA,this.getIntent().getExtras().getInt(ZONE_ID_EXTRA));
         intent.putExtra(CURRENT_GEOZONE_EXTRA,this.getIntent().getExtras().getSerializable(CURRENT_GEOZONE_EXTRA));
-        intent.putExtra("PREV_GEO",this.getIntent().getExtras().getSerializable("PREV_GEO"));
+        intent.putExtra("OLD_GEO",this.getIntent().getExtras().getSerializable("OLD_GEO"));
         return intent;
     }
 
