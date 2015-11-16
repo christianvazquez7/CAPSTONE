@@ -10,13 +10,13 @@ module.exports = function TelemetryStorageManager() {
 	var pg = require('../../node_modules/pg');
   
   //Luis
-	var conString = "postgres://postgres:kyateam@localhost:5432/KYA_SQL_DB";
+	//var conString = "postgres://postgres:kyateam@localhost:5432/KYA_SQL_DB";
 
   //Christian
   //var conString = "postgres://postgres:Aguaseka7!@localhost:5433/KYA_SQL_DB";
   
   //Remote
-  //var conString = "postgres://kyadb:CapstoneProject2015@postgresql-kya.cch3ie56ioks.us-west-2.rds.amazonaws.com:5432/KYA_SQL_DB"; 
+  var conString = "postgres://postgres@ec2-52-24-21-205.us-west-2.compute.amazonaws.com:5432/postgres"; 
 	var client;
 
 	/**
