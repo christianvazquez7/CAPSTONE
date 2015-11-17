@@ -13,12 +13,12 @@
 
 var argv 				= require('optimist').usage('File to Initialize KYA Builder.\nUsage: $0').demand('f').demand('c').alias('f', 'file').alias('c', 'code').describe('f', 'Load a file').describe('c', 'Code of city').argv;
 var stripJsonComments 	= require('strip-json-comments');
-var GeozoneManager 		= require('./GeozoneManager.js');
-var coordinate 			= require('./GeoCoordinate.js');
-var Crime 				= require('../DataProvider/crime.js');
+var GeozoneManager 		= require('./GeozoneManager/GeozoneManager.js');
+var coordinate 			= require('./GeozoneManager/GeoCoordinate.js');
+var Crime 				= require('./DataProvider/crime.js');
 var fs 					= require('fs');
-var MarshallBuilder 	= require('../DataProvider/marshallBuilder.js');
-var DataProvider 		= require('../DataProvider/dataProvider.js');
+var MarshallBuilder 	= require('./DataProvider/marshallBuilder.js');
+var DataProvider 		= require('./DataProvider/dataProvider.js');
 var SQLClient 			= require('pg');
 var mongodb 			= require('mongodb');
 
@@ -27,7 +27,7 @@ var mongodb 			= require('mongodb');
  */
 
 var Log = require('log');
-var log = new Log('debug', fs.createWriteStream('./GeozoneLogs/' + new Date().getTime().toString() + ' ' + new Date().toString() + '.log'));
+var log = new Log('debug', fs.createWriteStream('./GeozoneManager/GeozoneLogs/' + new Date().getTime().toString() + ' ' + new Date().toString() + '.log'));
 
 /**
  * To check if the argunments are place.
