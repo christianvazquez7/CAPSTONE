@@ -53,30 +53,44 @@ module.exports = function RequestScheduler() {
 	 * @param currentGeoZone: Object containing the current geo-zone.
 	 */	
 	zonesFetchingCallback = function onZonesFetched(error, geoZones) {
-		if(error) mResponseCallback(error);
-    
-		/*Analyze zone to obtain the time to schedule the next location request*/
+		if(error) {
+			mResponseCallback(error);
+			return;
+		}
+  
 	 	var locationGeoJSON = turf.point([mCheckIn.location.longitude, mCheckIn.location.latitude]);	
 		
+		//get the time for the next request
 		var timeForNextRequest = analyzer.calculateTimeToHRZone(mCheckIn.speed,locationGeoJSON, geoZones, mCheckIn.negDelta, function (err){ 
 			mResponseCallback(err);
 			return;
 		});
     
+    	//Get the current geo zone
 		var currentZone = analyzer.getCurrentZone(locationGeoJSON,geoZones);
 		if(currentZone == null){
-			mResponseCallback(new Error("Zone not found"));
+			mResponseCallback(new Error("Error fetching current zone"));
 			return;	
 		} 
 		
+		//Generate survey flag accirding to probability assigned
 		surveyFlag = (Math.random() > (1-probability));
+
+		//Get the previous zone from the id provided in the checkIn
+
+		fetcher.fetchByID(mCheckIn.prevZoneId, function (err, previousZone){
+			if(err){
+				mResponseCallback(new Error("Error fetching previous zone"));
+				return;	
+			}
+			var response = responseBuilder.build(currentZone, previousZone, timeForNextRequest, surveyFlag);
+			
+			if(!response){
+				mResponseCallback(new Error("Could not get response"));		
+				return;
+			}
 		
-		var response = responseBuilder.build(currentZone, timeForNextRequest, surveyFlag);
-		if(!response){
-			mResponseCallback(new Error("Could not get response"));		
-			return;
-		}
-		
-		mResponseCallback(null, response);		
+			mResponseCallback(null, response);		
+		});		
 	};	
 };

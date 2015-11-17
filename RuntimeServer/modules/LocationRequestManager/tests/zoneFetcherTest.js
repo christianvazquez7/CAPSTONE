@@ -45,15 +45,24 @@ var location =
 
 
 var numRings = 1;
-
+var testZoneID = 5;
 //Node test
 /*
 fetcherTest.fetchByLocation(location.NWCorner, numRings, function(err, result){
         zones = result;
         for(var i = 0; i<zones.length; i++){
-          zones[i].totalCrime Math.floor((Math.random() * 10) + 1); = 
+          zones[i].totalCrime = Math.floor((Math.random() * 10) + 1); 
         }
         console.log(zones);
+});
+
+
+fetcherTest.fetchByID(testZoneID, function(err, result){
+        if(err){
+          console.error("Error: " + err);
+        }
+        zone = result;
+        console.log(zone);
 });
 */
 
@@ -384,6 +393,23 @@ describe('Zone Fetcher', function() {
 
           expect(zones[5].loc.coordinates[0][0][1]).to.be.lessThan(zones[0].loc.coordinates[0][0][1]);
           
+          done();
+        });
+      });
+    });
+
+    describe('#fetchByLocation(location, numRings, zonesCallback)', function () {
+      it('should fetch the correct zone given a zone id' , function (done) {
+        fetcherTest.fetchByID(testZoneID, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.exist;
+          done();
+        });
+      });
+      it('should fetch no zones if the given a zone id is -1' , function (done) {
+        fetcherTest.fetchByID(-1, function(err, result){
+          expect(err).to.be.null;
+          expect(result).to.be.undefined;
           done();
         });
       });

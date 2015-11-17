@@ -19,7 +19,7 @@ module.exports = function LocationRequestHandler() {
 	 * Protobuffer message decoding variables
 	 */
 	process.chdir(__dirname);
-	var protoBuilder = ProtoBuf.loadProtoFile("../../resources/kya.proto");
+	var protoBuilder = ProtoBuf.loadProtoFile("../../../proto/KYA.proto");
 	var KYA = protoBuilder.build("com.nvbyte.kya");
 	var CheckIn = KYA.CheckIn;
 	var GeoPoint = KYA.GeoPoint;

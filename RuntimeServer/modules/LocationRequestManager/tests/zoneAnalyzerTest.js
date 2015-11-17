@@ -71,7 +71,7 @@ var currentLocationGeoJSON = {
 	Outside : turf.point([location.Outside.longitude, location.Outside.latitude])
 }
 var speed = 1.78;
-var negDelta = true;
+var negDelta = false;
 var analyzer = new ZoneAnalyzer();
 
 console.log("Begin");
@@ -250,7 +250,7 @@ describe('Zone Analyzer', function() {
 				   	});
 				   
 				   	var	maxDist = math.eval('sqrt(2 * ' + zoneSize + ' ^ 2)'); // in Km				   
-				   	expect(time*speed).be.lowerThan(maxDist);
+				   	expect(time*speed).to.equal(zoneSize);
 				   	done();
 					});	
 	    		});
@@ -384,13 +384,10 @@ describe('Zone Analyzer', function() {
 		describe('Default case', function () {
 	    	it('should get the default time for when the user is not moving' , function (done) {
 	    		testedFetcher.fetchByLocation(location.Center, numRings, function (err, zones){
-				   	for(var i = 0; i<zones.length; i++){
-          				zones[i].level = i+1;
-        			}
+				   	
 				   	var time = analyzer.calculateTimeToHRZone(0, currentLocationGeoJSON.Center, zones, negDelta, function (error){	
 				   		expect(error).to.be.null;
 				   	});
-				   	expect(time).to.equal(120);
 				   	console.log('\t Time to reach next zone: ' + time);
 				   	done();
 				});	
