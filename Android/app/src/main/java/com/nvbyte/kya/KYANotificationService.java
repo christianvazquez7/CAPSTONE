@@ -116,7 +116,8 @@ public class KYANotificationService extends Service {
             @Override
             public void run() {
                     synchronized (KYANotificationService.this) {
-                        Utils.appendLog("Retry for timeout!");
+                        Utils.appendLog("Retry for timeout in buildTimeoutTask()!");
+                        servingCheckIn = false;
                         if(timeoutTimer != null)
                             timeoutTimer.cancel();
                         timeoutTimer = null;
@@ -146,7 +147,14 @@ public class KYANotificationService extends Service {
                 Log.d(TAG,"SURVEY WAS CANCELED");
                 onSurveyCanceled(intent);
             } else if (action.equals("com.nvbyte.kya.ERROR")) {
-                scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                synchronized (KYANotificationService.this) {
+                    servingCheckIn = false;
+                    if (timeoutTimer != null)
+                        timeoutTimer.cancel();
+                    timeoutTimer = null;
+                    Utils.appendLog("Scheduling check in on ERROR");
+                    scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                }
             }
         }
     };
@@ -239,78 +247,90 @@ public class KYANotificationService extends Service {
     }
 
     private synchronized void checkIn(){
+        if(servingCheckIn) {
+            return;
+        }
+        servingCheckIn = true;
         Log.d(TAG,"Performing check in");
-        //synchronized (this) {
-            if(mNextCheckIn != null) {
-                mAlarmManager.cancel(mNextCheckIn);
-                mNextCheckIn = null;
-            }
-        //}
-
+        if(mNextCheckIn != null) {
+            mAlarmManager.cancel(mNextCheckIn);
+            mNextCheckIn = null;
+        }
         HandlerThread handlerThread = new HandlerThread("checkIn");
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
-                if(location != null) {
-                    mLastCheckInSpeed = mLastSpeed;
-                    KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(KYANotificationService.this);
-                    boolean negativeDelta = preferences.getBoolean("lower_preference",true);
-                    int previousId = preferences.getInt("PREV_ID",-1);
-                    KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setNegDelta(negativeDelta).setUserId(Utils.getUserId(KYANotificationService.this));
-                    builder.setLocation(point);
-                    builder.setPrevZoneId(previousId);
-                    builder.setSpeed(mLastCheckInSpeed);
+                synchronized (KYANotificationService.this) {
+                    Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT, true);
+                    if (location != null) {
+                        mLastCheckInSpeed = mLastSpeed;
+                        KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(KYANotificationService.this);
+                        boolean negativeDelta = preferences.getBoolean("lower_preference", true);
+                        int previousId = preferences.getInt("PREV_ID", -1);
+                        KYA.CheckIn.Builder builder = KYA.CheckIn.newBuilder().setNegDelta(negativeDelta).setUserId(Utils.getUserId(KYANotificationService.this));
+                        builder.setLocation(point);
+                        builder.setPrevZoneId(previousId);
+                        builder.setSpeed(mLastCheckInSpeed);
 
-                    synchronized (KYANotificationService.this) {
                         if (timeoutTimer != null) {
                             timeoutTimer.cancel();
                         }
                         timeoutTimer = new Timer();
-                    }
-                    timeoutTimer.schedule(buildTimeoutTask(), RESPONSE_TIMEOUT);
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
-                    Date resultdate = new Date(System.currentTimeMillis());
-                    Utils.appendLog("SENT CHECK IN at : " + sdf.format(resultdate));
-                    synchronized (KYANotificationService.this) {
-                        servingCheckIn = true;
-                    }
-                    PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(builder.build().toByteArray(), new Runnable() {
-                        @Override
-                        public void run() {
-                            synchronized (KYANotificationService.this) {
-                                Utils.appendLog("Setting delayed checkIN Flag");
-                                servingCheckIn = false;
-                                if(timeoutTimer != null)
-                                    timeoutTimer.cancel();
-                                timeoutTimer = null;
-                                Utils.appendLog("Had to retry check in!");
-                                scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+
+                        timeoutTimer.schedule(buildTimeoutTask(), RESPONSE_TIMEOUT);
+                        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+                        Date resultdate = new Date(System.currentTimeMillis());
+                        Utils.appendLog("SENT CHECK IN at : " + sdf.format(resultdate));
+                        PhoneInterface.getInstance(KYANotificationService.this).sendMessageCheckIn(builder.build().toByteArray(), new Runnable() {
+                            @Override
+                            public void run() {
+                                synchronized (KYANotificationService.this) {
+                                    servingCheckIn = false;
+                                    if (timeoutTimer != null)
+                                        timeoutTimer.cancel();
+                                    timeoutTimer = null;
+                                    Utils.appendLog("Had to retry check in!");
+                                    if (delayedCheckIn) {
+                                        Utils.appendLog("Delayed checkIn after retry.");
+                                        delayedCheckIn = false;
+                                        checkIn();
+                                    } else {
+                                        Utils.appendLog("Retry Check-In.");
+                                        scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                                    }
+                                }
                             }
-                        }
-                    });
-                } else {
-                    Utils.appendLog("Had to retry check in 2!");
-                    scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                        });
+                    } else {
+                        if(timeoutTimer != null)
+                            timeoutTimer.cancel();
+                        timeoutTimer = null;
+                        servingCheckIn = false;
+                        Utils.appendLog("Had to retry check in 2!");
+                        scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                    }
                 }
             }
         });
     }
 
-    private void onCheckInResponse(byte[] proto) {
+    private synchronized  void onCheckInResponse(byte[] proto) {
+        if(delayedCheckIn) {
+            delayedCheckIn = false;
+            checkIn();
+            return;
+        }
+        servingCheckIn = false;
         Log.d(TAG,"Handling response");
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
         Date resultdate = new Date(System.currentTimeMillis());
         Utils.appendLog("Got response at : " + sdf.format(resultdate));
-        synchronized (KYANotificationService.this) {
-            if(timeoutTimer != null)
-                timeoutTimer.cancel();
-            timeoutTimer = null;
-            servingCheckIn = false;
-        }
+        if(timeoutTimer != null)
+            timeoutTimer.cancel();
+        timeoutTimer = null;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         KYA.CheckInResponse response = null;
         try {
@@ -332,6 +352,7 @@ public class KYANotificationService extends Service {
         KYA.GeoZone prev = null;
         if(response.hasPrevZone()) {
             Log.d(TAG,"HAS PREVIOUS ZONE!!");
+            Utils.appendLog("Has Previous zone...");
             prev = response.getPrevZone();
         }
         int currentZoneId = response.getCurrentZone().getZoneID();
@@ -341,6 +362,7 @@ public class KYANotificationService extends Service {
         synchronized (KYANotificationService.this) {
             if(delayedCheckIn) {
                 delayedCheckIn = false;
+                Utils.appendLog("DELAYED CHECK IN NEXT--->");
                 checkIn();
             }
         }
@@ -378,19 +400,17 @@ public class KYANotificationService extends Service {
      * @param timeInSeconds Time delta in seconds for next check in.
      */
     private synchronized void scheduleCheckIn(double timeInSeconds) {
-        synchronized (this) {
             if(speedTracker == null) {
                 speedTracker = new Timer();
                 speedTracker.schedule(buildSpeedTask(),5000,5000);
             }
             if(mNextCheckIn == null) {
-                Log.d(TAG, "Scheduling check in!");
+                Utils.appendLog("Scheduling check-in in: "+ timeInSeconds + " seconds");
                 Intent intentAlarm = new Intent();
                 intentAlarm.setAction("com.nvbyte.kya.CHECK_IN");
                 mNextCheckIn = PendingIntent.getBroadcast(this, 0, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
                 mAlarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,(long) (SystemClock.elapsedRealtime() + 1000 * timeInSeconds),mNextCheckIn);
             }
-        }
     }
 
     /**

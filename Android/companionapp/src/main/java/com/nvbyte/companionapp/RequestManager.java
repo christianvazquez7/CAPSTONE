@@ -4,11 +4,14 @@ package com.nvbyte.companionapp;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Singleton that manages all HTTP requests to remote service using Volley API.
@@ -64,7 +67,12 @@ public class RequestManager {
 
             ;
         });
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
+
     }
 
     /**
@@ -84,6 +92,10 @@ public class RequestManager {
                 Log.d(TAG,"Error submitting survey to server.");
             };
         });
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
     }
 
@@ -104,6 +116,10 @@ public class RequestManager {
                 Log.d(TAG,"Error submitting heartbeat to server.");
             };
         });
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
     }
 
@@ -116,6 +132,10 @@ public class RequestManager {
     public void checkIn(byte[] message, Response.Listener<byte[]> onSuccess, Response.ErrorListener onFailure) {
         byte[] body = message;
         ByteArrayRequest request = new ByteArrayRequest(Request.Method.POST,CHECK_IN_ROUTE,body,onSuccess, onFailure);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
     }
 
@@ -128,6 +148,10 @@ public class RequestManager {
     public void retry(byte[] message, Response.Listener<byte[]> onSuccess, Response.ErrorListener onFailure) {
         byte[] body = message;
         ByteArrayRequest request = new ByteArrayRequest(Request.Method.POST,RETRY_ROUTE,body,onSuccess, onFailure);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
     }
 
