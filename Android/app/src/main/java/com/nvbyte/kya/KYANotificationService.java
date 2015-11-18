@@ -128,6 +128,9 @@ public class KYANotificationService extends Service {
                     }
                 } else {
                     Location location = LocationProvider.getInstance(KYANotificationService.this).getLocation(LOCATION_TIMEOUT,true);
+                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+                    Date resultdate = new Date(System.currentTimeMillis());
+                    Utils.appendLog("Trying to submit location at: " + sdf.format(resultdate));
                     if(location != null) {
                         KYA.GeoPoint point = KYA.GeoPoint.newBuilder().setLatitude(location.getLatitude()).setLongitude(location.getLongitude()).setUserID(Utils.getUserId(KYANotificationService.this)).build();
                         PhoneInterface.getInstance(KYANotificationService.this).sendMessageMovement(point.toByteArray());
@@ -439,6 +442,7 @@ public class KYANotificationService extends Service {
         }
 
         if(delayedCheckIn) {
+            Utils.appendLog("Next check in is delayed.");
             delayedCheckIn = false;
             checkIn();
         }
