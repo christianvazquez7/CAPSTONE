@@ -141,35 +141,4 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
     public void onMapLongClick(LatLng point) {
         mDismissOverlay.show();
     }
-
-    private double LatOffset(double lat,double amount){
-        //Position, decimal degrees
-
-
-        //Earth’s radius, sphere
-        double R=6378137;
-
-        //offsets in meters
-        double dn = amount;
-
-        //Coordinate offsets in radians
-        double dLat = dn/R;
-
-        //OffsetPosition, decimal degrees
-        return lat + dLat * 180/Math.PI;
-    }
-
-    private double LongOffset(double lon,double lat,double amount) {
-
-        double R=6378137;
-
-        //offsets in meters
-        double de = amount;
-
-        //Coordinate offsets in radians
-        double dLon = de/(R*Math.cos(Math.PI * lat / 180));
-
-        //OffsetPosition, decimal degrees
-        return lon + dLon * 180/Math.PI;
-    }
 }

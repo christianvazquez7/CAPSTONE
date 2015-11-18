@@ -10,8 +10,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.SensorEvent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -32,6 +30,22 @@ import java.util.concurrent.Future;
 
 /**
  * Service that runs in the background, and handles wear check in and notification to the wear user.
+ * The service works by scheduling check-ins. When a check-in occurs, the application waits for
+ * a server response. The server response contains all the parameters necessary for the app to
+ * decide if it will notify the user. If the user is notified, the server may or may not request
+ * a survey which should happen before notifications. The following lifecycle is observed:
+ *
+ * (1) Check-In scheduled.
+ * (2) Check-In response.
+ * (3) Schedule next check-in.
+ * (4) Survey (If notification and requested).
+ * (5) Send Heartbeat before notification.
+ * (6) Send Notification.
+ * (7) Send Heartbeat after notification.
+ * (8) Send Movement data (For a period of time).
+ *
+ * A check-in may occur out of this cycle if the user (i) opens the app or (ii) increases its
+ * velocity after a previous checkIn response. A new check-in cancels any scheduled check-ins.
  */
 public class KYANotificationService extends Service {
 
@@ -68,6 +82,13 @@ public class KYANotificationService extends Service {
 
     private Timer  speedTracker;
 
+    /**
+     * Creates a task that periodically checks the user's speed to ensure the scheduled check-in
+     * time is still valid. If the speed has increased, the task will either (i) Immediately
+     * perform a new check-in or (ii) raise a delay flag to be serviced when the executing check-in
+     * is serviced.
+     * @return A timer task that updates user speed.
+     */
     private TimerTask buildSpeedTask() {
         return new TimerTask(){
             @Override
@@ -79,6 +100,7 @@ public class KYANotificationService extends Service {
                     if (speed > mLastCheckInSpeed) {
                         if(!servingCheckIn) {
                             Utils.appendLog("Checkin again for higher speed: " + mLastCheckInSpeed + " new speed:" + mLastSpeed);
+                            delayedCheckIn = false;
                             checkIn();
                         } else {
                             delayedCheckIn = true;
@@ -90,6 +112,10 @@ public class KYANotificationService extends Service {
         };
     }
 
+    /**
+     * Creates a task that periodically sends the user's location to the remote service for telemetry.
+     * @return A timer task that runs for the time specified by COLLECT_PERIOD.
+     */
     private TimerTask buildMoveTask() {
         return new TimerTask(){
             @Override
@@ -111,6 +137,11 @@ public class KYANotificationService extends Service {
         };
     }
 
+    /**
+     * Creates a timeout timer class that schedules a new check-in or services a delayed check-in
+     * if the given time for check-in response is not met.
+     * @return A timer task that ensures check-n cycle continuity.
+     */
     private TimerTask buildTimeoutTask() {
         return new TimerTask(){
             @Override
@@ -121,7 +152,13 @@ public class KYANotificationService extends Service {
                         if(timeoutTimer != null)
                             timeoutTimer.cancel();
                         timeoutTimer = null;
-                        scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                        if(delayedCheckIn) {
+                            Utils.appendLog("Next check in is delayed!!!! in timeout...");
+                            delayedCheckIn = false;
+                            checkIn();
+                        } else {
+                            scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                        }
                     }
                 }
         };
@@ -159,6 +196,11 @@ public class KYANotificationService extends Service {
         }
     };
 
+    /**
+     * Called when the survey is exited manually or by timeout. Launches the notification associated
+     * with the survey.
+     * @param intent An intent that contains all parameters for notification.
+     */
     private void onSurveyCanceled(final Intent intent) {
         HandlerThread handlerThread = new HandlerThread("surveyCanceledHandler");
         handlerThread.start();
@@ -194,6 +236,12 @@ public class KYANotificationService extends Service {
     }
 
 
+    /**
+     * Called when the survey response is acquired. Sends the survey response to the remote service
+     * for telemetry and launches the notification.
+     * @param intent An intent that contains all parameters for notification and selected survey
+     *               response.
+     */
     private void sendSurveyResult(final Intent intent) {
         HandlerThread handlerThread = new HandlerThread("surveyHandler");
         handlerThread.start();
@@ -221,7 +269,10 @@ public class KYANotificationService extends Service {
         });
     }
 
-
+    /**
+     * Sends the heart rate to the survey for telemetry.
+     * @param intent An intent containing zone id for telemetry collection.
+     */
     private void sendHeartbeat(final Intent intent) {
         final int currentZoneId = intent.getExtras().getInt(ZONE_ID_EXTRA);
         HandlerThread handlerThread = new HandlerThread("hbHandler");
@@ -246,6 +297,12 @@ public class KYANotificationService extends Service {
         });
     }
 
+    /**
+     * Checks in with the remote service. If a check-in is being serviced when this method is called
+     * the check-in will be ignored. This method will cancel any pending check-in that has been
+     * previously scheduled. If the check-in fails, another check-in will be scheduled in a time
+     * specified by the retry period.
+     */
     private synchronized void checkIn(){
         if(servingCheckIn) {
             return;
@@ -294,7 +351,7 @@ public class KYANotificationService extends Service {
                                     timeoutTimer = null;
                                     Utils.appendLog("Had to retry check in!");
                                     if (delayedCheckIn) {
-                                        Utils.appendLog("Delayed checkIn after retry.");
+                                        Utils.appendLog("Next Check IN is delayed after retry!!!");
                                         delayedCheckIn = false;
                                         checkIn();
                                     } else {
@@ -310,19 +367,29 @@ public class KYANotificationService extends Service {
                         timeoutTimer = null;
                         servingCheckIn = false;
                         Utils.appendLog("Had to retry check in 2!");
-                        scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                        if(delayedCheckIn) {
+                            delayedCheckIn = false;
+                            Utils.appendLog("Next Check IN is delayed after retry 2!!!");
+                            checkIn();
+                        } else {
+                            scheduleCheckIn(RETRY_CHECKIN_PERIOD_SECONDS);
+                        }
                     }
                 }
             }
         });
     }
 
+    /**
+     * Called when the check in is serviced and the response is received from the remote service.
+     * A new check-in will be scheduled according to the time determined by the service. The user
+     * will be notified if an increase in risk is met and if a decrease in risk is met and negative
+     * delta is enabled, as long as the application is not muted and the threshold condition is met.
+     * If the response includes a survey flag, a survey will be launched before the notification
+     * occurs. If the delayed flag is enabled, a subsequent check-in will be launched immediately.
+     * @param proto A valid CheckInResponse proto buffer.
+     */
     private synchronized  void onCheckInResponse(byte[] proto) {
-        if(delayedCheckIn) {
-            delayedCheckIn = false;
-            checkIn();
-            return;
-        }
         servingCheckIn = false;
         Log.d(TAG,"Handling response");
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
@@ -359,13 +426,6 @@ public class KYANotificationService extends Service {
         preferences.edit().putInt("PREV_ID", currentZoneId).commit();
         mAlarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         scheduleCheckIn(nextCheckInSeconds);
-        synchronized (KYANotificationService.this) {
-            if(delayedCheckIn) {
-                delayedCheckIn = false;
-                Utils.appendLog("DELAYED CHECK IN NEXT--->");
-                checkIn();
-            }
-        }
         if (((currentZone > prevZone && currentZone > threshold) || (currentZone < prevZone && negativeDelta)) && !muted) {
             Log.d(TAG,"Notification Needed!");
             String userId  = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
@@ -376,6 +436,11 @@ public class KYANotificationService extends Service {
             } else {
                 notify(mCurrentNotificationId, currentZone, crimeRate, currentZoneDate, higher, currentZoneId, response.getCurrentZone(),prev);
             }
+        }
+
+        if(delayedCheckIn) {
+            delayedCheckIn = false;
+            checkIn();
         }
     }
 
@@ -414,9 +479,15 @@ public class KYANotificationService extends Service {
     }
 
     /**
-     * Launch a notification activity with a specific classification.
-     * @param notificationId Id of notification session (timestamp + phoneId).
-     * @param classification Classification level for notification.
+     * Launch a notification for the user.
+     * @param notificationId Id of the notification (device serial appended to timestamp).
+     * @param classification Classification of new zone.
+     * @param crimeRate Number of crimes in new zone.
+     * @param date Update time of the new zone.
+     * @param higher True if the risk is increasing. False otherwise.
+     * @param currentZoneId Id of the current zone.
+     * @param zone Current GeoZone.
+     * @param prev Previous GeoZone.
      */
     private void notify(final String notificationId, final int classification, final double crimeRate, final String date, final boolean higher,final int currentZoneId,final KYA.GeoZone zone, final KYA.GeoZone prev) {
         Utils.acquire(this);
@@ -468,6 +539,16 @@ public class KYANotificationService extends Service {
         });
     }
 
+    /**
+     * Launch a survey for the user.
+     * @param notificationId Id of the notification (device serial appended to timestamp).
+     * @param currentZone Classification of new zone.
+     * @param crimeRate Number of crimes in new zone.
+     * @param currentZoneDate Update time of the new zone.
+     * @param currentZoneId Id of the current zone.
+     * @param zone Current GeoZone.
+     * @param prev Previous GeoZone.
+     */
     private void startSurvey(String notificationId, int currentZone,double crimeRate,String currentZoneDate,int currentZoneId, KYA.GeoZone zone, KYA.GeoZone prev){
         Utils.acquire(this);
         Intent surveyActivity = new Intent(getApplicationContext(),SurveyActivity.class);

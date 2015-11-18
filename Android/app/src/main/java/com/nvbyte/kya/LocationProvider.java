@@ -56,6 +56,11 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
         return singleton;
     }
 
+    /**
+     * Set the mock location of the debug running instance.
+     * @param lat Latitude of the mock location.
+     * @param lon Longitude of the mock location.
+     */
     public void setMockLocation(String lat, String lon) {
         Location mockLocation = new Location("network");
         long currentTime = System.currentTimeMillis();
@@ -141,6 +146,10 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
 
     }
 
+    /**
+     * Get the latest location for speed estimate.
+     * @return A location object that represents the latest location (updated in one second intervals).
+     */
     public Location getCurrentLocationForSpeed() {
         return currentLocation;
     }

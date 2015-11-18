@@ -26,18 +26,6 @@ public class SensorDataProvider {
     private final ExecutorService pool;
     private static final String TAG = "SensorDataProvider";
 
-    private SensorEventListener accelerationChangeListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            Log.d(TAG,event.values[0]+" "+event.values[1] +" "+event.values[2] + " accel: "+ Math.sqrt(event.values[0]*event.values[0]+event.values[1]*event.values[1]+event.values[2]*event.values[2]));
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
-    };
-
     /**
      * Get singleton provider. Makes use of lazy initialization to avoid multiple instantiations.
      * @return A singleton instance of the Sensor data provider for universal use.
@@ -65,13 +53,11 @@ public class SensorDataProvider {
         //mSensorManager.registerListener(accelerationChangeListener,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),1000000);
     }
 
-    public Future<SensorEvent> getAcceleration(long timeout) {
-        ISensor accelerometer = mSensorIByType.get(Sensor.TYPE_ACCELEROMETER);
-        Future<SensorEvent> future = pool.submit(new SensorEventFuture(mContext, accelerometer, timeout));
-        return future;
-    }
-
-
+    /**
+     * Get the heart beat of the user using sensor type HEART_RATE.
+     * @param timeout The time to wait for a sensor result.
+     * @return A future heart beat, which can be fetched synchronously later on.
+     */
     public Future<SensorEvent> getHeartbeat(long timeout) {
         Log.d(TAG,"Fetching heart beat");
         ISensor accelerometer = mSensorIByType.get(Sensor.TYPE_HEART_RATE);
