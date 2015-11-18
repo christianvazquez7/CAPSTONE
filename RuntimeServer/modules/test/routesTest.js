@@ -6,14 +6,14 @@ var should = require('chai').should(),
     supertest = require('supertest'),
     api = supertest('http://localhost:3000');
 
-var builder = ProtoBuf.loadProtoFile("../../../KYA.proto"),
+var builder = ProtoBuf.loadProtoFile("../../proto/KYA.proto"),
     KYA = builder.build("com.nvbyte.kya"),
-    Telemetry = KYA.Telemetry;
+    Telemetry = KYA.Telemetry,
     GridBounds = KYA.GridBounds,
     GeoPoint = KYA.GeoPoint,
-     Threshold = KYA.Threshold;
-     Stats = KYA.Stats;
-     CheckIn = KYA.CheckIn;
+    Threshold = KYA.Threshold,
+    Stats = KYA.Stats,
+    CheckIn = KYA.CheckIn;
 
 describe('Dashboard', function() {
   this.timeout(5000);
@@ -104,9 +104,9 @@ describe('Dashboard', function() {
       .end(function(err, res) {
 
         var stats = Stats.decode(res.text);
-        expect(stats.maxNumOfCrimes).to.equal(10);
+        expect(stats.maxNumOfCrimes).to.equal(45);
         expect(stats.minNumOfCrimes).to.equal(0);
-        expect(stats.crimeAverage).to.equal(4.125);
+        expect(Math.round(parseFloat(stats.crimeAverage)*100)/100).to.equal(0.05);
         done();
       });
     });
@@ -227,7 +227,7 @@ describe('Dashboard', function() {
   });
 
   describe('Zones', function() {
-    
+    this.timeout(5000);
     before(function(done) {
       // runs before all tests in this block
       //Preparing buffer for HTTP request 
@@ -381,12 +381,12 @@ describe('Dashboard', function() {
 });
 
 describe('Telemetry', function() {
-
+  this.timeout(5000);
   it('should send a heartbeat protobuffer', function(done) {
 
     var telRecord = new Telemetry({
       "userID" : 'AFD43245DACE',
-      "notificationID" : 20,
+      "notificationID" : '20',
       "zoneID" : 3,
       "heartRate" : {
         "before" : 50,
@@ -411,7 +411,7 @@ describe('Telemetry', function() {
   it('should send a survey protobuffer', function(done) {
     var telRecord = new Telemetry({
       "userID" : 'AFD43245DACE',
-      "notificationID" : 20,
+      "notificationID" : '20',
       "zoneID" : 5,
       "survey" : {
         "actualRisk" : 5,
@@ -453,10 +453,10 @@ describe('Telemetry', function() {
 });
 
 describe('Location', function() {
-
+  this.timeout(5000);
   it('should send a checkIn protobuffer', function(done) {
     var LocObj = new GeoPoint('AFD43245DACE', 18.0025, -67.297);
-    var checkInRecord = new CheckIn('AFD43245DACE', LocObj, 9);
+    var checkInRecord = new CheckIn('AFD43245DACE', LocObj, 20.0, true, 9);
 
     var buffer = checkInRecord.encode();
     var bodyBuffer = buffer.toBuffer();

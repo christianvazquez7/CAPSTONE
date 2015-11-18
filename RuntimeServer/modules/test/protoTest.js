@@ -6,14 +6,14 @@ var should = require('chai').should(),
     supertest = require('supertest'),
     api = supertest('http://localhost:3000');
 
-var builder = ProtoBuf.loadProtoFile("../../../proto/KYA.proto"),
+var builder = ProtoBuf.loadProtoFile("../../proto/KYA.proto"),
     KYA = builder.build("com.nvbyte.kya"),
-    Telemetry = KYA.Telemetry;
+    Telemetry = KYA.Telemetry,
     GridBounds = KYA.GridBounds,
     GeoPoint = KYA.GeoPoint,
-     Threshold = KYA.Threshold;
-     Stats = KYA.Stats;
-     CheckIn = KYA.CheckIn;
+    Threshold = KYA.Threshold,
+    Stats = KYA.Stats,
+    CheckIn = KYA.CheckIn;
 
 describe('Protocol Buffers', function() {
   this.timeout(5000);
