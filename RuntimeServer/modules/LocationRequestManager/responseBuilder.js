@@ -33,8 +33,8 @@ module.exports = function ResponseBuilder() {
 		var currentZoneObj = new GeoZone(currentZone.level, currentZone.totalCrime, '10/10/2015',currentZone.zone_id, geoPointsAr);
 
 		var geoPointsAr1 = [];
-		for(var i = 0 ; i < currentZone.loc.coordinates[0].length - 1; i ++){
-			geoPointsAr1.push(new GeoPoint('', currentZone.loc.coordinates[0][i][1], currentZone.loc.coordinates[0][i][0]));
+		for(var i = 0 ; i < previousZone.loc.coordinates[0].length - 1; i ++){
+			geoPointsAr1.push(new GeoPoint('', previousZone.loc.coordinates[0][i][1], previousZone.loc.coordinates[0][i][0]));
 		}
 		var previousZoneObj = new GeoZone(previousZone.level, previousZone.totalCrime, '10/10/2015', previousZone.zone_id, geoPointsAr1);		
 		

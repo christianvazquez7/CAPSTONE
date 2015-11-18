@@ -67,6 +67,7 @@
 				<section id="map-section">
 					<div id="loading-img"></div>
 					<div id="googleMap" style="height: 450px"></div>
+					<div id="maxZoneMap" style="height: 450px"></div>
 					<div id="mapViewer"></div>
 				</section>
 				</div> 
@@ -127,6 +128,7 @@
 					<div id="kya-stats">	
 						<div class="clearfix container">
 							<h2 class="center">Statistics</h2>
+							
 							<div id="kya-stats-text" class="clearfix">
 								<section class="kya-stats-headers" id="kya-stats-left">
 										<p>Maximum Incidents:</p>
@@ -139,6 +141,11 @@
 										<p><span id="min-crimes">0</span> incidents</p>
 										<p><span id="crime-rate">0</span> incidents per zone</p>
 								</section>
+							</div>
+							<div id="show-maxZone-button">Show Max Zone</div>
+							<div id='max-zones-buttons'>
+								<div id="prev-div"></div><span id="prev-maxZone-button"><a onclick="prevMaxZone()">&#10094; Previous</a></span>
+								<div id="next-div"></div><span id="next-maxZone-button"><a onclick="nextMaxZone()">Next &#10095;</a></span>
 							</div>
 						</div><!-- end kya-stats section -->
 					</div>

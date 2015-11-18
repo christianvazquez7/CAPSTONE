@@ -435,9 +435,8 @@ em {
  *									MAP									*
  ************************************************************************/
 
-#googleMap {
-	background: transparent url(../images/loading3.gif) no-repeat center center;
-	
+#googleMap, #maxZoneMap {
+	background: #FFFFFF url(../images/loading2.gif) no-repeat center center;
 }
 
 #loading-img {
@@ -593,6 +592,74 @@ div div.legend-hover:hover {
 /************************************************************************
  *								STATISTICS								*
  ************************************************************************/
+#prev-div {
+	width: 74px;
+	height: 16px;
+	display: inline-block;
+}
+
+#next-div {
+	width: 47px;
+	height: 16px;
+	display: inline-block;
+}
+
+#max-zones-buttons {
+	margin-left: auto ;
+	margin-right: auto ;
+	margin-top: 2px;
+	margin-bottom: 10px;
+	width: 135px;
+}
+
+#show-maxZone-button {
+	margin-left: auto ;
+	margin-right: auto ;
+	margin-top: 2px;
+	margin-bottom: 10px;
+	width: 150px;
+	height: 35px;
+	background-color: #3E8CAC;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 35px;
+	font-family: 'Avenir Next LT Pro Regular';
+	font-size: 16px;
+	font-weight: 500;
+	color: #FFFFFF;
+	box-shadow: 1px 1px 2px #888888;
+	border-radius: 2px;
+}
+
+#prev-maxZone-button {
+	font-size: 16px;
+	line-height: 35px;
+	margin-right: 10px;
+	display: inline-block;
+}
+
+#next-maxZone-button {
+	font-size: 16px;
+	line-height: 35px;
+	display: inline-block;
+}
+
+#prev-maxZone-button:hover {
+	color: #3E8CAC;
+	text-decoration: underline;
+} 
+
+#next-maxZone-button:hover {
+	color: #3E8CAC;
+	text-decoration: underline;
+} 
+
+#show-maxZone-button:hover  {
+	cursor: pointer;
+	background-color: rgba(55, 170, 215, 0.89);
+	box-shadow: 2px 2px 5px #888888;
+
+}
 
 #kya-stats-left {
 	float: left;
@@ -762,7 +829,7 @@ div div.legend-hover:hover {
 
 
 
-#backButtonDiv {
+#backButtonDiv, #maxBackButtonDiv {
   background-color: #fff;
   border: 2px solid #fff;
   border-radius: 3px;
@@ -773,7 +840,7 @@ div div.legend-hover:hover {
   text-align: center;
 }
 
-#backButtonText {
+#backButtonText, #maxBackButtonText {
   color: rgb(25,25,25);
   font-family: Roboto, Helvetica, Arial,sans-serif;
   font-size: 13px;

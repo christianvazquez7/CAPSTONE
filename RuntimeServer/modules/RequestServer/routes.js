@@ -21,6 +21,8 @@ module.exports = function Route(app, handlers) {
 
 	app.get('/stats', handlers.getStats);
 
+	app.get('/stats/maxZone', handlers.getMaxZone);
+
 	app.get('/grids/', handlers.getGrids);
 
 	app.get('/grids/ready/', handlers.isReady);
