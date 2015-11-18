@@ -96,6 +96,7 @@ public class Utils {
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(text);
             buf.newLine();
+            buf.flush();
             buf.close();
         }
         catch (IOException e)

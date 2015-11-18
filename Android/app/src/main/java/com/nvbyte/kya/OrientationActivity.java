@@ -77,7 +77,7 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                         map.moveCamera(center);
                         map.animateCamera(zoom);
                         KYA.GeoZone dangerZone = (KYA.GeoZone) getIntent().getExtras().getSerializable(CURRENT_GEOZONE_EXTRA);
-                        Object saferZoneObject = getIntent().getExtras().getSerializable("PREV_GEO");
+                        Object saferZoneObject = getIntent().getExtras().getSerializable("OLD_GEO");
                         KYA.GeoZone saferZone = null;
                         if (saferZoneObject != null) {
                             saferZone = (KYA.GeoZone) saferZoneObject;
@@ -89,7 +89,8 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                             LatLng se = new LatLng(dangerZone.getBoundaries(2).getLatitude(), dangerZone.getBoundaries(2).getLongitude());
                             LatLng sw = new LatLng(dangerZone.getBoundaries(3).getLatitude(), dangerZone.getBoundaries(3).getLongitude());
                             int level = getIntent().getIntExtra("CLASS", 1);
-
+                            Utils.appendLog("Appending danger zone");
+                            Log.d("TAG","Appending danger zone.");
                             Polygon polygon = map.addPolygon(new PolygonOptions()
 
                                     .add(nw, ne, se, sw)
@@ -100,6 +101,8 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                         }
 
                         if(saferZone != null) {
+                            Log.d("TAG","Appending safer zone.");
+                            Utils.appendLog("Appending safer zone");
                             LatLng nw2 = new LatLng(saferZone.getBoundaries(0).getLatitude(), saferZone.getBoundaries(0).getLongitude());
                             LatLng ne2 = new LatLng(saferZone.getBoundaries(1).getLatitude(), saferZone.getBoundaries(1).getLongitude());
                             LatLng se2 = new LatLng(saferZone.getBoundaries(2).getLatitude(), saferZone.getBoundaries(2).getLongitude());
@@ -137,36 +140,5 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
      */
     public void onMapLongClick(LatLng point) {
         mDismissOverlay.show();
-    }
-
-    private double LatOffset(double lat,double amount){
-        //Position, decimal degrees
-
-
-        //Earth’s radius, sphere
-        double R=6378137;
-
-        //offsets in meters
-        double dn = amount;
-
-        //Coordinate offsets in radians
-        double dLat = dn/R;
-
-        //OffsetPosition, decimal degrees
-        return lat + dLat * 180/Math.PI;
-    }
-
-    private double LongOffset(double lon,double lat,double amount) {
-
-        double R=6378137;
-
-        //offsets in meters
-        double de = amount;
-
-        //Coordinate offsets in radians
-        double dLon = de/(R*Math.cos(Math.PI * lat / 180));
-
-        //OffsetPosition, decimal degrees
-        return lon + dLon * 180/Math.PI;
     }
 }

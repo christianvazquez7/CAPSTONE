@@ -4,11 +4,14 @@ package com.nvbyte.companionapp;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Singleton that manages all HTTP requests to remote service using Volley API.
@@ -16,13 +19,13 @@ import com.android.volley.toolbox.Volley;
 public class RequestManager {
     private RequestQueue mRequestQueue;
     private static RequestManager mRequestManager;
-    private static final String IP = "192.168.2.140";
-    private static final String SURVEY_ROUTE = "http://"+IP+":3000/telemetry/survey";
-    private static final String HEART_BEAT_ROUTE = "http://"+IP+":3000/telemetry/heartbeat";
-    private static final String CHECK_IN_ROUTE = "http://"+IP+":3000/location/checkin";
-    private static final String CURRENT_ZONE_ROUTE = "http://"+IP+":3000/zones/current/";
-    private static final String MOVEMENT_ROUTE = "http://"+IP+":3000/telemetry/movement";
-    private static final String RETRY_ROUTE = "http://"+IP+":3000/location/checkin";
+    private static final String IP = "52.24.21.205";
+    private static final String SURVEY_ROUTE = "http://"+IP+"/telemetry/survey";
+    private static final String HEART_BEAT_ROUTE = "http://"+IP+"/telemetry/heartbeat";
+    private static final String CHECK_IN_ROUTE = "http://"+IP+"/location/checkin";
+    private static final String CURRENT_ZONE_ROUTE = "http://"+IP+"/zones/current";
+    private static final String MOVEMENT_ROUTE = "http://"+IP+"/telemetry/movement";
+    private static final String RETRY_ROUTE = "http://"+IP+"/location/checkin";
 
 
     private Context mContext;
@@ -64,7 +67,12 @@ public class RequestManager {
 
             ;
         });
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
+
     }
 
     /**
@@ -84,6 +92,10 @@ public class RequestManager {
                 Log.d(TAG,"Error submitting survey to server.");
             };
         });
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
     }
 
@@ -104,6 +116,10 @@ public class RequestManager {
                 Log.d(TAG,"Error submitting heartbeat to server.");
             };
         });
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
     }
 
@@ -116,6 +132,10 @@ public class RequestManager {
     public void checkIn(byte[] message, Response.Listener<byte[]> onSuccess, Response.ErrorListener onFailure) {
         byte[] body = message;
         ByteArrayRequest request = new ByteArrayRequest(Request.Method.POST,CHECK_IN_ROUTE,body,onSuccess, onFailure);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
     }
 
@@ -128,6 +148,10 @@ public class RequestManager {
     public void retry(byte[] message, Response.Listener<byte[]> onSuccess, Response.ErrorListener onFailure) {
         byte[] body = message;
         ByteArrayRequest request = new ByteArrayRequest(Request.Method.POST,RETRY_ROUTE,body,onSuccess, onFailure);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                (int) TimeUnit.SECONDS.toMillis(3),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
     }
 

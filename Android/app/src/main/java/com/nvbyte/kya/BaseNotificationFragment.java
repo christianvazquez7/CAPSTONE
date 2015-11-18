@@ -59,6 +59,7 @@ public class BaseNotificationFragment extends Fragment {
             public void onClick(View v) {
                 Intent orientationActivity = new Intent();
                 orientationActivity.putExtra(CURRENT_GEOZONE_EXTRA,getActivity().getIntent().getExtras().getSerializable(CURRENT_GEOZONE_EXTRA));
+                orientationActivity.putExtra("OLD_GEO",getActivity().getIntent().getExtras().getSerializable("OLD_GEO"));
                 orientationActivity.setClass(getActivity(),OrientationActivity.class);
                 orientationActivity.putExtra("CLASS",getArguments().getInt(CLASS_PARAM));
                 startActivity(orientationActivity);

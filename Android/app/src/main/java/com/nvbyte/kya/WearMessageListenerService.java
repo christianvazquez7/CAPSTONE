@@ -14,6 +14,7 @@ import com.google.android.gms.wearable.WearableListenerService;
  * (ii) GET_ZONE: Triggered when the phone has successfully retrieved the current zone from the
  * remote service.
  * (iii) ERROR: Triggered when the phone has encountered an issue during a request with the remote
+ * (iv) MOCK: Triggered when a mock location is sent from the phone for DEBUG purposes.
  * server.
  */
 public class WearMessageListenerService extends WearableListenerService {

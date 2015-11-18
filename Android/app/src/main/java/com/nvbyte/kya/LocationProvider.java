@@ -2,16 +2,20 @@ package com.nvbyte.kya;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.wearable.Wearable;
 
@@ -31,8 +35,14 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
     private Context mContext;
     private static LocationProvider singleton;
     private GoogleApiClient mGoogleApiClient;
-    private boolean DEBUG = true;
-
+    private boolean DEBUG = false;
+    private Location currentLocation = null;
+    private LocationListener listener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            currentLocation = location;
+        }
+    };
 
     /**
      * Static factory that lazily instantiates a singleton instance of the LocationProvider.
@@ -46,6 +56,11 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
         return singleton;
     }
 
+    /**
+     * Set the mock location of the debug running instance.
+     * @param lat Latitude of the mock location.
+     * @param lon Longitude of the mock location.
+     */
     public void setMockLocation(String lat, String lon) {
         Location mockLocation = new Location("network");
         long currentTime = System.currentTimeMillis();
@@ -88,6 +103,12 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
         } else {
             LocationServices.FusedLocationApi.setMockMode(mGoogleApiClient,false);
         }
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000);
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, listener);
+
     }
 
     /**
@@ -123,5 +144,13 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+    /**
+     * Get the latest location for speed estimate.
+     * @return A location object that represents the latest location (updated in one second intervals).
+     */
+    public Location getCurrentLocationForSpeed() {
+        return currentLocation;
     }
 }
