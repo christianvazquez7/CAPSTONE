@@ -89,7 +89,8 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                             LatLng se = new LatLng(dangerZone.getBoundaries(2).getLatitude(), dangerZone.getBoundaries(2).getLongitude());
                             LatLng sw = new LatLng(dangerZone.getBoundaries(3).getLatitude(), dangerZone.getBoundaries(3).getLongitude());
                             int level = getIntent().getIntExtra("CLASS", 1);
-
+                            Utils.appendLog("Appending danger zone");
+                            Log.d("TAG","Appending danger zone.");
                             Polygon polygon = map.addPolygon(new PolygonOptions()
 
                                     .add(nw, ne, se, sw)
@@ -100,6 +101,8 @@ public class OrientationActivity extends Activity implements OnMapReadyCallback,
                         }
 
                         if(saferZone != null) {
+                            Log.d("TAG","Appending safer zone.");
+                            Utils.appendLog("Appending safer zone");
                             LatLng nw2 = new LatLng(saferZone.getBoundaries(0).getLatitude(), saferZone.getBoundaries(0).getLongitude());
                             LatLng ne2 = new LatLng(saferZone.getBoundaries(1).getLatitude(), saferZone.getBoundaries(1).getLongitude());
                             LatLng se2 = new LatLng(saferZone.getBoundaries(2).getLatitude(), saferZone.getBoundaries(2).getLongitude());
