@@ -60,7 +60,7 @@ module.exports = function MongoManager (mongoClient, log){
 	 */
 	this.updateGeozone = function(classification, update_callback) {
 		var dateUpdated = dateFormat(now, "mm/dd/yyyy");
-		client.collection('Geozone').update({zone_id: classification.zone}, { $set: { level: classification.level, totalCrime: parseInt(classification.totalCrime), updated: dateUpdated}}, function(err, result) {
+		client.collection('Geozone').update({zone_id: classification.zone}, { $set: { level: classification.level, totalCrime: parseInt(classification.totalCrime), updatedOn: dateUpdated}}, function(err, result) {
 			if(!err) {
 				mongoLog.notice('Updated Geozone: ', classification);
 				update_callback();
