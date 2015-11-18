@@ -19,7 +19,8 @@ module.exports = function DataProvider(marshall) {
 	var RequestHandler = require('./requestHandler.js');
 	var pg = require('pg');
 
-	var conString = "postgres://postgres:Aguaseka7!@localhost/KYAUtility";
+	//var conString = "postgres://postgres:Aguaseka7!@localhost/KYAUtility"; // Christian PostgreSQL Server
+	var conString = "postgres://postgres:joel@localhost:5433/KYA"; // Joel PostgreSQL Server
 	var mLastPage;
 	var mLastOffset;
 	var mRequestHandler = new RequestHandler();

@@ -38,6 +38,26 @@ module.exports = function RequestHandlers() {
 	}
 
 	/**
+	 * Request handle for the zone with the maximum number of incidents. 
+	 * Connects with the database to fetch the zone.
+	 *
+	 * @param response: A Json array with the requested zones.
+	 */
+	this.getMaxZone = function(req, res) {
+		logger.debug("GET --> Get Max Zone handle");
+		mDashboardHandler.requestMaxZone(function(err, result) {
+			if (err) {
+				res.statusCode = 404;
+				res.send('No max zone found');
+				logger.error(err);
+			}
+			else {
+				res.send(result);
+			}
+		});
+	}
+
+	/**
 	 * Request handle for the fetching of the zones. Connects with the 
 	 * KYA DB to fetch the zones requested.
 	 *
@@ -150,7 +170,7 @@ module.exports = function RequestHandlers() {
 	/**
 	 * Communicates with teh Grid Controller to construct the grids.
 	 *
-	 * @param req: Object containing the following parameter:
+	 * @param req: Object containing the following parameters:
 	 *   1) swLat	: south west latitude of current grid
 	 *   2) swLng	: south west longitude of current grid
 	 *   3) neLat	: north east latitude of current grid
@@ -177,6 +197,13 @@ module.exports = function RequestHandlers() {
 		});
 	}
 
+	/**
+	 * Sends the area threshold value to the dashboard handler.
+	 *
+	 * @param req: Object containing the following parameter:
+	 *   1) threshold	: the area's threshold
+	 * @param response: if it was succesusfull or not in sending the data
+	 */
 	this.setThreshold = function(req, res) {
 		logger.debug("POST --> Threshold handle");
 		threshold = req.body;

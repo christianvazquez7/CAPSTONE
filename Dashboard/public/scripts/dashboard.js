@@ -23,6 +23,8 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 	GeoPoint = KYA.GeoPoint;
 	Threshold = KYA.Threshold;
 
+var currentMaxZone,
+	maxZoneLength;
 /**
  * Gets the current crime statistics when the HTML
  * document is ready.
@@ -51,12 +53,73 @@ $(document).ready(function() {
 	// Initial grid size
 	var initialArea = 20;
 
-	buildMap(mapLocLat, mapLocLng, swLat, swLng, neLat, neLng, initialArea);
+	$("#maxZoneMap").hide();			// Hides the max zone map
+	$("#loading-img").hide();			// Hides the loading animation
+	$("#max-zones-buttons").hide();		// Hides the previous and next buttons
+	$("#prev-maxZone-button").hide();	// Hdes the next button
+	$("#next-maxZone-button").hide();	// Hdes the next button
 
-	$("#loading-img").hide();     // Hide loading animation
-	requestStats();               // Fetch current statatistics from database
+	buildMap(mapLocLat, mapLocLng, swLat, swLng, neLat, neLng, initialArea);
+	requestStats();					// Fetch current statatistics from database
+
+	$("#show-maxZone-button").on('click', function() {
+		requestMaxZone();
+	});
 });
 	
+
+this.prevMaxZone = function() {
+	if (currentMaxZone == 1) {
+		currentMaxZone = 1;
+		if (maxZoneLength > 1) {
+			$("#next-maxZone-button").show();
+			$("#next-div").hide();
+		}
+	}
+	else {
+		currentMaxZone = currentMaxZone - 1;
+
+		if (currentMaxZone == 1) {
+			$("#prev-maxZone-button").hide();
+			$("#prev-div").show();
+		}
+
+		if (currentMaxZone < maxZoneLength) {
+			$("#next-maxZone-button").show();
+			$("#next-div").hide();
+		}
+		drawMaxZone(currentMaxZone-1);
+	}
+}
+
+this.nextMaxZone = function() {
+	if (currentMaxZone == maxZoneLength) {
+		currentMaxZone = maxZoneLength;
+		if (maxZoneLength > 1) {
+			$("#prev-maxZone-button").show();
+			$("#prev-div").hide();
+		}
+	}
+	else {
+		currentMaxZone = currentMaxZone + 1;
+
+		if (currentMaxZone == maxZoneLength) {
+			$("#next-maxZone-button").hide();
+			$("#next-div").show();
+			if (maxZoneLength > 1) {
+				$("#prev-maxZone-button").show();
+				$("#prev-div").hide();
+			}
+		}
+
+		if (currentMaxZone > 1 && currentMaxZone < maxZoneLength) {
+			$("#prev-maxZone-button").show();
+			$("#prev-div").hide();
+		}
+		drawMaxZone(currentMaxZone-1);
+	}
+}
+
 /**
  * Constructs a new Google Map object.
  *
@@ -72,10 +135,11 @@ this.buildMap = function(locLat, locLng, swLat, swLng, neLat, neLng, area) {
 	initArea = area;
 	reductionFactor = 10;
 	thresholdArea = 0.2;
+	currentMaxZone = 1;
 	swInitLatLng = new google.maps.LatLng(swLat, swLng);
 	neInitLatLng = new google.maps.LatLng(neLat, neLng);
 	setThreshold();
-	drawMap(locLat, locLng, swInitLatLng, neInitLatLng, initArea, onGridClicked, onBackButtonClicked, onMapDrag, onZoomOut);
+	drawMap(locLat, locLng, swInitLatLng, neInitLatLng, initArea, onGridClicked, onBackButtonClicked, onMapDrag, onZoomOut, onMaxBackButtonClicked);
 };
 
 this.setThreshold = function() {
@@ -142,9 +206,6 @@ this.onZoomOut = function() {
     	clearZones();
     	requestZones(newBounds);
     }
-
-	// clearGrids();
-	// drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
 }
 
 /**
@@ -202,6 +263,21 @@ this.requestZones = function(bounds) {
 	});
 }
 
+this.requestMaxZone = function() {
+	$('#maxZoneMap').show();
+	$("#googleMap").hide();
+	
+	$.ajax({
+        url: 'http://localhost:3000/stats/maxZone',
+        type: 'GET',
+        dataType: 'json',
+        success: function(res) {
+        	reloadMaxMap();
+        	onMaxZoneFetched(res);
+        }
+    });
+}
+
 /**
  * Callback function to be called when the crimes statistics have been
  * fetched from the database.
@@ -222,6 +298,26 @@ this.onZonesFetched = function(geozones) {
 	// Parse GeoJson from response
 	newJson = JSON.parse(JSON.stringify(geozones));
 	drawZones(newJson);
+};
+
+this.onMaxZoneFetched = function(maxZoneJson) {
+	// Parse GeoJson from response
+	newJson = JSON.parse(JSON.stringify(maxZoneJson));
+	maxZoneLength = Object.keys(newJson.features).length
+	drawInitMaxZone(newJson);
+	if (maxZoneLength > 1) {
+		$("#prev-maxZone-button").hide();
+		$("#next-maxZone-button").show();
+		$("#prev-div").show();
+		$("#next-div").hide();
+	}
+	else {
+		$("#prev-maxZone-button").hide();
+		$("#next-maxZone-button").hide();
+		$("#prev-div").show();
+		$("#show-div").show();
+	}
+	$("#max-zones-buttons").show();
 };
 
 /**
@@ -289,4 +385,9 @@ this.onBackButtonClicked = function() {
 		clearGrids();
 		drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
 	}
+}
+
+this.onMaxBackButtonClicked = function() {
+	$("#maxZoneMap").hide();
+	$("#googleMap").show();
 }

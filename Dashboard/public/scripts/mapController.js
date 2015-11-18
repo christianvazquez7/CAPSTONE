@@ -4,6 +4,7 @@
  */
 
 var map,
+	maxMap,
 	mapViewer,
 	mapLoc,			// Map location latitude and longitude
 	mapMarker,
@@ -14,7 +15,9 @@ var map,
 	maximumZoom;
 
 var backControlDiv,
-	zoomControlDiv;
+	zoomControlDiv,
+	maxZoomControlDiv,
+	maxBackControlDiv;
 
 // Initial grid coordinates
 var swPoint, nePoint;
@@ -29,6 +32,8 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 	KYA = builder.build("com.nvbyte.kya"),
 	Stats = KYA.Stats;
 
+var maxZones;
+
 /**
  * Draws a new map given the sothwest and northeast latitude and longitude.
  *
@@ -37,7 +42,7 @@ var ProtoBuf = dcodeIO.ProtoBuf,
  * @param onGridClickedCallback : Callback function to notify when a grid have been clicked
  * @param backButtonCallback	: Callback function to notify when the back button have been clicked
  */
-this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedCallback, backButtonCallback, dragCallback, zoomOutCallback) {
+this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedCallback, backButtonCallback, dragCallback, zoomOutCallback, maxBackButtonCallback) {
 	mapLoc = new google.maps.LatLng(locLat, locLng);
 
 	// Reference to the initial boundaries
@@ -53,7 +58,19 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 		streetViewControl: false,
 		scrollwheel: false,
 		disableDoubleClickZoom: true,
-		center: mapLoc
+		center: mapLoc,
+		backgroundColor: 'none'
+	});
+
+	maxMap = new google.maps.Map(document.getElementById('maxZoneMap'), {
+		zoom: initialZoom,
+		zoomControl: false,
+		mapTypeControl: false,
+		streetViewControl: false,
+		scrollwheel: false,
+		disableDoubleClickZoom: true,
+		center: mapLoc,
+		backgroundColor: 'none'
 	});
 
 	// Draw initial grid
@@ -62,14 +79,27 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 	infoWindow = new google.maps.InfoWindow({});
 	showInstructions();
 	addMapViewer();
-  	onHover();	// Listen for hover events
-  	onDrag(dragCallback);	// Listen for hover events
-  	onClick(dragCallback);	// Listen for click events in the map viewer
-	styleMap(); // Add some style to the map
-	boundsControl(swPoint, nePoint);
-	backButtonControl(backButtonCallback);
-	zoomButtonControl(zoomOutCallback);
+  	onHover(map);						// Listen for hover events for main map
+  	onHover(maxMap);					// Listen for hover events for max zone map
+  	onDrag(dragCallback);				// Listen for drag events for main map
+  	onMaxDrag();				// Listen for drag events for max zone map
+  	onClick(dragCallback);				// Listen for click events in the map viewer
+	styleMap(); 						// Add some style to the map
+
+	// Buttons
+	boundsControl(map, swPoint, nePoint);		// Bounds control for main map
+	boundsControl(maxMap, swPoint, nePoint);	// Bounds control for max zone map
+	backButtonControl(backButtonCallback);		// Back button for main map
+	maxBackButtonControl(maxBackButtonCallback);// Back button for max zone map
+	zoomButtonControl(zoomOutCallback);			// Zoom button for main map
+	zoomMaxButtonControl();						// Zoom button for max zone map
 };
+
+
+this.reloadMaxMap = function() {
+	google.maps.event.trigger(maxMap, "resize");
+	maxMap.setCenter(mapLoc);
+}
 
 /**
  * Creates a rectangle object using the grid's coordinates
@@ -116,6 +146,7 @@ this.drawGrid = function(swPoint, nePoint, areaOfGrid, onGridClickedCallback) {
  */
 this.drawStats = function(stats) {
 	var currentStats = Stats.decode(stats);
+	// maxZoneBounds = currentStats.maxZone.boundaries;
 
 	var maxCrimes = document.getElementById('max-crimes');
 	var minCrimes = document.getElementById('min-crimes');
@@ -177,7 +208,28 @@ this.zoomControl = function(zoomInButton, zoomOutButton, callback) {
 	});  
 };
 
-this.boundsControl = function(swPoint, nePoint) {
+this.maxZoomControl = function(zoomInButton, zoomOutButton) {
+
+	// Listener for zoomIn
+	google.maps.event.addDomListener(zoomInButton, 'click', function() {
+		var currentZoom = map.getZoom();
+		if (currentZoom >= maximumZoom)
+			maxMap.setZoom(map.getZoom());
+		else
+			maxMap.setZoom(maxMap.getZoom() + 1);
+	});
+
+	// Listener for zoomOut
+	google.maps.event.addDomListener(zoomOutButton, 'click', function() {
+		var currentZoom = maxMap.getZoom();
+		if (currentZoom <= initialZoom)
+			maxMap.setZoom(initialZoom);
+		else
+			maxMap.setZoom(maxMap.getZoom() - 1);
+	});  
+};
+
+this.boundsControl = function(currentMap, swPoint, nePoint) {
 	// Bounds of the desired area
 	var allowedBounds = new google.maps.LatLngBounds(
 		swPoint,
@@ -190,14 +242,14 @@ this.boundsControl = function(swPoint, nePoint) {
 		minLng : allowedBounds.getSouthWest().lng()
 	};
 
-	var lastValidCenter = map.getCenter();
+	var lastValidCenter = currentMap.getCenter();
 	var newLat, newLng;
 
-	google.maps.event.addListener(map, 'center_changed', function() {
-		center = map.getCenter();
+	google.maps.event.addListener(currentMap, 'center_changed', function() {
+		center = currentMap.getCenter();
 		if (allowedBounds.contains(center)) {
 			// still within valid bounds, so save the last valid position
-			lastValidCenter = map.getCenter();
+			lastValidCenter = currentMap.getCenter();
 			return;
 		}
 		newLat = lastValidCenter.lat();
@@ -208,7 +260,7 @@ this.boundsControl = function(swPoint, nePoint) {
 		if(center.lat() > boundLimits.minLat && center.lat() < boundLimits.maxLat){
 			newLat = center.lat();
 		}
-		map.panTo(new google.maps.LatLng(newLat, newLng));
+		currentMap.panTo(new google.maps.LatLng(newLat, newLng));
 	});
 }
 
@@ -216,17 +268,17 @@ this.boundsControl = function(swPoint, nePoint) {
  * Function to be called when the user hovers over the grids.
  *
  */
-this.onHover = function() {
+this.onHover = function(mapVar) {
 	// When the user hovers, outline the grids.
-	map.data.addListener('mouseover', function(event) {
+	mapVar.data.addListener('mouseover', function(event) {
 		var color = event.feature.getProperty('color');
-		map.data.revertStyle();
-		map.data.overrideStyle(event.feature, {strokeColor: color, strokeWeight: 3});
+		mapVar.data.revertStyle();
+		mapVar.data.overrideStyle(event.feature, {strokeColor: color, strokeWeight: 3});
 	});
 
-	map.data.addListener('mouseout', function(event) {
+	mapVar.data.addListener('mouseout', function(event) {
 		// Remove all overrides
-		map.data.revertStyle();
+		mapVar.data.revertStyle();
 	});
 };
 
@@ -239,6 +291,17 @@ this.onDrag = function(callback) {
 		infoWindow.close();
 		callback();
 		mapMarker.setPosition(map.getCenter());
+	});
+};
+
+/**
+ * Function to be called when the user drags the max map.
+ *
+ */
+this.onMaxDrag = function() {
+	maxMap.addListener('dragend', function() {
+		infoWindow.close();
+		mapMarker.setPosition(maxMap.getCenter());
 	});
 };
 
@@ -262,10 +325,40 @@ this.onClick = function(callback) {
  */
 this.drawZones = function(geozones) {
 	map.data.addGeoJson(geozones);
-	onZoneClicked();
-	styleZones();
+	onZoneClicked(map);
+	styleZones(map);
 	mapMarker.setPosition(map.getCenter());
 };
+
+this.drawInitMaxZone = function(maxZoneGeoJson) {
+	maxZones = maxZoneGeoJson;
+	clearMaxMap();
+	maxMap.data.addGeoJson(maxZoneGeoJson);
+	onZoneClicked(maxMap);
+	swLat = maxZones.features[0].geometry.coordinates[0][0][1]
+	swLng = maxZones.features[0].geometry.coordinates[0][0][0]
+	neLat = maxZones.features[0].geometry.coordinates[0][2][1]
+	neLng = maxZones.features[0].geometry.coordinates[0][2][0]
+	swCoord = new google.maps.LatLng(swLat, swLng);
+	neCoord = new google.maps.LatLng(neLat, neLng);
+	bounds = new google.maps.LatLngBounds(swCoord, neCoord);
+	styleZones(maxMap);
+    maxMap.fitBounds(bounds);
+    mapMarker.setPosition(maxMap.getCenter());
+}
+
+this.drawMaxZone = function(currentMaxZone) {
+	swLat = maxZones.features[currentMaxZone].geometry.coordinates[0][0][1]
+	swLng = maxZones.features[currentMaxZone].geometry.coordinates[0][0][0]
+	neLat = maxZones.features[currentMaxZone].geometry.coordinates[0][2][1]
+	neLng = maxZones.features[currentMaxZone].geometry.coordinates[0][2][0]
+	swCoord = new google.maps.LatLng(swLat, swLng);
+	neCoord = new google.maps.LatLng(neLat, neLng);
+	bounds = new google.maps.LatLngBounds(swCoord, neCoord);
+	styleZones(maxMap);
+    maxMap.fitBounds(bounds);
+    mapMarker.setPosition(maxMap.getCenter());
+}
 
 /**
  * Draw the zone's statistics. This includes the risk level,
@@ -273,12 +366,15 @@ this.drawZones = function(geozones) {
  *
  * @param event : (event) the click event
  */
-this.drawZoneStats = function(event) {
+this.drawZoneStats = function(event, mapVar) {
 	level = event.feature.getProperty('level');
+	// zone_id = event.feature.getProperty('zone_id');
+
 	incidents = event.feature.getProperty('totalCrime');
+	// console.log(event.feature.getProperty('zone_id'));
 	infoWindow.setContent('<div class=\"popup-circle legend-box-level' + level +'\"></div><div class=\"popup-div\"><h3 class=\"popup-title\">Level <span class=\"popup-res-' + level + '\">' + level + '</span></h3><h3 class=\"popup-title\"><span class=\"popup-res-' + level + '\">' + incidents + '</span> incidents</h3></div>');
 	infoWindow.setPosition(event.latLng)
-	infoWindow.open(map);
+	infoWindow.open(mapVar);
 };
 
 /**
@@ -286,9 +382,9 @@ this.drawZoneStats = function(event) {
  * in a zone is detected.
  *
  */
-this.onZoneClicked = function() {
-	popupListenerHandle = map.data.addListener('click', function(event) {
-		drawZoneStats(event);
+this.onZoneClicked = function(mapVar) {
+	popupListenerHandle = mapVar.data.addListener('click', function(event) {
+		drawZoneStats(event, mapVar);
 	});
 };
 
@@ -387,6 +483,12 @@ this.clearGrids = function() {
 	});
 };
 
+this.clearMaxMap = function() {
+	// Remove each polygon from the map
+	maxMap.data.forEach(function(feature) {
+		maxMap.data.remove(feature);
+	});
+}
 /**
  * Defines the visual styles for the map.
  *
@@ -405,8 +507,8 @@ this.styleMap = function() {
  * Defines the style for the zones.
  *
  */
-this.styleZones = function() {
-	map.data.setStyle(function(feature) {
+this.styleZones = function(mapVar) {
+	mapVar.data.setStyle(function(feature) {
 		var color = feature.getProperty('color');
 		return ({
 			fillColor: color,
@@ -489,8 +591,42 @@ this.backButtonControl = function(callback) {
 	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(backControlDiv);
 };
 
+this.maxBackButtonControl = function(callback) {
+
+	// Create div to hold back button
+	maxBackControlDiv = document.createElement('div');
+
+	// Set CSS for the control border.
+	var controlUI = document.createElement('div');
+	controlUI.id = 'maxBackButtonDiv';
+	controlUI.title = 'Click to go back to view main map.';
+	maxBackControlDiv.appendChild(controlUI);
+
+	// Set CSS for the control interior.
+	var controlText = document.createElement('div');
+	controlText.id = 'maxBackButtonText';
+	controlText.innerHTML = 'Back';
+	controlUI.appendChild(controlText);
+
+	// Setup the click event listeners: 
+	controlUI.addEventListener('click', function() {
+		// Close the current open info window
+		infoWindow.close();
+		mapMarker.setPosition(map.getCenter());
+		callback();
+
+		// // Update grids color to a light grey
+		// styleMap();
+	});
+
+	maxBackControlDiv.index = 1;
+	maxBackControlDiv.style['padding-top'] = '10px';
+	maxBackControlDiv.style.display =  'initial';
+	maxMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(maxBackControlDiv);
+};
+
 /**
- * Creates the zoom button and adds listener.
+ * Creates the zoom button and adds listener for main map.
  *
  */
 this.zoomButtonControl = function(callback) {
@@ -534,6 +670,50 @@ this.zoomButtonControl = function(callback) {
 }
 
 /**
+ * Creates the zoom button and adds listener for the max map.
+ *
+ */
+this.zoomMaxButtonControl = function() {
+	// Create div to hold zoom buttons
+	maxZoomControlDiv = document.createElement('div');
+
+	// Creating divs & styles for custom zoom control
+	maxZoomControlDiv.style.padding = '5px';
+
+	// Set CSS for the control wrapper
+	var controlWrapper = document.createElement('div');
+	controlWrapper.style.backgroundColor = 'white';
+	controlWrapper.style.borderStyle = 'solid';
+	controlWrapper.style.borderColor = 'gray';
+	controlWrapper.style.borderWidth = '1px';
+	controlWrapper.style.cursor = 'pointer';
+	controlWrapper.style.textAlign = 'center';
+	controlWrapper.style.width = '32px'; 
+	controlWrapper.style.height = '64px';
+	maxZoomControlDiv.appendChild(controlWrapper);
+
+	// Set CSS for the zoomIn
+	var zoomInButton = document.createElement('div');
+	zoomInButton.style.width = '32px'; 
+	zoomInButton.style.height = '32px';
+	zoomInButton.style.backgroundImage = 'url("../images/zoomIn.png")';
+	controlWrapper.appendChild(zoomInButton);
+
+	// Set CSS for the zoomOut
+	var zoomOutButton = document.createElement('div');
+	zoomOutButton.style.width = '32px'; 
+	zoomOutButton.style.height = '32px';
+	zoomOutButton.style.backgroundImage = 'url("../images/zoomOut.png")';
+	controlWrapper.appendChild(zoomOutButton);
+
+	// Add listener for zoom buttons
+	maxZoomControl(zoomInButton, zoomOutButton);
+
+	maxZoomControlDiv.index = 1;
+	maxMap.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(maxZoomControlDiv);
+}
+
+/**
  * Shows the back button.
  *
  */
@@ -551,4 +731,12 @@ this.setMinimumZoom = function() {
  */
 this.hideBackButton = function() {
 	backControlDiv.style.display =  'none';
+};
+
+
+this.setMaxZone = function() {
+	var swPoint = new google.maps.LatLng(maxZoneBounds[0].latitude, maxZoneBounds[0].longitude);
+	var nePoint = new google.maps.LatLng(maxZoneBounds[2].latitude, maxZoneBounds[2].longitude);
+	bounds = new google.maps.LatLngBounds(swPoint, nePoint);
+    map.fitBounds(bounds);
 };

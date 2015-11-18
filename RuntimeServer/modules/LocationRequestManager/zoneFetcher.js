@@ -20,6 +20,23 @@ module.exports = function ZoneFetcher() {
 	// Sets the size of the zones
 	var mZoneSize = 200;
 	 
+	this.fetchByID = function(zoneID, zoneCallback) {
+		connectToDB(url, function(err, db) {			
+  			if(err){
+  				zoneCallback(err);
+  				return;	
+  			} 
+  			
+  			var collection = db.collection('Geozone');
+
+  			collection.find({ zone_id : zoneID }).toArray(function (resErr, zone){
+  				db.close();
+  				zoneCallback(resErr, zone[0]);
+  			});
+		});
+	};
+
+
 	/**
 	 * From a given location it fetches the geo-zone that it belongs to. 
 	 * A number of rings around the current zone can be assigned to fetch the zones
@@ -47,11 +64,15 @@ module.exports = function ZoneFetcher() {
 		//Currently only supports only 0 or 1 rings around the current zone
 		else{
 			zonesCallback(new Error("Cannot fetch more than 1 ring"));
+			return;
 		}
 
 		//Start connection to db
 		connectToDB(url, function(err, db) {			
-  			if(err) zonesCallback(err);
+  			if(err){
+  				zonesCallback(err);
+  				return;	
+  			} 
   			findZones(db, container, zonesCallback);
 		});
 	};
@@ -82,7 +103,7 @@ module.exports = function ZoneFetcher() {
   		
   		// Get the documents collection 
   		var collection = db.collection('Geozone');
-  		// Find some documents 
+  		
   		
   		//Query zones and sort them by ascending longitude and descending latitude
 		collection.find(

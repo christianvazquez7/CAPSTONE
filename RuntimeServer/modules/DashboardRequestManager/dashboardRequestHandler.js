@@ -48,6 +48,7 @@ module.exports = function DashboardRequestHandler() {
 
 			if (err) {
 				//logger.error('Unable to connect to the mongoDB server. Error:', err);
+				callback(err);
 			} 
 			else {
 				// Connected
@@ -98,6 +99,42 @@ module.exports = function DashboardRequestHandler() {
 	};
 
 	/**
+	 * Fetch the zone with the maximum number of incidents.
+	 *
+	 * @param callback: Callback function to be called when the zone have been fecthed from the database.
+	 */
+	this.requestMaxZone = function(callback) {
+		// Use connect method to connect to the Server
+		MongoClient.connect(url, function (err, db) {
+			// Documents collection
+			var collection = db.collection('Geozone');
+
+			if (err) {
+				//logger.error('Unable to connect to the mongoDB server. Error:', err);
+				callback(err);
+			} 
+			else {
+				collection.find().sort({"totalCrime":-1}).limit(1).toArray(function (err, result)
+				{
+					if (err) {
+						//logger.error(err);
+					}
+					else if (result.length) {
+						maxNumber = result[0].totalCrime;
+
+						collection.find({ totalCrime : maxNumber }).toArray(function (err, result)
+						{
+							db.close();
+							maxZone = zonesManager.getGeoJson(result);
+							callback(err, maxZone);
+						});
+					}
+				});
+			}
+		});
+	};
+	
+	/**
 	 * Fetch the zones from KYA DB.
 	 *
 	 * @param nwPoint: the north west point
@@ -125,6 +162,7 @@ module.exports = function DashboardRequestHandler() {
 				var collection = db.collection('Geozone');
 				if (err) {
 					//logger.error('Unable to connect to the mongoDB server. Error:', err);
+					callback(err);
 				} 
 				else {
 				    // Connected
