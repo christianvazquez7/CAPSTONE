@@ -829,7 +829,10 @@ div div.legend-hover:hover {
 
 
 
-#backButtonDiv, #maxBackButtonDiv {
+#backButtonDiv, #maxBackButtonDiv,
+#showMaxZoneButtonDiv,
+#showPrevMaxZoneButtonDiv,
+#showNextMaxZoneButtonDiv {
   background-color: #fff;
   border: 2px solid #fff;
   border-radius: 3px;
@@ -840,7 +843,14 @@ div div.legend-hover:hover {
   text-align: center;
 }
 
-#backButtonText, #maxBackButtonText {
+#showPrevMaxZoneButtonDiv {
+	margin-left: 10px;
+}
+
+#backButtonText, #maxBackButtonText,
+#showMaxZoneButtonText,
+#showPrevMaxZoneButtonText,
+#showNextMaxZoneButtonText {
   color: rgb(25,25,25);
   font-family: Roboto, Helvetica, Arial,sans-serif;
   font-size: 13px;
