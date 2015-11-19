@@ -17,6 +17,7 @@ var currentZone = {
 	zone_id: 10,
 	level: 6,	
 	totalCrime: 190,
+	updatedOn: '11/18/2015',
 	loc: 
 	{	
 		type:'Polygon',
@@ -28,6 +29,7 @@ var previousZone = {
 	zone_id: 9,
 	level: 5,	
 	totalCrime: 200,
+	updatedOn: '11/18/2015',
 	loc: 
 	{	
 		type:'Polygon',
@@ -46,8 +48,8 @@ var mockGeoPointsAr =
 	new GeoPoint('', 18, -67.29810938811335)
 ];
 
-var currentZoneObj = new GeoZone(currentZone.level, currentZone.totalCrime, '10/10/2015', currentZone.zone_id, mockGeoPointsAr);
-var previousZoneObj = new GeoZone(previousZone.level, previousZone.totalCrime, '10/10/2015', previousZone.zone_id, mockGeoPointsAr);
+var currentZoneObj = new GeoZone(currentZone.level, currentZone.totalCrime, currentZone.updatedOn, currentZone.zone_id, mockGeoPointsAr);
+var previousZoneObj = new GeoZone(previousZone.level, previousZone.totalCrime, previousZone.updatedOn, previousZone.zone_id, mockGeoPointsAr);
 var response = new CheckInResponse(nextRequestTime, surveyFlag, currentZoneObj, previousZoneObj);
 var responseMessage = response.encode().toBuffer();
 

@@ -39,28 +39,32 @@ describe('Location Request Manager', function() {
 	describe('#handleRequest(checkInBuffer,callback)', function () {
 	    it('should call the appropiate functions and respond through a callback with an encoded response' , function (done) {
 	   		reqHandler.handleRequest(reqMessage, function (err, responseBuffer){
-	   			//expect(err).to.be.null;
-	   			//expect(responseBuffer).to.exist;
+	   			expect(err).to.be.null;
+	   			expect(responseBuffer).to.exist;
+				
 				decodedResponse = CheckInResponse.decode(responseBuffer);
+
 				var currZoneFromFetcher;
+				
 				testedFetcher.fetchByLocation(location, 0, function (err, curZone){
 					curZone = curZone[0];
-					var geoPointsAr = [];
+					
+					var zoneCorners = [];
 					for(var i = 0 ; i < curZone.loc.coordinates[0].length - 1; i ++){
-						geoPointsAr.push(new GeoPoint('', curZone.loc.coordinates[0][i][1], curZone.loc.coordinates[0][i][0]));
+						zoneCorners.push(new GeoPoint('', curZone.loc.coordinates[0][i][1], curZone.loc.coordinates[0][i][0]));
 					}
-					currZoneFromFetcher = new GeoZone(curZone.level, curZone.totalCrime, '10/10/2015', curZone.zone_id, geoPointsAr); 
-					//expect(decodedResponse.currentZone).to.eql(currZoneFromFetcher);
+					currZoneFromFetcher = new GeoZone(curZone.level, curZone.totalCrime, curZone.updatedOn, curZone.zone_id, zoneCorners); 
+					expect(decodedResponse.currentZone).to.eql(currZoneFromFetcher);
 					
 					testedFetcher.fetchByID(prevZoneID, function(err, prevZone){
-						curZone = curZone[0];
-						var geoPointsAr1 = [];
+						curZone = curZone[0];	
+						var zoneCorners1 = [];
 						for(var i = 0 ; i < prevZone.loc.coordinates[0].length - 1; i ++){
-							geoPointsAr1.push(new GeoPoint('', prevZone.loc.coordinates[0][i][1], prevZone.loc.coordinates[0][i][0]));
+							zoneCorners1.push(new GeoPoint('', prevZone.loc.coordinates[0][i][1], prevZone.loc.coordinates[0][i][0]));
 						}
-						prevZoneFromFetcher = new GeoZone(prevZone.level, prevZone.totalCrime, '10/10/2015', prevZone.zone_id, geoPointsAr); 
+						prevZoneFromFetcher = new GeoZone(prevZone.level, prevZone.totalCrime, prevZone.updatedOn, prevZone.zone_id, zoneCorners1); 
 					
-						//expect(decodedResponse.prevZone).to.eql(prevZoneFromFetcher);	
+						expect(decodedResponse.prevZone).to.eql(prevZoneFromFetcher);	
 						done();
 						console.log('\n--------------------------------------------------------------------------------');
 						console.log("Expected current zone: ");
