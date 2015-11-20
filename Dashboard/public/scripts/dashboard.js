@@ -106,6 +106,10 @@ this.nextMaxZone = function() {
 	}
 }
 
+this.resetCurrentMaxZone = function() {
+	currentMaxZone = 1;
+}
+
 /**
  * Constructs a new Google Map object.
  *
@@ -250,17 +254,27 @@ this.requestZones = function(bounds) {
 	});
 }
 
+/**
+ * Connects to the server and retrieves the max zone(s).
+ *
+ */
 this.requestMaxZone = function() {
-	$('#maxZoneMap').show();
+	$('#maxZoneMap').hide();
+	$("#loading-img").show();
 	$("#googleMap").hide();
-	
+	reloadMaxMap();
+
 	$.ajax({
         url: 'http://localhost:3000/stats/maxZone',
         type: 'GET',
         dataType: 'json',
         success: function(res) {
+        	$("#loading-img").hide();
+        	$('#maxZoneMap').show();
         	reloadMaxMap();
         	onMaxZoneFetched(res);
+        	
+
         }
     });
 }

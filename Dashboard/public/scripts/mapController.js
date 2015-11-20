@@ -26,7 +26,8 @@ var swPoint, nePoint;
 // Listeners
 var listenerHandle,
 	zoneListenerHandle,
-	popupListenerHandle;
+	popupListenerHandle,
+	maxPopupListenerHandle;
 
 // Protocol Buffers
 var ProtoBuf = dcodeIO.ProtoBuf,
@@ -395,7 +396,7 @@ this.drawInitMaxZone = function(maxZoneGeoJson) {
 	maxZones = maxZoneGeoJson;
 	clearMaxMap();
 	maxMap.data.addGeoJson(maxZoneGeoJson);
-	onZoneClicked(maxMap);
+	onMaxZoneClicked(maxMap);
 	swLat = maxZones.features[0].geometry.coordinates[0][0][1]
 	swLng = maxZones.features[0].geometry.coordinates[0][0][0]
 	neLat = maxZones.features[0].geometry.coordinates[0][2][1]
@@ -414,6 +415,7 @@ this.drawInitMaxZone = function(maxZoneGeoJson) {
  * @param nextMaxZone: (int)  index for the next zone to show 
  */
 this.drawMaxZone = function(nextMaxZone) {
+	// reloadMaxMap()
 	swLat = maxZones.features[nextMaxZone].geometry.coordinates[0][0][1]
 	swLng = maxZones.features[nextMaxZone].geometry.coordinates[0][0][0]
 	neLat = maxZones.features[nextMaxZone].geometry.coordinates[0][2][1]
@@ -449,9 +451,20 @@ this.drawZoneStats = function(event, mapVar) {
  *
  * @param mapVar: (map) current map reference
  */
-this.onZoneClicked = function(mapVar) {
-	popupListenerHandle = mapVar.data.addListener('click', function(event) {
-		drawZoneStats(event, mapVar);
+this.onZoneClicked = function() {
+	popupListenerHandle = map.data.addListener('click', function(event) {
+		drawZoneStats(event, map);
+	});
+};
+
+/**
+ * Callback function to be called when a click event 
+ * in a zone from the 'max map' is detected.
+ *
+ */
+this.onMaxZoneClicked = function() {
+	maxPopupListenerHandle = maxMap.data.addListener('click', function(event) {
+		drawZoneStats(event, maxMap);
 	});
 };
 
@@ -555,10 +568,16 @@ this.clearGrids = function() {
  *
  */
 this.clearMaxMap = function() {
+	// Remove listener for the zone's info window
+	google.maps.event.removeListener(maxPopupListenerHandle);
+	resetCurrentMaxZone();
 	// Remove each polygon from the map
 	maxMap.data.forEach(function(feature) {
 		maxMap.data.remove(feature);
 	});
+
+	hidePrevButton();
+	hideNextButton();
 }
 
 /**
@@ -689,6 +708,7 @@ this.maxBackButtonControl = function(callback) {
 	controlUI.addEventListener('click', function() {
 		// Close the current open info window
 		infoWindow.close();
+		clearMaxMap();
 		mapMarker.setPosition(map.getCenter());
 		callback();
 	});
@@ -812,6 +832,7 @@ this.showMaxZone = function() {
 	controlUI.addEventListener('click', function() {
 		// Close the current open info window
 		infoWindow.close();
+		clearMaxMap();
 		setMaxZoneFlag();
 		requestMaxZone();
 	});
