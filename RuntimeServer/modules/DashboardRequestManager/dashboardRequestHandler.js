@@ -10,7 +10,7 @@ module.exports = function DashboardRequestHandler() {
 	 */
 	var MongoClient = require('mongodb').MongoClient;
 	var ProtoBuf = require("../../node_modules/protobufjs");
-	//var logger = require('../../utils/logger.js');
+	var logger = require('../../utils/logger.js');
 	var coordinate = require('../../../BuildServer/modules/GeozoneManager/GeoCoordinate.js');
 	var GridController = require('../DashboardManager/gridController.js');
 	var ZonesManager = require('../DashboardManager/zonesManager.js');
@@ -47,40 +47,40 @@ module.exports = function DashboardRequestHandler() {
 			var collection = db.collection('Geozone');
 
 			if (err) {
-				//logger.error('Unable to connect to the mongoDB server. Error:', err);
+				logger.debug('ERROR: Unable to connect to the mongoDB server. Error:', err);
 				callback(err);
 			} 
 			else {
 				// Connected
-				//logger.debug('Connection established to', url);
+				logger.debug('CONN: Connection established to', url);
 
 				collection.find().sort({"totalCrime":-1}).limit(1).toArray(function (err, result)
 				{
 					if (err) {
-						//logger.error(err);
+						logger.debug('ERROR: ', err);
 					}
 					else if (result.length) {
-						//logger.info('Crime statistics');
+						logger.debug('Fetching statistics...');
 						maxCrime = result[0].totalCrime;
-						//logger.info('\tMax crimes: ', maxCrime);
+						logger.debug('    Max crimes: ', maxCrime);
 						collection.find().sort({"totalCrime":1}).limit(1).toArray(function (err, result) 
 						{
 							if (err) {
-								//logger.error(err);
+								logger.debug('ERROR: ', err);
 							}
 							else if (result.length) {
 								minCrime = result[0].totalCrime;
-								//logger.info('\tMin crimes: ', minCrime);
+								logger.debug('    Min crimes: ', minCrime);
 								collection.aggregate([{$group: {_id:null, crimeAverage: {$avg:"$totalCrime"} } }]).toArray(function (err, result)
 								{
 									if (err) {
-										//logger.error(err);
+										logger.debug('ERROR: ', err);
 									}
 									else if (result.length) {
 										crimeAverage = result[0].crimeAverage;
-										//logger.info('\tCrime rate: ', crimeAverage);
+										logger.debug('    Crime rate: ', crimeAverage);
 										db.close();  
-										//logger.debug('Mongodb connection closed.');                  
+										logger.debug('CONN: Mongodb connection closed.');                  
 										var result = encodeStats(maxCrime, minCrime, crimeAverage);
 										callback(err, result)
 									}
@@ -89,9 +89,9 @@ module.exports = function DashboardRequestHandler() {
 						});
 					}
 					else {
-						//logger.error('No document(s) found with defined "find" criteria!');
+						logger.debug('ERROR: No document(s) found with defined "find" criteria!');
 						db.close();
-						//logger.debug('Mongodb connection closed.');
+						logger.debug('CONN: Mongodb connection closed.');
 					}
 				});
 			}
@@ -99,25 +99,26 @@ module.exports = function DashboardRequestHandler() {
 	};
 
 	/**
-	 * Fetch the zone with the maximum number of incidents.
+	 * Fetch the zone(s) with the maximum number of incidents.
 	 *
-	 * @param callback: Callback function to be called when the zone have been fecthed from the database.
+	 * @param callback: Callback function to be called when the zone(s) have been fecthed from the database.
 	 */
 	this.requestMaxZone = function(callback) {
 		// Use connect method to connect to the Server
 		MongoClient.connect(url, function (err, db) {
 			// Documents collection
 			var collection = db.collection('Geozone');
-
 			if (err) {
-				//logger.error('Unable to connect to the mongoDB server. Error:', err);
+				logger.debug('ERROR: Unable to connect to the mongoDB server. Error:', err);
 				callback(err);
 			} 
 			else {
+				logger.debug('CONN: Connection established to', url);
+				logger.debug('Fetching max zone...');
 				collection.find().sort({"totalCrime":-1}).limit(1).toArray(function (err, result)
 				{
 					if (err) {
-						//logger.error(err);
+						logger.debug('ERROR: ', err);
 					}
 					else if (result.length) {
 						maxNumber = result[0].totalCrime;
@@ -125,6 +126,7 @@ module.exports = function DashboardRequestHandler() {
 						collection.find({ totalCrime : maxNumber }).toArray(function (err, result)
 						{
 							db.close();
+							logger.debug('CONN: Mongodb connection closed.');
 							maxZone = zonesManager.getGeoJson(result);
 							callback(err, maxZone);
 						});
@@ -151,23 +153,23 @@ module.exports = function DashboardRequestHandler() {
 			var nePoint = [gridBounds.boundaries[2].longitude, gridBounds.boundaries[2].latitude];
 			var sePoint = [gridBounds.boundaries[3].longitude, gridBounds.boundaries[3].latitude];
 
-			// logger.info('GET zones in: ');
-			// logger.info('\tSW Point', swPoint);
-			// logger.info('\tNW Point', nwPoint);
-			// logger.info('\tNE Point', nePoint);
-			// logger.info('\tSE Point', sePoint);
+			logger.debug('GET zones in... ');
+			logger.debug('    SW Point', swPoint);
+			logger.debug('    NW Point', nwPoint);
+			logger.debug('    NE Point', nePoint);
+			logger.debug('    SE Point', sePoint);
 			
 			MongoClient.connect(url, function (err, db) {
 				// Documents collection
 				var collection = db.collection('Geozone');
 				if (err) {
-					//logger.error('Unable to connect to the mongoDB server. Error:', err);
+					logger.debug('ERROR: Unable to connect to the mongoDB server. Error:', err);
 					callback(err);
 				} 
 				else {
 				    // Connected
-				    //logger.debug('Connection established to', url);
-
+				    logger.debug('CONN: Connection established to', url);
+				    logger.debug('Fetching zones...');
 					collection.find( { loc : 
 		                  { $geoWithin : 
 		                    { $geometry : 
@@ -175,19 +177,20 @@ module.exports = function DashboardRequestHandler() {
 		                        coordinates : [ [ swPoint , nwPoint , nePoint , sePoint , swPoint ] ]
 		                } } } } ).toArray(function (err, result) {
 		                	if (err) {
-								//logger.error(err);
+								logger.debug('ERROR: ', err);
 							}
 							else {
 								zones = zonesManager.getGeoJson(result);
 								callback(err, zones);
 					    	}
 					    	db.close();
-					    	//logger.debug('Mongodb connection closed.');
+					    	logger.debug('CONN: Mongodb connection closed.');
 					    });
 				}
 			});
 		}
 		catch(err) {
+			logger.debug('ERROR: ', err);
 			callback(new Error("Undefined parameter"))
 		}
 	};
@@ -203,13 +206,21 @@ module.exports = function DashboardRequestHandler() {
 	 * @param callback: Callback function to be called when the grids have been created
 	 */
 	this.requestGrids = function(swLat, swLng, neLat, neLng, area, callback) {
+		logger.debug('Requesting grids...');
+		logger.debug('    swLat -> ', swLat);
+		logger.debug('    swLng -> ', swLng);
+		logger.debug('    neLat -> ', neLat);
+		logger.debug('    neLng -> ', neLng);
+		logger.debug('    area -> ', area);
+
 		if (typeof swLat === 'undefined' || 
 			typeof swLng === 'undefined' || 
 			typeof neLat === 'undefined' || 
 			typeof neLng === 'undefined' || 
 			typeof area === 'undefined') {
 			// Error -  undefined value
-			callback(new Error("Undefined parameter"))
+			logger.debug('ERROR: Undefined parameter.');
+			callback(new Error("Undefined parameter"));
 		}
 		else {
 			result = gridController.buildGrids(new coordinate(swLat, swLng), new coordinate(neLat, neLng), area);
@@ -224,7 +235,10 @@ module.exports = function DashboardRequestHandler() {
 	 * @param callback: Callback function to be called to send the response
 	 */
 	this.isReady = function(area, callback) {
+		logger.debug('Checking if ready to fetch zones...');
+		logger.debug('    area -> ', area);
 		if (typeof area === 'undefined') {
+			logger.debug('ERROR: Area is undefined.');
 			// Error - Area is undefined
 			callback(new Error("Area is undefined"))
 		}
@@ -241,14 +255,16 @@ module.exports = function DashboardRequestHandler() {
 	 * @param callback: Callback function to be called when the threshold have been set
 	 */
 	this.setThreshold = function(threshold, callback) {
+		logger.debug('Setting threshold...');
+		logger.debug('    threshold ->', threshold)
 		try {
 			var thresholdBuf = Threshold.decode(threshold);
 			var areaThreshold = thresholdBuf.threshold;
 			gridController = new GridController(areaThreshold);
-			//logger.info('Setting threshold: ', areaThreshold);
 			callback(null, 'SUCCESS');
 		}
 		catch(err) {
+			logger.debug('ERROR:  Error when trying to set threshold.');
 			callback(err);
 		}
 	};

@@ -104,9 +104,9 @@ describe('Dashboard', function() {
       .end(function(err, res) {
 
         var stats = Stats.decode(res.text);
-        expect(stats.maxNumOfCrimes).to.equal(45);
+        expect(stats.maxNumOfCrimes).to.equal(90);
         expect(stats.minNumOfCrimes).to.equal(0);
-        expect(Math.round(parseFloat(stats.crimeAverage)*100)/100).to.equal(0.05);
+        expect(Math.round(parseFloat(stats.crimeAverage)*100)/100).to.equal(0.10);
         done();
       });
     });

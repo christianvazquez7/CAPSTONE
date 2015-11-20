@@ -213,7 +213,7 @@ module.exports = function RequestHandlers() {
 				res.send(err);
 			}
 			else {
-				res.sendStatus(result);
+				res.send(result);
 				// logger.info('Threshold result --> ', result);
 			}
 		});
