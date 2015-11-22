@@ -35,7 +35,7 @@ public class LocationProvider implements GoogleApiClient.ConnectionCallbacks,
     private Context mContext;
     private static LocationProvider singleton;
     private GoogleApiClient mGoogleApiClient;
-    private boolean DEBUG = false;
+    private boolean DEBUG = true;
     private Location currentLocation = null;
     private LocationListener listener = new LocationListener() {
         @Override

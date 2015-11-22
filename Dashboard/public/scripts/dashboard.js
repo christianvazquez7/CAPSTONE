@@ -55,16 +55,9 @@ $(document).ready(function() {
 
 	$("#maxZoneMap").hide();			// Hides the max zone map
 	$("#loading-img").hide();			// Hides the loading animation
-	$("#max-zones-buttons").hide();		// Hides the previous and next buttons
-	$("#prev-maxZone-button").hide();	// Hdes the next button
-	$("#next-maxZone-button").hide();	// Hdes the next button
 
 	buildMap(mapLocLat, mapLocLng, swLat, swLng, neLat, neLng, initialArea);
 	requestStats();					// Fetch current statatistics from database
-
-	$("#show-maxZone-button").on('click', function() {
-		requestMaxZone();
-	});
 });
 	
 
@@ -72,21 +65,18 @@ this.prevMaxZone = function() {
 	if (currentMaxZone == 1) {
 		currentMaxZone = 1;
 		if (maxZoneLength > 1) {
-			$("#next-maxZone-button").show();
-			$("#next-div").hide();
+			showNextButton()
 		}
 	}
 	else {
 		currentMaxZone = currentMaxZone - 1;
 
 		if (currentMaxZone == 1) {
-			$("#prev-maxZone-button").hide();
-			$("#prev-div").show();
+			hidePrevButton();
 		}
 
 		if (currentMaxZone < maxZoneLength) {
-			$("#next-maxZone-button").show();
-			$("#next-div").hide();
+			showNextButton();
 		}
 		drawMaxZone(currentMaxZone-1);
 	}
@@ -96,28 +86,28 @@ this.nextMaxZone = function() {
 	if (currentMaxZone == maxZoneLength) {
 		currentMaxZone = maxZoneLength;
 		if (maxZoneLength > 1) {
-			$("#prev-maxZone-button").show();
-			$("#prev-div").hide();
+			showPrevButton()
 		}
 	}
 	else {
 		currentMaxZone = currentMaxZone + 1;
 
 		if (currentMaxZone == maxZoneLength) {
-			$("#next-maxZone-button").hide();
-			$("#next-div").show();
+			hideNextButton();
 			if (maxZoneLength > 1) {
-				$("#prev-maxZone-button").show();
-				$("#prev-div").hide();
+				showPrevButton();
 			}
 		}
 
 		if (currentMaxZone > 1 && currentMaxZone < maxZoneLength) {
-			$("#prev-maxZone-button").show();
-			$("#prev-div").hide();
+			showPrevButton();
 		}
 		drawMaxZone(currentMaxZone-1);
 	}
+}
+
+this.resetCurrentMaxZone = function() {
+	currentMaxZone = 1;
 }
 
 /**
@@ -258,22 +248,33 @@ this.requestZones = function(bounds) {
 		success: function(res) {
 			$("#loading-img").hide();
 			$("#googleMap").show();
+			reloadMainMap();
 			onZonesFetched(res);
 		}
 	});
 }
 
+/**
+ * Connects to the server and retrieves the max zone(s).
+ *
+ */
 this.requestMaxZone = function() {
-	$('#maxZoneMap').show();
+	$('#maxZoneMap').hide();
+	$("#loading-img").show();
 	$("#googleMap").hide();
-	
+	reloadMaxMap();
+
 	$.ajax({
         url: 'http://localhost:3000/stats/maxZone',
         type: 'GET',
         dataType: 'json',
         success: function(res) {
+        	$("#loading-img").hide();
+        	$('#maxZoneMap').show();
         	reloadMaxMap();
         	onMaxZoneFetched(res);
+        	
+
         }
     });
 }
@@ -306,18 +307,13 @@ this.onMaxZoneFetched = function(maxZoneJson) {
 	maxZoneLength = Object.keys(newJson.features).length
 	drawInitMaxZone(newJson);
 	if (maxZoneLength > 1) {
-		$("#prev-maxZone-button").hide();
-		$("#next-maxZone-button").show();
-		$("#prev-div").show();
-		$("#next-div").hide();
+		hidePrevButton();
+		showNextButton();
 	}
 	else {
-		$("#prev-maxZone-button").hide();
-		$("#next-maxZone-button").hide();
-		$("#prev-div").show();
-		$("#show-div").show();
+		hidePrevButton();
+		hideNextButton();
 	}
-	$("#max-zones-buttons").show();
 };
 
 /**
@@ -390,4 +386,7 @@ this.onBackButtonClicked = function() {
 this.onMaxBackButtonClicked = function() {
 	$("#maxZoneMap").hide();
 	$("#googleMap").show();
+
+	// Sets the isMaxZoneShown flag to false
+	unsetMaxZoneFlag();
 }

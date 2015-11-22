@@ -46,6 +46,61 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        findViewById(R.id.zone1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String lat = "" + 18.213719;
+                String lon = "" + -67.157224;
+                WearInterface.getInstance(MainActivity.this).sendMock(lat,lon);
+            }
+        });
+
+        findViewById(R.id.zone2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String lat = "" + 18.214147;
+                String lon = "" + -67.149607;
+                WearInterface.getInstance(MainActivity.this).sendMock(lat,lon);
+            }
+        });
+
+        findViewById(R.id.zone3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String lat = "" + 18.205892;
+                String lon = "" + -67.141989;
+                WearInterface.getInstance(MainActivity.this).sendMock(lat,lon);
+            }
+        });
+
+        findViewById(R.id.zone4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String lat = "" + 18.206034;
+                String lon = "" + -67.139972;
+                WearInterface.getInstance(MainActivity.this).sendMock(lat,lon);
+            }
+        });
+
+        findViewById(R.id.zone5).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String lat = "" + 18.211028;
+                String lon = "" + -67.140144;
+                WearInterface.getInstance(MainActivity.this).sendMock(lat,lon);
+            }
+        });
+
+        findViewById(R.id.zone6).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String lat = "" + 18.213209;
+                String lon = "" + -67.142504;
+                WearInterface.getInstance(MainActivity.this).sendMock(lat,lon);
+            }
+        });
+
     }
 
     @Override

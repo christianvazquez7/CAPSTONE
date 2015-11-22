@@ -3,28 +3,31 @@
  * and the zones. 
  */
 
-var map,
-	maxMap,
-	mapViewer,
+var map,			// Main map
+	maxMap,			// Map where the max zones are shown
+	mapViewer,		// Map to view the current position of the main map
 	mapLoc,			// Map location latitude and longitude
-	mapMarker,
-	infoWindow,
-	instrWindow,
-	initialZoom,
-	minimumZoom,
-	maximumZoom;
+	mapMarker,		// Marker in  Map Viewer 
+	infoWindow,		// Window that shows the details about a zone
+	instrWindow,	// Window that appears when the map loads to show a brief message
+	initialZoom,	// The initial zoom for map
+	minimumZoom,	// To keep track of the minimum zoom permitted
+	maximumZoom;	// To keep track of the maximum zoom permitted
 
-var backControlDiv,
-	zoomControlDiv,
-	maxZoomControlDiv,
-	maxBackControlDiv;
+var backControlDiv,			// Control for div that holds the back button in main map
+	zoomControlDiv,			// Control for div that holds the zoom buttons in main map
+	maxZoomControlDiv,		// Control for div that holds the zoom buttons in max zone map
+	maxBackControlDiv,		// Control for div that holds the back button in max zone map
+	showMaxZoneControlDiv;	// Control for div that holds the show max zone button 
 
 // Initial grid coordinates
 var swPoint, nePoint;
 
+// Listeners
 var listenerHandle,
 	zoneListenerHandle,
-	popupListenerHandle;
+	popupListenerHandle,
+	maxPopupListenerHandle;
 
 // Protocol Buffers
 var ProtoBuf = dcodeIO.ProtoBuf,
@@ -32,15 +35,22 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 	KYA = builder.build("com.nvbyte.kya"),
 	Stats = KYA.Stats;
 
-var maxZones;
+var maxZones,			// Keep track of the max zone(s)
+	isMaxZoneMapShown;	// Flag to keep track when the max zone map is shown
 
 /**
  * Draws a new map given the sothwest and northeast latitude and longitude.
  *
- * @param lat: (double) the location's latitude
- * @param lng: (double) the location's longitude
- * @param onGridClickedCallback : Callback function to notify when a grid have been clicked
- * @param backButtonCallback	: Callback function to notify when the back button have been clicked
+ * @param locLat 				: 	(double) the location's latitude
+ * @param locLng				: 	(double) the location's longitude
+ * @param swPoint_				:	() the south west point for the grids
+ * @param nePoint_				:	() the north east point for the grids
+ * @param area 					:	(double) the area size for the grids
+ * @param onGridClickedCallback : 	Callback function to notify when a grid have been clicked
+ * @param backButtonCallback	: 	Callback function to notify when the back button have been clicked
+ * @param dragCallback			:	Callback funciton to notify when a drag have been detected
+ * @param zooomOutCallback		: 	Callback function to notify when the zoom out button have been clicked
+ * @param maxBackButtonCallback	: 	Callback function to notify when the back button in the max zone map have been clicked
  */
 this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedCallback, backButtonCallback, dragCallback, zoomOutCallback, maxBackButtonCallback) {
 	mapLoc = new google.maps.LatLng(locLat, locLng);
@@ -50,6 +60,9 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 	nePoint = nePoint_;
 	initialZoom = minimumZoom = 9;
 	maximumZoom = 19;
+
+	// Initially only the main map is shown
+	isMaxZoneMapShown = false;
 
 	map = new google.maps.Map(document.getElementById('googleMap'), {
 		zoom: initialZoom,
@@ -75,6 +88,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 
 	// Draw initial grid
 	drawGrid(swPoint, nePoint, area, onGridClickedCallback);
+
 	// Instantiate the info window for the zones statistics
 	infoWindow = new google.maps.InfoWindow({});
 	showInstructions();
@@ -82,31 +96,52 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
   	onHover(map);						// Listen for hover events for main map
   	onHover(maxMap);					// Listen for hover events for max zone map
   	onDrag(dragCallback);				// Listen for drag events for main map
-  	onMaxDrag();				// Listen for drag events for max zone map
+  	onMaxDrag();						// Listen for drag events for max zone map
   	onClick(dragCallback);				// Listen for click events in the map viewer
 	styleMap(); 						// Add some style to the map
 
-	// Buttons
+	// Control map bounds
 	boundsControl(map, swPoint, nePoint);		// Bounds control for main map
 	boundsControl(maxMap, swPoint, nePoint);	// Bounds control for max zone map
-	backButtonControl(backButtonCallback);		// Back button for main map
-	maxBackButtonControl(maxBackButtonCallback);// Back button for max zone map
-	zoomButtonControl(zoomOutCallback);			// Zoom button for main map
-	zoomMaxButtonControl();						// Zoom button for max zone map
+
+	// Map's buttons
+	backButtonControl(backButtonCallback);		// Back button for 'main map'
+	maxBackButtonControl(maxBackButtonCallback);// Back button for 'max zone map'
+	zoomButtonControl(zoomOutCallback);			// Zoom button for 'main map'
+	zoomMaxButtonControl();						// Zoom button for 'max zone map'
+	showMaxZone();								// Show max zone button in 'main map'
+	showPrevMaxZone();							// Show previous max zone button in 'max zone map'
+	showNextMaxZone();							// Show next max zone button in 'max zone map'
 };
 
-
+/**
+ * Reloads the max zone map.
+ *
+ */
 this.reloadMaxMap = function() {
 	google.maps.event.trigger(maxMap, "resize");
 	maxMap.setCenter(mapLoc);
 }
 
 /**
+ * Reloads the main map.
+ *
+ */
+this.reloadMainMap = function() {
+	center = map.getCenter();
+	google.maps.event.trigger(map, "resize");
+	map.setCenter(center);
+}
+
+/**
  * Creates a rectangle object using the grid's coordinates
  * and then draws each rectangle in the map.
  *
- * @param grids: (GeoJSON) the grids to draw
- * @param callback: Callback function to be called when a grid is clicked.
+ * @param swPoint 	: 	() the south west coordinate to build the grid
+ * @param nePoint 	: 	() the north east coordinate to build the grid
+ * @param areaOfGrid: 	(double) the area size of the grids
+ * @param grids 	: 	(GeoJSON) the grids to draw
+ * @param callback 	: 	Callback function to be called when a grid is clicked.
  */
 this.drawGrid = function(swPoint, nePoint, areaOfGrid, onGridClickedCallback) {
 	// Get the southwest and northeast latitude and longitude
@@ -146,7 +181,6 @@ this.drawGrid = function(swPoint, nePoint, areaOfGrid, onGridClickedCallback) {
  */
 this.drawStats = function(stats) {
 	var currentStats = Stats.decode(stats);
-	// maxZoneBounds = currentStats.maxZone.boundaries;
 
 	var maxCrimes = document.getElementById('max-crimes');
 	var minCrimes = document.getElementById('min-crimes');
@@ -179,12 +213,11 @@ this.getCurrentSwPoint = function() {
 };
 
 /**
- * Function to be called when the map is zoomed.
+ * Function to be called when the main map is zoomed.
  *
- * @param lat: (double) the new latitude location
- * @param lgt: (double) the new longitude location
- * @param area: (int) the area of 
- * @param callback: Callback function to be called when the map is zoomed.
+ * @param zoomInButton	: 	the zoom in button
+ * @param zoomOutButton	: 	the zoom out button
+ * @param callback 		: 	Callback function to be called when a zoom out event is detected
  */
 this.zoomControl = function(zoomInButton, zoomOutButton, callback) {
 
@@ -208,6 +241,13 @@ this.zoomControl = function(zoomInButton, zoomOutButton, callback) {
 	});  
 };
 
+/**
+ * Function to be called when the max zone map is zoomed.
+ *
+ * @param zoomInButton	: 	the zoom in button
+ * @param zoomOutButton	: 	the zoom out button
+ * @param callback 		: 	Callback function to be called when a zoom out event is detected
+ */
 this.maxZoomControl = function(zoomInButton, zoomOutButton) {
 
 	// Listener for zoomIn
@@ -229,6 +269,13 @@ this.maxZoomControl = function(zoomInButton, zoomOutButton) {
 	});  
 };
 
+/**
+ * Function that controls the bounds of the map.
+ *
+ * @param currentmap	: 	the current map
+ * @param swPoint		: 	bounds for the south west coordinate
+ * @param nePoint 		: 	bounds for the north east coordinate
+ */
 this.boundsControl = function(currentMap, swPoint, nePoint) {
 	// Bounds of the desired area
 	var allowedBounds = new google.maps.LatLngBounds(
@@ -267,6 +314,7 @@ this.boundsControl = function(currentMap, swPoint, nePoint) {
 /**
  * Function to be called when the user hovers over the grids.
  *
+ * @param mapVar: 	the map reference
  */
 this.onHover = function(mapVar) {
 	// When the user hovers, outline the grids.
@@ -285,6 +333,7 @@ this.onHover = function(mapVar) {
 /**
  * Function to be called when the user drags the map.
  *
+ * @param callback: Callback function to be called when a drag is detected.
  */
 this.onDrag = function(callback) {
 	map.addListener('dragend', function() {
@@ -297,6 +346,7 @@ this.onDrag = function(callback) {
 /**
  * Function to be called when the user drags the max map.
  *
+ * @param callback: Callback function to be called when a drag is detected.
  */
 this.onMaxDrag = function() {
 	maxMap.addListener('dragend', function() {
@@ -308,12 +358,19 @@ this.onMaxDrag = function() {
 /**
  * Function to be called when the user clicks on the map viewer.
  *
+ * @param callback: Callback function to be called when a click is detected.
  */
 this.onClick = function(callback) {
 	mapViewer.addListener('click', function(event) {
-		map.setCenter(event.latLng);
-		callback();
-		mapMarker.setPosition(map.getCenter());
+		if (isMaxZoneMapShown) {
+			maxMap.setCenter(event.latLng);
+			mapMarker.setPosition(maxMap.getCenter());
+		}
+		else {
+			map.setCenter(event.latLng);
+			callback();
+			mapMarker.setPosition(map.getCenter());
+		}
 	});
 }
 
@@ -330,11 +387,16 @@ this.drawZones = function(geozones) {
 	mapMarker.setPosition(map.getCenter());
 };
 
+/**
+ * Draws the initial max zone(s) in the max zone map.
+ *
+ * @param maxZoneGeoJson: (GeoJson)  the GeoJsin with the zones to draw
+ */
 this.drawInitMaxZone = function(maxZoneGeoJson) {
 	maxZones = maxZoneGeoJson;
 	clearMaxMap();
 	maxMap.data.addGeoJson(maxZoneGeoJson);
-	onZoneClicked(maxMap);
+	onMaxZoneClicked(maxMap);
 	swLat = maxZones.features[0].geometry.coordinates[0][0][1]
 	swLng = maxZones.features[0].geometry.coordinates[0][0][0]
 	neLat = maxZones.features[0].geometry.coordinates[0][2][1]
@@ -347,11 +409,17 @@ this.drawInitMaxZone = function(maxZoneGeoJson) {
     mapMarker.setPosition(maxMap.getCenter());
 }
 
-this.drawMaxZone = function(currentMaxZone) {
-	swLat = maxZones.features[currentMaxZone].geometry.coordinates[0][0][1]
-	swLng = maxZones.features[currentMaxZone].geometry.coordinates[0][0][0]
-	neLat = maxZones.features[currentMaxZone].geometry.coordinates[0][2][1]
-	neLng = maxZones.features[currentMaxZone].geometry.coordinates[0][2][0]
+/**
+ * Draws the next max zone(s) in the max zone map.
+ *
+ * @param nextMaxZone: (int)  index for the next zone to show 
+ */
+this.drawMaxZone = function(nextMaxZone) {
+	// reloadMaxMap()
+	swLat = maxZones.features[nextMaxZone].geometry.coordinates[0][0][1]
+	swLng = maxZones.features[nextMaxZone].geometry.coordinates[0][0][0]
+	neLat = maxZones.features[nextMaxZone].geometry.coordinates[0][2][1]
+	neLng = maxZones.features[nextMaxZone].geometry.coordinates[0][2][0]
 	swCoord = new google.maps.LatLng(swLat, swLng);
 	neCoord = new google.maps.LatLng(neLat, neLng);
 	bounds = new google.maps.LatLngBounds(swCoord, neCoord);
@@ -365,13 +433,13 @@ this.drawMaxZone = function(currentMaxZone) {
  * number of crimes and crime rate.
  *
  * @param event : (event) the click event
+ * @param mapVar: (map) current map reference
  */
 this.drawZoneStats = function(event, mapVar) {
 	level = event.feature.getProperty('level');
-	// zone_id = event.feature.getProperty('zone_id');
 
 	incidents = event.feature.getProperty('totalCrime');
-	// console.log(event.feature.getProperty('zone_id'));
+	console.log(event.feature.getProperty('zone_id'));
 	infoWindow.setContent('<div class=\"popup-circle legend-box-level' + level +'\"></div><div class=\"popup-div\"><h3 class=\"popup-title\">Level <span class=\"popup-res-' + level + '\">' + level + '</span></h3><h3 class=\"popup-title\"><span class=\"popup-res-' + level + '\">' + incidents + '</span> incidents</h3></div>');
 	infoWindow.setPosition(event.latLng)
 	infoWindow.open(mapVar);
@@ -381,10 +449,22 @@ this.drawZoneStats = function(event, mapVar) {
  * Callback function to be called when a click event 
  * in a zone is detected.
  *
+ * @param mapVar: (map) current map reference
  */
-this.onZoneClicked = function(mapVar) {
-	popupListenerHandle = mapVar.data.addListener('click', function(event) {
-		drawZoneStats(event, mapVar);
+this.onZoneClicked = function() {
+	popupListenerHandle = map.data.addListener('click', function(event) {
+		drawZoneStats(event, map);
+	});
+};
+
+/**
+ * Callback function to be called when a click event 
+ * in a zone from the 'max map' is detected.
+ *
+ */
+this.onMaxZoneClicked = function() {
+	maxPopupListenerHandle = maxMap.data.addListener('click', function(event) {
+		drawZoneStats(event, maxMap);
 	});
 };
 
@@ -483,12 +563,23 @@ this.clearGrids = function() {
 	});
 };
 
+/**
+ * Removes all features from the max zone map.
+ *
+ */
 this.clearMaxMap = function() {
+	// Remove listener for the zone's info window
+	google.maps.event.removeListener(maxPopupListenerHandle);
+	resetCurrentMaxZone();
 	// Remove each polygon from the map
 	maxMap.data.forEach(function(feature) {
 		maxMap.data.remove(feature);
 	});
+
+	hidePrevButton();
+	hideNextButton();
 }
+
 /**
  * Defines the visual styles for the map.
  *
@@ -591,6 +682,11 @@ this.backButtonControl = function(callback) {
 	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(backControlDiv);
 };
 
+/**
+ * Creates the back button in max zone map and adds listener.
+ *
+ * @param callback: Callback function to be called when the button is clicked.
+ */
 this.maxBackButtonControl = function(callback) {
 
 	// Create div to hold back button
@@ -612,11 +708,9 @@ this.maxBackButtonControl = function(callback) {
 	controlUI.addEventListener('click', function() {
 		// Close the current open info window
 		infoWindow.close();
+		clearMaxMap();
 		mapMarker.setPosition(map.getCenter());
 		callback();
-
-		// // Update grids color to a light grey
-		// styleMap();
 	});
 
 	maxBackControlDiv.index = 1;
@@ -714,6 +808,110 @@ this.zoomMaxButtonControl = function() {
 }
 
 /**
+ * Shows the max zone button.
+ *
+ */
+this.showMaxZone = function() {
+
+	// Create div to hold show max zone button
+	showMaxZoneControlDiv = document.createElement('div');
+
+	// Set CSS for the control border.
+	var controlUI = document.createElement('div');
+	controlUI.id = 'showMaxZoneButtonDiv';
+	controlUI.title = 'Click to view max zone.';
+	showMaxZoneControlDiv.appendChild(controlUI);
+
+	// Set CSS for the control interior.
+	var controlText = document.createElement('div');
+	controlText.id = 'showMaxZoneButtonText';
+	controlText.innerHTML = 'Show Max Zone';
+	controlUI.appendChild(controlText);
+
+	// Setup the click event listeners: 
+	controlUI.addEventListener('click', function() {
+		// Close the current open info window
+		infoWindow.close();
+		clearMaxMap();
+		setMaxZoneFlag();
+		requestMaxZone();
+	});
+
+	showMaxZoneControlDiv.index = 1;
+	showMaxZoneControlDiv.style['padding-top'] = '10px';
+	showMaxZoneControlDiv.style.display =  'initial';
+	map.controls[google.maps.ControlPosition.TOP_CENTER].push(showMaxZoneControlDiv);
+};
+
+/**
+ * Shows the previous max zone button.
+ *
+ */
+this.showPrevMaxZone = function() {
+
+	// Create div to hold show previous max zone button
+	showPrevMaxZoneControlDiv = document.createElement('div');
+
+	// Set CSS for the control border.
+	var controlUI = document.createElement('div');
+	controlUI.id = 'showPrevMaxZoneButtonDiv';
+	controlUI.title = 'Click to view previous max zone.';
+	showPrevMaxZoneControlDiv.appendChild(controlUI);
+
+	// Set CSS for the control interior.
+	var controlText = document.createElement('div');
+	controlText.id = 'showPrevMaxZoneButtonText';
+	controlText.innerHTML = 'Previous';
+	controlUI.appendChild(controlText);
+
+	// Setup the click event listeners: 
+	controlUI.addEventListener('click', function() {
+		// Close the current open info window
+		infoWindow.close();
+		prevMaxZone();
+	});
+
+	showPrevMaxZoneControlDiv.index = 1;
+	showPrevMaxZoneControlDiv.style['padding-top'] = '10px';
+	showPrevMaxZoneControlDiv.style.display =  'none';
+	maxMap.controls[google.maps.ControlPosition.LEFT_CENTER].push(showPrevMaxZoneControlDiv);
+};
+
+/**
+ * Shows the next max zone button.
+ *
+ */
+this.showNextMaxZone = function() {
+
+	// Create div to hold show next max zone button
+	showNextMaxZoneControlDiv = document.createElement('div');
+
+	// Set CSS for the control border.
+	var controlUI = document.createElement('div');
+	controlUI.id = 'showNextMaxZoneButtonDiv';
+	controlUI.title = 'Click to view next max zone.';
+	showNextMaxZoneControlDiv.appendChild(controlUI);
+
+	// Set CSS for the control interior.
+	var controlText = document.createElement('div');
+	controlText.id = 'showNextMaxZoneButtonText';
+	controlText.innerHTML = 'Next';
+	controlUI.appendChild(controlText);
+
+	// Setup the click event listeners: 
+	controlUI.addEventListener('click', function() {
+		// Close the current open info window
+		infoWindow.close();
+		nextMaxZone();
+	});
+
+	showNextMaxZoneControlDiv.index = 1;
+	showNextMaxZoneControlDiv.style['padding-top'] = '10px';
+	showNextMaxZoneControlDiv.style.display =  'none';
+	maxMap.controls[google.maps.ControlPosition.RIGHT_CENTER].push(showNextMaxZoneControlDiv);
+};
+
+/**
  * Shows the back button.
  *
  */
@@ -733,10 +931,51 @@ this.hideBackButton = function() {
 	backControlDiv.style.display =  'none';
 };
 
-
-this.setMaxZone = function() {
-	var swPoint = new google.maps.LatLng(maxZoneBounds[0].latitude, maxZoneBounds[0].longitude);
-	var nePoint = new google.maps.LatLng(maxZoneBounds[2].latitude, maxZoneBounds[2].longitude);
-	bounds = new google.maps.LatLngBounds(swPoint, nePoint);
-    map.fitBounds(bounds);
+/**
+ * Hides the prev max zone button.
+ *
+ */
+this.hidePrevButton = function() {
+	showPrevMaxZoneControlDiv.style.display =  'none';
 };
+
+/**
+ * Hides the next max zone button.
+ *
+ */
+this.hideNextButton = function() {
+	showNextMaxZoneControlDiv.style.display =  'none';
+};
+
+/**
+ * Shows the prev max zone button.
+ *
+ */
+this.showPrevButton = function() {
+	showPrevMaxZoneControlDiv.style.display =  'initial';
+};
+
+/**
+ * Shows the next max zone button.
+ *
+ */
+this.showNextButton = function() {
+	showNextMaxZoneControlDiv.style.display =  'initial';
+};
+
+/**
+ * Sets the max zone map flag.
+ *
+ */
+this.setMaxZoneFlag = function() {
+	isMaxZoneMapShown = true;
+};
+
+/**
+ * Unsets the max zone map flag.
+ *
+ */
+this.unsetMaxZoneFlag = function() {
+	isMaxZoneMapShown = false;
+};
+

@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nvbyte.companionapp.MainActivity">
+    tools:context="com.nvbyte.companionapp.MainActivity"
+    android:padding="10dp">
 
     <EditText
         android:id="@+id/latitude"
@@ -25,5 +26,60 @@
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
         android:text="Send Mcok"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:id="@+id/zone1"
+        android:layout_marginTop="56dp"
+        android:layout_below="@+id/http"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2"
+        android:id="@+id/zone2"
+        android:layout_alignTop="@+id/zone1"
+        android:layout_toEndOf="@+id/zone1" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3"
+        android:id="@+id/zone3"
+        android:layout_alignTop="@+id/zone2"
+        android:layout_toEndOf="@+id/zone2" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4"
+        android:id="@+id/zone4"
+        android:layout_alignTop="@+id/zone3"
+        android:layout_toEndOf="@+id/zone3" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5"
+        android:id="@+id/zone5"
+        android:layout_alignTop="@+id/zone4"
+        android:layout_toEndOf="@+id/zone4" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="6"
+        android:id="@+id/zone6"
+        android:layout_alignTop="@+id/zone5"
+        android:layout_toEndOf="@+id/zone5" />
 
 </RelativeLayout>

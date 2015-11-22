@@ -32,10 +32,10 @@ module.exports = function GridController(threshold) {
 			throw new Error("Incorrect parameter")
 		}
 		else {
-			logger.info("Grid requested: ");
-			logger.info('\tSW coordinate: ', swCoordinate.getLatitude(), swCoordinate.getLongitude());
-			logger.info('\tNE coordinate: ', neCoordinate.getLatitude(), neCoordinate.getLongitude());
-			logger.info('\tGrid width: ', area);
+			logger.debug("Grid requested: ");
+			logger.debug('    SW coordinate: ', swCoordinate.getLatitude(), swCoordinate.getLongitude());
+			logger.debug('    NE coordinate: ', neCoordinate.getLatitude(), neCoordinate.getLongitude());
+			logger.debug('    Grid width: ', area);
 
 			var extent = [
 							parseFloat(swCoordinate.getLongitude()), 
@@ -47,8 +47,8 @@ module.exports = function GridController(threshold) {
 			var units = 'kilometers';
 
 			squareGrid = turf.squareGrid(extent, cellWidth, units);
-			logger.info('Grid result: ');
-			logger.info('\tTotal grids: ', squareGrid.features.length);
+			logger.debug('Grid result: ');
+			logger.debug('    Total grids: ', squareGrid.features.length);
 				squareGrid.features.forEach(function (feature) {
 
 					var polyCoord = [
