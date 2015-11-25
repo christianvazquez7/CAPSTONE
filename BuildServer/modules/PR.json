@@ -8,7 +8,7 @@
 	"CrimesToIgnore": "Apropiacion Ilegal, Escalamiento, 9, Incendio Malicioso, Vehiculo Hurtado", 									/* LIST TYPE OF CRIMES TO IGNORE */
 	"NWCoordinate": "18.536909, -67.299500",																						/* NORTH-WEST COORDINATE FOR THE GRID */
 	"SECoordinate": "17.918636, -65.176392",																						/* SOUTH-EAST COORDINATE FOR THE GRID */
-	"Area": "1000",																													/* AREA OF THE GRID IN KILOMETERS SQUARE */
+	"Area": "40",																													/* AREA OF THE GRID IN KILOMETERS SQUARE */
 	"Marshall": { 																													/* MARSHALL TO SET ATTRIBUTES OF SODA ENTITY*/
 					"Date": "fecha", 
 					"Time": "hora",

@@ -38,9 +38,6 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	var notPinpointed;
 	var pinpointCount;
 
-	var maxZone;
-	var minZone;
-
 	var onClassification;
 
 	classifierLog.info('Initializing variables for Geozone Classifier');
@@ -213,12 +210,11 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	 */
 	this.getParameter = function(parameter_callback) {
 		classifierLog.info('Getting Parameter for classification');
-		storage.getMaxMin(function(err, max, min) {
+		storage.getCrimeCount(function(err, found) {
 			if(!err) {
-				maxZone = max;
-				minZone = min;
-				classifierLog.notice("The maximun crime count within the zone is " +maxZone+ " and minimun crime count within the zone is ", minZone);
-				parameter_callback();
+				classifierLog.notice("The distinct crime counts found were ", found);
+				console.log(found)
+				strategy.findThreshold(found, 1, parameter_callback);
 			}
 		})
 	}
@@ -230,7 +226,7 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	function classifyZone(count) {
 		storage.getZoneCount(count, function(err, result) {
 			if(!err) {
-				strategy.classify(maxZone, minZone, result, function(level, totalCrime) {
+				strategy.classify(result, function(level, totalCrime) {
 					classifierLog.debug('zone: ' + count + ', level: ' + level + ', Total Crime: ', totalCrime);
 					classifiedZone.push({zone: count, level: level, totalCrime: totalCrime});
 					classificationCount++;

@@ -159,6 +159,9 @@ module.exports = function GeozoneManager (pgClient, mongoClient, finish_callback
 		geozoneStorage.persistGeozone(onClassification);
 	}
 
+	/**
+     * This callback function initialize the classification of the Geozones.
+     */
 	function onClassification() {
 		geozoneLog.info('Initializing Geozone Classifier');
 		classifier.init(geozoneList, geozoneList.length, onStorageComplete);

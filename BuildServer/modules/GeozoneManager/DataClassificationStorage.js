@@ -123,14 +123,14 @@ module.exports = function DataClassificationStorage(client, log) {
 	 * This method retreive the max and min for the classification strategy
 	 * @param maxMin_callback: Callback function use for retreiving of the max and min
 	 */
-	this.getMaxMin = function(maxMin_callback) {
-		pgClient.query("SELECT min(crimecounter), max(crimecounter) FROM classifier", function(err, result) {
+	this.getCrimeCount = function(crimeCount_callback) {
+		pgClient.query("SELECT distinct(crimecounter) FROM classifier", function(err, result) {
  			if(err) {
  				classificationLog.critical('The max and min for the classification strategy were NOT RETREIVE!');
  			}
  			else {
  				classificationLog.notice('The max and min for the classification strategy were retreive');
-				maxMin_callback(null, result.rows[0].max, result.rows[0].min);		
+				crimeCountParse(result, crimeCount_callback);		
  			}
  		});
 	}
@@ -151,5 +151,18 @@ module.exports = function DataClassificationStorage(client, log) {
 				zoneCount_callback(null, result.rows[0].crimecounter);
  			}
 		});
+	}
+
+	/**
+	 * This method parse the array of crime count into an arra of integers.
+	 * @param result: The array result from the crime dictionaty on the database.
+	 * @param parsing_callback: Callback function use to retreive the array of integers.
+	 */
+	var crimeCountParse = function(result, parsing_callback) {
+		var crimeCounter = [];
+		for(var i = 0; i < result.rows.length; i++) {
+			crimeCounter.push(parseInt(result.rows[i].crimecounter));
+		}
+		parsing_callback(null, crimeCounter);
 	}
 }
