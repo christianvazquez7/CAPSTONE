@@ -23,8 +23,14 @@ module.exports = function Crime(pLatitude,pLongitude,pType,pDate,pTime,pId,pIsDo
 		var crimeList = [];
 		for (var i =0 ; i < jsonList.length ; i++) {
 			var crimeJson = jsonList[i];
-			var latitude = crimeJson[marshall.getLatitudeLabel()];
-			var longitude = crimeJson[marshall.getLongitudeLabel()];
+			if(marshall.getLatitudeLabel() == marshall.getLongitudeLabel()) {
+				var latitude = crimeJson[marshall.getLatitudeLabel()].latitude;
+				var longitude = crimeJson[marshall.getLongitudeLabel()].longitude;
+			}
+			else {
+				var latitude = crimeJson[marshall.getLatitudeLabel()];
+				var longitude = crimeJson[marshall.getLongitudeLabel()];
+			}
 			var type = crimeJson[marshall.getTypeLabel()];
 			var date = crimeJson[marshall.getDateLabel()];
 			var time = crimeJson[marshall.getTimeLabel()];

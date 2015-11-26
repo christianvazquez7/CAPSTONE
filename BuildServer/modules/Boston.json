@@ -1,0 +1,20 @@
+{
+	"Location": "Boston",																												/* LOCATION WHERE THE DATA WILL BE COLLECTED */
+	"SodaSource": "https://data.cityofboston.gov/", 																							/* SODA DATA SOURCE */
+	"Token": "mxH22n8js0toWFnxPSEUDzVKi", 																							/* TOKEN USED TO CONNECT TO SODA DATA SOURCE */
+	"Resource": "7cdf-6fgx", 																										/* RESOURCE USED TO CONNECT TO SODA DATA SOURCE */
+	"From": "2012-07-08",  																											/* FROM WHICH DAY TO RETREIVE DATA */
+	"To": "2015-08-10", 																											/* TO WHICH DAT TO RETREIVE DATA */
+	"CrimesToIgnore": "RESIDENTIAL BURGLARY, COMMERCIAL BURGLARY, ROBBERY, FRAUD, WEAPONS CHARGE, MedAssist, BENoProp, VAL, PropFound, InvPer, TOWED, InvProp, PropLost, DRUG CHARGES, OTHER LARCENY, Arrest, VANDALISM, MVAcc, CRIMES AGAINT CHILDREN, PhoneCalls, Ballist, FIRE, Harbor, Restrain", 									/* LIST TYPE OF CRIMES TO IGNORE */
+	"NWCoordinate": "42.405759, -71.198786",																						/* NORTH-WEST COORDINATE FOR THE GRID */
+	"SECoordinate": "42.215596, -70.912455",																						/* SOUTH-EAST COORDINATE FOR THE GRID */
+	"Area": "40",																													/* AREA OF THE GRID IN KILOMETERS SQUARE */
+	"Marshall": { 																													/* MARSHALL TO SET ATTRIBUTES OF SODA ENTITY*/
+					"Date": "fromdate", 
+					"Time": "fromdate",
+					"Longitude": "location",
+					"Latitude": "location",
+					"Type": "incident_type_description",
+					"Id": "compnos"
+				}
+}

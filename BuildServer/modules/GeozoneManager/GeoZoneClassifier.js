@@ -213,7 +213,6 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 		storage.getCrimeCount(function(err, found) {
 			if(!err) {
 				classifierLog.notice("The distinct crime counts found were ", found);
-				console.log(found)
 				strategy.findThreshold(found, 1, parameter_callback);
 			}
 		})
@@ -226,9 +225,9 @@ module.exports = function GeozoneClassifier (client, mongoClient, log) {
 	function classifyZone(count) {
 		storage.getZoneCount(count, function(err, result) {
 			if(!err) {
-				strategy.classify(result, function(level, totalCrime) {
+				strategy.classify(result, function(level, totalCrime, lower, upper) {
 					classifierLog.debug('zone: ' + count + ', level: ' + level + ', Total Crime: ', totalCrime);
-					classifiedZone.push({zone: count, level: level, totalCrime: totalCrime});
+					classifiedZone.push({zone: count, level: level, totalCrime: totalCrime, lower: lower, upper: upper});
 					classificationCount++;
 					that.beginClassification(onClassification);
 				});

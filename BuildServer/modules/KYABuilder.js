@@ -10,7 +10,6 @@
 /**
  * Module imports.
  */
-
 var argv 				= require('optimist').usage('File to Initialize KYA Builder.\nUsage: $0').demand('f').demand('c').alias('f', 'file').alias('c', 'code').describe('f', 'Load a file').describe('c', 'Code of city').argv;
 var stripJsonComments 	= require('strip-json-comments');
 var GeozoneManager 		= require('./GeozoneManager/GeozoneManager.js');
@@ -25,16 +24,14 @@ var mongodb 			= require('mongodb');
 /**
  * Log for the Geozone Manager.
  */
-
 var Log = require('log');
-var log = new Log('debug', fs.createWriteStream('./GeozoneManager/GeozoneLogs/' + new Date().getTime().toString() + ' ' + new Date().toString() + '.log'));
+var log = new Log('debug', fs.createWriteStream('./GeozoneManager/GeozoneLogs/' + new Date().getTime().toString() + '.log'));
 
 /**
  * To check if the argunments are place.
  */
-
 if (argv.file != true){
-	log.info('The city code is', argv.city);
+	log.info('The city code is', argv.code);
 	var lines = '';
 	var s = fs.createReadStream(argv.file);
 }
@@ -46,7 +43,6 @@ else {
 /**
  * Reading Parameter for to execute.
  */
-
 log.info('Reading parameter');
 
 s.on('data', function (buf) {
@@ -66,7 +62,7 @@ var mongoClient = mongodb.MongoClient;
 
 // Connection URLs for Databases. This is where your MongoDB and PostgreSQL server are running.
 var SQLconnection = "postgres://postgres:joel@localhost:5433/KYA";
-var NoSQLconnection = "mongodb://localhost:27017/Geozone";
+var NoSQLconnection = "mongodb://localhost:27017/Geozone" + argv.code;
 
 var pgClient = new SQLClient.Client(SQLconnection);
 

@@ -126,10 +126,10 @@ module.exports = function DataClassificationStorage(client, log) {
 	this.getCrimeCount = function(crimeCount_callback) {
 		pgClient.query("SELECT distinct(crimecounter) FROM classifier", function(err, result) {
  			if(err) {
- 				classificationLog.critical('The max and min for the classification strategy were NOT RETREIVE!');
+ 				classificationLog.critical('The crime counts for the classification strategy were NOT RETREIVE!');
  			}
  			else {
- 				classificationLog.notice('The max and min for the classification strategy were retreive');
+ 				classificationLog.notice('The crime counts for the classification strategy were retreive');
 				crimeCountParse(result, crimeCount_callback);		
  			}
  		});
