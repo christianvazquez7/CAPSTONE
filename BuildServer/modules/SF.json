@@ -1,0 +1,20 @@
+{
+	"Location": "SF",																												/* LOCATION WHERE THE DATA WILL BE COLLECTED */
+	"SodaSource": "https://data.sfgov.org/", 																							/* SODA DATA SOURCE */
+	"Token": "mxH22n8js0toWFnxPSEUDzVKi", 																							/* TOKEN USED TO CONNECT TO SODA DATA SOURCE */
+	"Resource": "gxxq-x39z", 																										/* RESOURCE USED TO CONNECT TO SODA DATA SOURCE */
+	"From": "2003-01-01",  																											/* FROM WHICH DAY TO RETREIVE DATA */
+	"To": "2015-11-12", 																											/* TO WHICH DAT TO RETREIVE DATA */
+	"CrimesToIgnore": "PROSTITUTION, VANDALISM, ROBBERY, TRASPASS, SECONDARY CODES, WARRANTS, FRAUD, SUSPICIOUS OCC, NON-CRIMINAL, BURGLARY, OTHER OFFENSES", 									/* LIST TYPE OF CRIMES TO IGNORE */
+	"NWCoordinate": "37.811884, -122.531336",																						/* NORTH-WEST COORDINATE FOR THE GRID */
+	"SECoordinate": "37.702767, -122.331522",																						/* SOUTH-EAST COORDINATE FOR THE GRID */
+	"Area": "40",																													/* AREA OF THE GRID IN KILOMETERS SQUARE */
+	"Marshall": { 																													/* MARSHALL TO SET ATTRIBUTES OF SODA ENTITY*/
+					"Date": "date", 
+					"Time": "date",
+					"Longitude": "location",
+					"Latitude": "location",
+					"Type": "category",
+					"Id": "incidntnum"
+				}
+}

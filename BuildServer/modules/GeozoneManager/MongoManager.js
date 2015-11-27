@@ -47,6 +47,7 @@ module.exports = function MongoManager (mongoClient, log){
 				});
 			}
 			else {
+				console.log('Geozone ' + geozone.zone_id + ' is already added');
 				mongoLog.notice('Geozone ' + geozone.zone_id + ' is already added');
 				add_callback();
 			}

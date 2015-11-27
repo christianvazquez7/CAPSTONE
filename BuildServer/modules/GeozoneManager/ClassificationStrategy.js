@@ -29,11 +29,11 @@ module.exports = function ClassificationStrategy (log) {
 	 */
 	this.classify = function(count, strategy_callback) {
 		if(count > upperThreshold) {
-			strategyLog.notice('The level of the crime count ' + count + ' is ', level);
+			strategyLog.notice('The level of the crime count ' + count + ' is ', 10);
 			strategy_callback(10, count, lowerThreshold, upperThreshold);
 		}
 		else if (count < lowerThreshold) {
-			strategyLog.notice('The level of the crime count ' + count + ' is ', level);
+			strategyLog.notice('The level of the crime count ' + count + ' is ', 1);
 			strategy_callback(1, count, lowerThreshold, upperThreshold);
 		}
 		else {

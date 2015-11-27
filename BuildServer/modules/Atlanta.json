@@ -1,0 +1,20 @@
+{
+	"Location": "Atlanta",																												/* LOCATION WHERE THE DATA WILL BE COLLECTED */
+	"SodaSource": "https://brigades.opendatanetwork.com/", 																							/* SODA DATA SOURCE */
+	"Token": "mxH22n8js0toWFnxPSEUDzVKi", 																							/* TOKEN USED TO CONNECT TO SODA DATA SOURCE */
+	"Resource": "hn3z-ivw4", 																										/* RESOURCE USED TO CONNECT TO SODA DATA SOURCE */
+	"From": "1920-02-05",  																											/* FROM WHICH DAY TO RETREIVE DATA */
+	"To": "2015-11-12", 																											/* TO WHICH DAT TO RETREIVE DATA */
+	"CrimesToIgnore": "LARCENY-NON VEHICLE, BURGLARY-RESIDENCE, LARCENY-FROM VEHICLE", 									/* LIST TYPE OF CRIMES TO IGNORE */
+	"NWCoordinate": "33.903521, -84.566525",																						/* NORTH-WEST COORDINATE FOR THE GRID */
+	"SECoordinate": "33.600081, -84.233502",																						/* SOUTH-EAST COORDINATE FOR THE GRID */
+	"Area": "40",																													/* AREA OF THE GRID IN KILOMETERS SQUARE */
+	"Marshall": { 																													/* MARSHALL TO SET ATTRIBUTES OF SODA ENTITY*/
+					"Date": "occur_date", 
+					"Time": "occur_time",
+					"Longitude": "locationfromxy",
+					"Latitude": "locationfromxy",
+					"Type": "uc2_literal",
+					"Id": "mi_prinx"
+				}
+}

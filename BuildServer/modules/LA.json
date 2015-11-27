@@ -1,0 +1,20 @@
+{
+	"Location": "LA",																												/* LOCATION WHERE THE DATA WILL BE COLLECTED */
+	"SodaSource": "https://data.lacity.org/", 																							/* SODA DATA SOURCE */
+	"Token": "mxH22n8js0toWFnxPSEUDzVKi", 																							/* TOKEN USED TO CONNECT TO SODA DATA SOURCE */
+	"Resource": "ms69-dazs", 																										/* RESOURCE USED TO CONNECT TO SODA DATA SOURCE */
+	"From": "2013-01-01",  																											/* FROM WHICH DAY TO RETREIVE DATA */
+	"To": "2014-05-28", 																											/* TO WHICH DAT TO RETREIVE DATA */
+	"CrimesToIgnore": "TRAFFIC DR #, ROBBERY, BURGLARY, VIOLATION OF RESTRAINING ORDER, SPOUSAL(COHAB) ABUSE - SIMPLE ASSAULT, SHOPLIFTING, VANDALISM - FELONY, DOCUMENT FORGERY / STOLEN FELONY, BATTERY - SIMPLE ASSAULT, OTHER MISCELLANEOUS CRIME, ABORTION/ILLEGAL, VANDALISM - MISDEAMEANOR, VIOLATION OF COURT ORDER", 									/* LIST TYPE OF CRIMES TO IGNORE */
+	"NWCoordinate": "34.350762, -118.727626",																						/* NORTH-WEST COORDINATE FOR THE GRID */
+	"SECoordinate": "33.674595, -118.051967",																						/* SOUTH-EAST COORDINATE FOR THE GRID */
+	"Area": "40",																													/* AREA OF THE GRID IN KILOMETERS SQUARE */
+	"Marshall": { 																													/* MARSHALL TO SET ATTRIBUTES OF SODA ENTITY*/
+					"Date": "date_rptd", 
+					"Time": "date_rptd",
+					"Longitude": "location_1",
+					"Latitude": "location_1",
+					"Type": "crm_cd_desc",
+					"Id": "dr_no"
+				}
+}
