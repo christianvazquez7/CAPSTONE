@@ -77,6 +77,7 @@ module.exports = function GeozoneManager (pgClient, mongoClient, finish_callback
 		classifier.beginClassification(function(err, result) {
 			classifiedList = result;
 			console.info('Classification Completed');
+			geozoneList = null; // Clear Memory...
 			persistClassification();
 		});
 	}
