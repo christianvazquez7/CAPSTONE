@@ -58,7 +58,7 @@ module.exports = function RequestHandlers() {
 	}
 
 	/**
-	 * Request handle for the fetching of the zones. Connects with the 
+	 * Request handle for fetching zones. Connects with the 
 	 * KYA DB to fetch the zones requested.
 	 *
 	 * @param req: Object containing the following parameters:
@@ -81,6 +81,31 @@ module.exports = function RequestHandlers() {
 			else {
 				res.send(result);
 				// logger.info(result);
+			}
+		});
+	}
+
+	/**
+	 * Request handle for fetching zones by lebel. Connects with the 
+	 * KYA DB to fetch the zones requested.
+	 *
+	 * @param req: Object containing the following parameters:
+	 *   1) northWest: Farthest north west point of area requested.
+	 *   2) northEast: Farthest north east point of area requested.
+	 *	 3) southWest: Farthest south west point of area requested.
+	 *   4) southEast: Farthest south east point of area requested.
+	 * @param response: A Json array with the requested zones.
+	 */
+	this.getZonesByLevel = function(req, res) {
+		logger.debug("GET --> Zones by level handle");
+		level = parseInt(req.query.level);
+		mDashboardHandler.requestZonesByLevel(level, function(err, result){
+			if (err) {
+				res.statusCode = 400;
+				res.send(err);
+			}
+			else {
+				res.send(result);
 			}
 		});
 	}
@@ -168,7 +193,7 @@ module.exports = function RequestHandlers() {
 	}
 
 	/**
-	 * Communicates with teh Grid Controller to construct the grids.
+	 * Communicates with the Grid Controller to construct the grids.
 	 *
 	 * @param req: Object containing the following parameters:
 	 *   1) swLat	: south west latitude of current grid
@@ -208,6 +233,28 @@ module.exports = function RequestHandlers() {
 		logger.debug("POST --> Threshold handle");
 		threshold = req.body;
 		mDashboardHandler.setThreshold(threshold, function(err, result){
+			if (err) {
+				res.statusCode = 400;
+				res.send(err);
+			}
+			else {
+				res.send(result);
+				// logger.info('Threshold result --> ', result);
+			}
+		});
+	}
+
+	/**
+	 * Sends the new map location id value to the dashboard handler.
+	 *
+	 * @param req: Object containing the following parameter:
+	 *   1) mapID	: the new map location ID
+	 * @param response: if it was succesusfull or not in sending the data
+	 */
+	this.setMapID = function(req, res) {
+		logger.debug("POST --> MapID handle");
+		mapID = req.body;
+		mDashboardHandler.setMapID(mapID, function(err, result){
 			if (err) {
 				res.statusCode = 400;
 				res.send(err);

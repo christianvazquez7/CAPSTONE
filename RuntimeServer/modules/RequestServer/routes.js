@@ -27,9 +27,13 @@ module.exports = function Route(app, handlers) {
 
 	app.get('/grids/ready/', handlers.isReady);
 
+	app.get('/zones/level/', handlers.getZonesByLevel);
+
 	app.post('/zones', bufferParser, handlers.getZones);
 	
 	app.post('/zones/current/', bufferParser, handlers.handleCurrentZone);
+
+	app.post('/zones/mapid', bufferParser, handlers.setMapID);
 	
 	app.post('/location/checkin/', bufferParser, handlers.handleCheckIn);
 	

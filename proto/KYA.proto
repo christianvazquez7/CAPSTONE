@@ -142,9 +142,15 @@ message Stats {
     required double maxNumOfCrimes = 1;
     required double minNumOfCrimes = 2;
     required double crimeAverage = 3;
+    required string thresholdBounds = 4;
 }
 
 // Threshold
 message Threshold {
     required double threshold = 1;
+}
+
+// 
+message MapID {
+    required int32 mapID = 1;
 }

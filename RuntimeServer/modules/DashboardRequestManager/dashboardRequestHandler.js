@@ -18,10 +18,11 @@ module.exports = function DashboardRequestHandler() {
 	// Protocol buffer initialization
 	process.chdir(__dirname);
 	var protoBuilder = ProtoBuf.loadProtoFile("../../../proto/KYA.proto");
-	var KYA = protoBuilder.build("com.nvbyte.kya");
-	var GridBounds = KYA.GridBounds;
-	var Stats = KYA.Stats;
-	var Threshold = KYA.Threshold;
+	var KYA = protoBuilder.build("com.nvbyte.kya"),
+		GridBounds = KYA.GridBounds,
+		Stats = KYA.Stats,
+		Threshold = KYA.Threshold,
+		MapID = KYA.MapID;
 	var zonesManager = new ZonesManager();
 	var gridController;
 
@@ -29,7 +30,6 @@ module.exports = function DashboardRequestHandler() {
 	var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';			// Puerto Rico's geozones db
 	// var url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/ChicagoGeozone';	// Chicago's geozones db
 	// var url = 'mongodb://localhost:27017/Geozone';	// Local PR database
-	// var url = 'mongodb://localhost:27017/TestGeozone';	// Test database
 	
 	/**
 	 * Fetch the current crime statistics from KYA DB.
@@ -62,6 +62,12 @@ module.exports = function DashboardRequestHandler() {
 					else if (result.length) {
 						logger.debug('Fetching statistics...');
 						maxCrime = result[0].totalCrime;
+						thresholdString = result[0].threshold;
+						thresholdArray = thresholdString.split(',')
+						thresholdBound1 = parseFloat(thresholdArray[0]).toFixed(2);
+						thresholdBound2 = parseFloat(thresholdArray[1]).toFixed(2);
+						thresholdBounds = thresholdBound1 + ', ' + thresholdBound2;
+						logger.debug('    Threshold: ', thresholdBounds);
 						logger.debug('    Max crimes: ', maxCrime);
 						collection.find().sort({"totalCrime":1}).limit(1).toArray(function (err, result) 
 						{
@@ -81,7 +87,7 @@ module.exports = function DashboardRequestHandler() {
 										logger.debug('    Crime rate: ', crimeAverage);
 										db.close();  
 										logger.debug('CONN: Mongodb connection closed.');                  
-										var result = encodeStats(maxCrime, minCrime, crimeAverage);
+										var result = encodeStats(maxCrime, minCrime, crimeAverage, thresholdBounds);
 										callback(err, result)
 									}
 								});
@@ -131,6 +137,34 @@ module.exports = function DashboardRequestHandler() {
 							callback(err, maxZone);
 						});
 					}
+				});
+			}
+		});
+	};
+
+	/**
+	 * Fetch the zone(s) with the maximum number of incidents.
+	 *
+	 * @param callback: Callback function to be called when the zone(s) have been fecthed from the database.
+	 */
+	this.requestZonesByLevel = function(level, callback) {
+		// Use connect method to connect to the Server
+		MongoClient.connect(url, function (err, db) {
+			// Documents collection
+			var collection = db.collection('Geozone');
+			if (err) {
+				logger.debug('ERROR: Unable to connect to the mongoDB server. Error:', err);
+				callback(err);
+			} 
+			else {
+				logger.debug('CONN: Connection established to', url);
+				logger.debug('Fetching zones from level ' + level + '...');
+				collection.find({"level": level}).toArray(function (err, result)
+				{
+					db.close();
+					logger.debug('CONN: Mongodb connection closed.');
+					zones = zonesManager.getGeoJson(result);
+					callback(err, zones);
 				});
 			}
 		});
@@ -270,19 +304,58 @@ module.exports = function DashboardRequestHandler() {
 	};
 
 	/**
+	 * Sets the threshold value that indicates when to fetch the zones.
+	 *
+	 * @param threshold: the threshold value
+	 * @param callback: Callback function to be called when the threshold have been set
+	 */
+	this.setMapID = function(mapID, callback) {
+		logger.debug('Setting mapID...');
+		
+		try {
+			var mapIDBuf = MapID.decode(mapID);
+			var mapIDValue = mapIDBuf.mapID;
+			logger.debug('    mapID ->', mapIDValue)
+			if (mapIDValue == 0) {
+				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';			// Puerto Rico's geozones db
+			}
+			else if (mapIDValue == 1) {
+				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneBoston';		// Boston's geozones db
+			}
+			else if (mapIDValue == 2) {
+				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneAtlanta';	// Atlanta's geozones db
+			}
+			else if (mapIDValue == 3) {
+				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneSF';			// San Francisco's geozones db
+			}
+			else if (mapIDValue == 4) {
+				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneLA';			// Los Angeles's geozones db
+			}
+
+			callback(null, 'SUCCESS');
+		}
+		catch(err) {
+			logger.debug('ERROR:  Error when trying to set mapID.');
+			callback(err);
+		}
+	};
+
+	/**
 	 * Prepare the stats to be send via a HTTP respone.
 	 *
 	 * @param maxCrime: the maximum number of incidents
 	 * @param minCrime: the minimum number of incidents
 	 * @param crimeAverage: the crime average
+	 * @param thresholdBounds: the upper and lower bound of the classification strategy
 	 *
 	 * @return buffer: the parameters encoded into a buffer object
 	 */
-	function encodeStats(maxCrime, minCrime, crimeAverage) {
+	function encodeStats(maxCrime, minCrime, crimeAverage, thresholdBounds) {
 		var currentStats = new Stats({
 			"maxNumOfCrimes" : maxCrime,
 			"minNumOfCrimes" : minCrime,
-			"crimeAverage": crimeAverage
+			"crimeAverage": crimeAverage,
+			"thresholdBounds": thresholdBounds
  		});
 
  		var buffer = currentStats.encode();

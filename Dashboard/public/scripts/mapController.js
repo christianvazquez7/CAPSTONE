@@ -185,11 +185,13 @@ this.drawStats = function(stats) {
 	var maxCrimes = document.getElementById('max-crimes');
 	var minCrimes = document.getElementById('min-crimes');
 	var crimeRate = document.getElementById('crime-rate');
+	var thresholdBounds = document.getElementById('threshold-bounds');
 
 	// Modify statistics in HTML file
 	maxCrimes.innerHTML = currentStats.maxNumOfCrimes;
 	minCrimes.innerHTML = currentStats.minNumOfCrimes;
 	crimeRate.innerHTML = currentStats.crimeAverage.toFixed(2);
+	thresholdBounds.innerHTML = currentStats.thresholdBounds;
 };
 
 /**
@@ -381,10 +383,15 @@ this.onClick = function(callback) {
  * @param geozones: (GeoJson)  the GeoJsin with the zones to draw
  */
 this.drawZones = function(geozones) {
-	map.data.addGeoJson(geozones);
-	onZoneClicked(map);
-	styleZones(map);
-	mapMarker.setPosition(map.getCenter());
+	if (geozones.features.length == 0) {
+		showZonesError(map);
+	}
+	else {
+		map.data.addGeoJson(geozones);
+		onZoneClicked(map);
+		styleZones(map);
+		mapMarker.setPosition(map.getCenter());
+	}
 };
 
 /**
@@ -393,20 +400,25 @@ this.drawZones = function(geozones) {
  * @param maxZoneGeoJson: (GeoJson)  the GeoJsin with the zones to draw
  */
 this.drawInitMaxZone = function(maxZoneGeoJson) {
-	maxZones = maxZoneGeoJson;
-	clearMaxMap();
-	maxMap.data.addGeoJson(maxZoneGeoJson);
-	onMaxZoneClicked(maxMap);
-	swLat = maxZones.features[0].geometry.coordinates[0][0][1]
-	swLng = maxZones.features[0].geometry.coordinates[0][0][0]
-	neLat = maxZones.features[0].geometry.coordinates[0][2][1]
-	neLng = maxZones.features[0].geometry.coordinates[0][2][0]
-	swCoord = new google.maps.LatLng(swLat, swLng);
-	neCoord = new google.maps.LatLng(neLat, neLng);
-	bounds = new google.maps.LatLngBounds(swCoord, neCoord);
-	styleZones(maxMap);
-    maxMap.fitBounds(bounds);
-    mapMarker.setPosition(maxMap.getCenter());
+	if (maxZoneGeoJson.features.length == 0) {
+		showZonesError(maxMap);
+	}
+	else {
+		maxZones = maxZoneGeoJson;
+		clearMaxMap();
+		maxMap.data.addGeoJson(maxZoneGeoJson);
+		onMaxZoneClicked(maxMap);
+		swLat = maxZones.features[0].geometry.coordinates[0][0][1]
+		swLng = maxZones.features[0].geometry.coordinates[0][0][0]
+		neLat = maxZones.features[0].geometry.coordinates[0][2][1]
+		neLng = maxZones.features[0].geometry.coordinates[0][2][0]
+		swCoord = new google.maps.LatLng(swLat, swLng);
+		neCoord = new google.maps.LatLng(neLat, neLng);
+		bounds = new google.maps.LatLngBounds(swCoord, neCoord);
+		styleZones(maxMap);
+	    maxMap.fitBounds(bounds);
+	    mapMarker.setPosition(maxMap.getCenter());
+	}
 }
 
 /**
@@ -441,7 +453,7 @@ this.drawZoneStats = function(event, mapVar) {
 	incidents = event.feature.getProperty('totalCrime');
 	console.log(event.feature.getProperty('zone_id'));
 	infoWindow.setContent('<div class=\"popup-circle legend-box-level' + level +'\"></div><div class=\"popup-div\"><h3 class=\"popup-title\">Level <span class=\"popup-res-' + level + '\">' + level + '</span></h3><h3 class=\"popup-title\"><span class=\"popup-res-' + level + '\">' + incidents + '</span> incidents</h3></div>');
-	infoWindow.setPosition(event.latLng)
+	infoWindow.setPosition(event.latLng);
 	infoWindow.open(mapVar);
 };
 
@@ -486,6 +498,26 @@ this.showInstructions = function() {
 	instrWindow.open(map);
 	// After 5 seconds the info window closes itself
 	setTimeout(function(){instrWindow.close();}, '5000');
+};
+
+/**
+ * Shows an info window when there are not zones to show.
+ *
+ */
+this.showZonesError = function(mapVar) {
+	var contentString = '<div id="instrWindow">'+
+	'There are not zones to show.' +
+	'</div>';
+
+	instrWindow = new google.maps.InfoWindow({
+		content: contentString,
+		maxWidth: 200
+	});
+
+	instrWindow.setPosition(mapVar.getCenter());
+	instrWindow.open(mapVar);
+	// After 5 seconds the info window closes itself
+	setTimeout(function(){instrWindow.close();}, '10000');
 };
 
 /**
@@ -842,6 +874,14 @@ this.showMaxZone = function() {
 	showMaxZoneControlDiv.style.display =  'initial';
 	map.controls[google.maps.ControlPosition.TOP_CENTER].push(showMaxZoneControlDiv);
 };
+
+this.showZonesByLevel = function(level) {
+	// Close the current open info window
+	infoWindow.close();
+	clearMaxMap();
+	setMaxZoneFlag();
+	requestZonesByLevel(level);
+}
 
 /**
  * Shows the previous max zone button.

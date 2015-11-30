@@ -12,7 +12,7 @@ var swPoint,
 	nePoint,
 	initArea, 			// the initial size of the grids
 	currentArea, 		// the current size of the grids
-	thresholdArea,
+	thresholdArea,		// the value needed to be reached to fetch zones
 	reductionFactor;	// the reduction factor for each level of the grids
 
 // Protocol Buffers
@@ -20,95 +20,41 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 	builder = ProtoBuf.loadProtoFile("KYA.proto"),
 	KYA = builder.build("com.nvbyte.kya"),
 	GridBounds = KYA.GridBounds,
-	GeoPoint = KYA.GeoPoint;
-	Threshold = KYA.Threshold;
+	GeoPoint = KYA.GeoPoint,
+	Threshold = KYA.Threshold,
+	MapID = KYA.MapID;
 
-var currentMaxZone,
-	maxZoneLength;
+var currentMaxZone,		// Curent max zone id shown
+	maxZoneLength,		// Number of max zones
+	prevMapID;			// Id of previous location
+
 /**
- * Gets the current crime statistics when the HTML
- * document is ready.
+ * Sets the initial parameters and gets the current crime
+ * statistics when the HTML document is ready.
  */
 $(document).ready(function() {
 	// Specify bounds for the initial position of the grid
-	// Change this to indicate the location for the grids
+	// Change this to indicate another location for the grids
 	var swLat = 17.918636,
 		swLng = -67.299500,
 		neLat = 18.536909,
 		neLng = -65.176392;
 
 	// Specify the map's location
-	// Change this to indicate the location of the area of study
+	// Change this to indicate another location for the area of study
 	var mapLocLat = 18.210952,
 		mapLocLng = -66.492914;
 
-	// var swLat = 41.588743,
-	// 	swLng = -87.967529,
-	// 	neLat = 42.051332,
-	// 	neLng = -87.377014;
+	var initialArea = 20;			// Initial grid size
+	prevMapID = 0; 					// Puerto Rico's ID
 
-	// var mapLocLat = 41.8369,
-	// 	mapLocLng = -87.6847;
-
-	// Initial grid size
-	var initialArea = 20;
-
-	$("#maxZoneMap").hide();			// Hides the max zone map
-	$("#loading-img").hide();			// Hides the loading animation
+	$("#maxZoneMap").hide();		// Hides the max zone map
+	$("#loading-img").hide();		// Hides the loading animation
 
 	buildMap(mapLocLat, mapLocLng, swLat, swLng, neLat, neLng, initialArea);
 	requestStats();					// Fetch current statatistics from database
 });
-	
 
-this.prevMaxZone = function() {
-	if (currentMaxZone == 1) {
-		currentMaxZone = 1;
-		if (maxZoneLength > 1) {
-			showNextButton()
-		}
-	}
-	else {
-		currentMaxZone = currentMaxZone - 1;
-
-		if (currentMaxZone == 1) {
-			hidePrevButton();
-		}
-
-		if (currentMaxZone < maxZoneLength) {
-			showNextButton();
-		}
-		drawMaxZone(currentMaxZone-1);
-	}
-}
-
-this.nextMaxZone = function() {
-	if (currentMaxZone == maxZoneLength) {
-		currentMaxZone = maxZoneLength;
-		if (maxZoneLength > 1) {
-			showPrevButton()
-		}
-	}
-	else {
-		currentMaxZone = currentMaxZone + 1;
-
-		if (currentMaxZone == maxZoneLength) {
-			hideNextButton();
-			if (maxZoneLength > 1) {
-				showPrevButton();
-			}
-		}
-
-		if (currentMaxZone > 1 && currentMaxZone < maxZoneLength) {
-			showPrevButton();
-		}
-		drawMaxZone(currentMaxZone-1);
-	}
-}
-
-this.resetCurrentMaxZone = function() {
-	currentMaxZone = 1;
-}
 
 /**
  * Constructs a new Google Map object.
@@ -132,6 +78,10 @@ this.buildMap = function(locLat, locLng, swLat, swLng, neLat, neLng, area) {
 	drawMap(locLat, locLng, swInitLatLng, neInitLatLng, initArea, onGridClicked, onBackButtonClicked, onMapDrag, onZoomOut, onMaxBackButtonClicked);
 };
 
+/**
+ * Sends the threshold area to the server.
+ *
+ */
 this.setThreshold = function() {
 
 	// Preparing buffer for HTTP request 
@@ -280,6 +230,29 @@ this.requestMaxZone = function() {
 }
 
 /**
+ * Connects to the server and 
+ *
+ */
+this.requestZonesByLevel = function(level) {
+	$('#maxZoneMap').hide();
+	$("#loading-img").show();
+	$("#googleMap").hide();
+	reloadMaxMap();
+
+	$.ajax({
+        url: 'http://localhost:3000/zones/level/?level=' + level,
+        type: 'GET',
+        dataType: 'json',
+        success: function(res) {
+        	$("#loading-img").hide();
+        	$('#maxZoneMap').show();
+        	reloadMaxMap();
+        	onMaxZoneFetched(res);
+        }
+    });
+}
+
+/**
  * Callback function to be called when the crimes statistics have been
  * fetched from the database.
  *
@@ -389,4 +362,243 @@ this.onMaxBackButtonClicked = function() {
 
 	// Sets the isMaxZoneShown flag to false
 	unsetMaxZoneFlag();
+}
+
+/**
+ * Change the current map.
+ *
+ * @param newID: (int) the new id
+ */
+this.showNewMap = function(newID) {
+	changeMapID(newID);
+	changeMainMap(newID);
+}
+
+/**
+ * Clears the current map and shows a new map with the new location.
+ *
+ * @param newID: (int) the new id
+ */
+this.changeMainMap = function(newID) {
+	$("#googleMap").show();
+	clearGrids();
+	clearZones();
+	clearMaxMap();
+
+	removeMapIdClass(newID);		// Remove old CSS class
+	addMapIdClass(newID);			// Add new CSS class
+
+	// Puerto Rico Location
+	if (newID == 0) {
+		// Initial position of the grid
+		var swLat = 17.918636,
+			swLng = -67.299500,
+			neLat = 18.536909,
+			neLng = -65.176392;
+
+		// Map's location
+		var mapLocLat = 18.210952,
+			mapLocLng = -66.492914;
+	}
+	// Boston
+	else if (newID == 1) {
+		// Initial position of the grid
+		var swLat = 42.230469,
+			swLng = -71.183508,
+			neLat = 42.399548,
+			neLng = -70.993994;
+
+		// Map's location
+		var mapLocLat = 42.3601,
+			mapLocLng = -71.0589;
+	}
+	// Atlanta
+	else if (newID == 2) {
+		// Initial position of the grid
+		var swLat = 33.646537,
+			swLng =  -84.544896,
+			neLat = 33.887989,
+			neLng = -84.348516;
+
+		// Map's location
+		var mapLocLat = 33.7550,
+			mapLocLng = -84.3900;
+	}
+	// San Francisco
+	else if (newID == 3) {
+		// Initial position of the grid
+		var swLat = 37.708541298593325,
+			swLng = -122.51712799072266,
+			neLat = 37.813310018173176,
+			neLng = -122.34821319580078;
+
+		// Map's location
+		var mapLocLat = 37.7833,
+			mapLocLng = -122.4167;
+	}
+	// Los Angeles
+	else if (newID == 4) {
+		// Initial position of the grid
+		var swLat = 33.706589,
+			swLng = -118.602658,
+			neLat = 34.342825,
+			neLng = -118.196164;
+
+		// Map's location
+		var mapLocLat = 34.0500,
+			mapLocLng = -118.2500;
+	}
+
+	// Initial grid size
+	var initialArea = 20;
+
+	$("#maxZoneMap").hide();			// Hides the max zone map
+	$("#loading-img").hide();			// Hides the loading animation
+
+	buildMap(mapLocLat, mapLocLng, swLat, swLng, neLat, neLng, initialArea);
+	requestStats();						// Fetch current statatistics from database
+};
+
+/**
+ * Sends the new map location id to the server.
+ *
+ * @param newID: (int) the new id
+ */
+this.changeMapID = function(newID) {
+
+	// Preparing buffer for HTTP request 
+	var mapID = new MapID(newID);
+	var buffer = mapID.encode();
+	var message = buffer.toArrayBuffer();
+
+	$.ajax({
+		url:  'http://localhost:3000/zones/mapid',
+		type: 'POST',
+		data: message,
+		contentType: 'application/octet-stream',
+		processData: false,
+		success: function(res) {
+			
+		}
+	});
+}
+
+/**
+ * Remove CSS class from the specified map DIV.
+ *
+ * @param newID: (int) the new id
+ */
+this.removeMapIdClass = function(newID) {
+	// Puerto Rico
+	if (prevMapID == 0) {
+		$("#prMap").removeClass("active");
+	}
+	// Boston
+	else if (prevMapID == 1) {
+		$("#bostonMap").removeClass("active");
+	}
+	// Atlanta
+	else if (prevMapID == 2) {
+		$("#atlMap").removeClass("active");
+	}
+	// San Francisco
+	else if (prevMapID == 3) {
+		$("#sfMap").removeClass("active");
+	}
+	// Los Angeles
+	else if (prevMapID == 4) {
+		$("#laMap").removeClass("active");
+	}
+
+	prevMapID = newID;
+};
+
+/**
+ * Add CSS class to the specified map DIV. the "active" class 
+ * provides indication to which location is currently selected.
+ *
+ * @param newID: (int) the new id
+ */
+this.addMapIdClass = function(newID) {
+	// Puerto Rico
+	if (newID == 0) {
+		$("#prMap").addClass("active");
+	}
+	// Boston
+	else if (newID == 1) {
+		$("#bostonMap").addClass("active");
+	}
+	// Atlanta
+	else if (newID == 2) {
+		$("#atlMap").addClass("active");
+	}
+	// San Francisco
+	else if (newID == 3) {
+		$("#sfMap").addClass("active");
+	}
+	// Los Angeles
+	else if (newID == 4) {
+		$("#laMap").addClass("active");
+	}
+};
+
+/**
+ * Shows the previous max zone, if it exist.
+ *
+ */
+this.prevMaxZone = function() {
+	if (currentMaxZone == 1) {
+		currentMaxZone = 1;
+		if (maxZoneLength > 1) {
+			showNextButton()
+		}
+	}
+	else {
+		currentMaxZone = currentMaxZone - 1;
+
+		if (currentMaxZone == 1) {
+			hidePrevButton();
+		}
+
+		if (currentMaxZone < maxZoneLength) {
+			showNextButton();
+		}
+		drawMaxZone(currentMaxZone-1);
+	}
+}
+
+/**
+ * Shows the next max zone, if it exist.
+ *
+ */
+this.nextMaxZone = function() {
+	if (currentMaxZone == maxZoneLength) {
+		currentMaxZone = maxZoneLength;
+		if (maxZoneLength > 1) {
+			showPrevButton()
+		}
+	}
+	else {
+		currentMaxZone = currentMaxZone + 1;
+
+		if (currentMaxZone == maxZoneLength) {
+			hideNextButton();
+			if (maxZoneLength > 1) {
+				showPrevButton();
+			}
+		}
+
+		if (currentMaxZone > 1 && currentMaxZone < maxZoneLength) {
+			showPrevButton();
+		}
+		drawMaxZone(currentMaxZone-1);
+	}
+}
+
+/**
+ * Resets the current max zone variable.
+ *
+ */
+this.resetCurrentMaxZone = function() {
+	currentMaxZone = 1;
 }

@@ -38,9 +38,17 @@
 						<nav>
 							<ul >
 								<li><a class="link-logo " href="/"><img alt="KYA logo" src="images/kya-logo2.png"></a></li>
-								<li class="header-title header-first"><a href="#map-section">Map</a>
-								<li class="header-title "><a href="#stats-section">Statistics</a>
-								<li class="header-title" id="header-last"><a href="aboutus">About Us</a>
+								<li class="header-title header-first"><a href="#map-section">Map <span>&#9662;</span></a>
+									<ul>
+										<li id="prMap" onclick="showNewMap(0)">Puerto Rico</li>
+										<li id="bostonMap" onclick="showNewMap(1)">Boston</li>
+										<li id="atlMap" onclick="showNewMap(2)">Atlanta</li>
+										<li id="sfMap" onclick="showNewMap(3)">San Francisco</li>
+										<li id="laMap" onclick="showNewMap(4)">Los Angeles</li>
+									</ul>
+								</li>
+								<li class="header-title "><a href="#stats-section">Statistics</a></li>
+								<li class="header-title" id="header-last"><a href="aboutus">About Us</a></li>
 								<li class="header-title "><a href="https://projectkya.wordpress.com">Blog</a></li>
 							</ul>
 						</nav>
@@ -79,44 +87,44 @@
 							<h3 class="center">Danger Color Legend</h3>
 							<div id="legend-top" class="clearfix">
 								<div class="clearfix legend-box">
-									<div title="Level 1" class="legend-hover legend-circle tooltip legend-box-level1">1</div>
+									<div title="Level 1" class="legend-hover legend-circle legend-box-level1" id="level1">1</div>
 								</div>
 								<div class="clearfix legend-box">
-									<div title="Level 2" class="legend-hover legend-circle legend-box-level2">2</div>
+									<div title="Level 2" class="legend-hover legend-circle legend-box-level2" id="level2" onclick="showZonesByLevel(2)">2</div>
 								</div>
 								
 								<div class="clearfix legend-box">
-									<div title="Level 3" class="legend-hover legend-circle legend-box-level3">3</div>
+									<div title="Level 3" class="legend-hover legend-circle legend-box-level3" id="level3" onclick="showZonesByLevel(3)">3</div>
 								</div>	
 								
 								<div class="clearfix legend-box">
-									<div title="Level 4" class="legend-hover legend-circle legend-box-level4">4</div>
+									<div title="Level 4" class="legend-hover legend-circle legend-box-level4" id="level4" onclick="showZonesByLevel(4)">4</div>
 								</div>
 								
 								<div class="clearfix legend-box">
-									<div title="Level 5" class="legend-hover legend-circle legend-box-level5">5</div>
+									<div title="Level 5" class="legend-hover legend-circle legend-box-level5" id="level5" onclick="showZonesByLevel(5)">5</div>
 								</div>	
 							</div>
 			
 							<div id="legend-bottom" class="clearfix">
 								<div class="clearfix legend-box">
-									<div title="Level 6" class="legend-hover legend-circle legend-box-level6">6</div>
+									<div title="Level 6" class="legend-hover legend-circle legend-box-level6" id="level6" onclick="showZonesByLevel(6)">6</div>
 								</div>
 									
 								<div class="clearfix legend-box">
-									<div title="Level 7" class="legend-hover legend-circle legend-box-level7">7</div>
+									<div title="Level 7" class="legend-hover legend-circle legend-box-level7" id="level7" onclick="showZonesByLevel(7)">7</div>
 								</div>
 								
 								<div class="clearfix legend-box">
-									<div title="Level 8" class="legend-hover legend-circle legend-box-level8">8</div>
+									<div title="Level 8" class="legend-hover legend-circle legend-box-level8" id="level8" onclick="showZonesByLevel(8)">8</div>
 								</div>	
 								
 								<div class="clearfix legend-box">
-									<div title="Level 9" class="legend-hover legend-circle legend-box-level9">9</div>
+									<div title="Level 9" class="legend-hover legend-circle legend-box-level9" id="level9" onclick="showZonesByLevel(9)">9</div>
 								</div>	
 								
 								<div class="clearfix legend-box">
-									<div title="Level 10" class="legend-hover legend-circle legend-box-level10">10</div>
+									<div title="Level 10" class="legend-hover legend-circle legend-box-level10" id="level10" onclick="showZonesByLevel(10)">10</div>
 								</div>	
 							</div>
 						</div>				
@@ -134,12 +142,14 @@
 										<p>Maximum Incidents:</p>
 										<p>Minimum Incidents:</p>
 										<p>Incident average:</p>
+										<p>Threshold bounds:</p>
 								</section>
 								
 								<section class="kya-stats-res" id="kya-stats-right">
 										<p><span id="max-crimes">0</span> incidents</p>
 										<p><span id="min-crimes">0</span> incidents</p>
 										<p><span id="crime-rate">0</span> incidents per zone</p>
+										<p><span id="threshold-bounds">0</span> bounds</p>
 								</section>
 							</div>
 						</div><!-- end kya-stats section -->
