@@ -11,8 +11,6 @@ module.exports = function Server() {
   
   var app = express();
   var __dirname = '/Users/omar91/Development/CAPSTONE/Dashboard';
-  // Store all HTML files in view folder.
-  // app.use(express.static('/Users/omar91/Development/CAPSTONE/Dashboard/public'));
 
   // set static directories
   app.use(express.static(path.join(__dirname, 'public')));
@@ -41,6 +39,6 @@ module.exports = function Server() {
   		var port = process.env.PORT || mPort;
   		app.listen(port);
   		logger.info("app listening on port " + port + ".");
-		console.log("Express server listening on port %d in %s mode", port, app.settings.env);
+		  console.log("Express server listening on port %d in %s mode", port, app.settings.env);
   }
 };

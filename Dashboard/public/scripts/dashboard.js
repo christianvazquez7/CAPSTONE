@@ -21,8 +21,7 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 	KYA = builder.build("com.nvbyte.kya"),
 	GridBounds = KYA.GridBounds,
 	GeoPoint = KYA.GeoPoint,
-	Threshold = KYA.Threshold,
-	MapID = KYA.MapID;
+	Threshold = KYA.Threshold;
 
 var currentMaxZone,		// Curent max zone id shown
 	maxZoneLength,		// Number of max zones
@@ -107,18 +106,14 @@ this.setThreshold = function() {
  * @param newLat: (double) the new latitude coordinate
  * @param newLgt: (double) the new longitude coordinate
  */
-this.onMapDrag = function() {
+this.onMapDrag = function(minBounds) {
 	if (currentArea > thresholdArea && currentArea < initArea) {
 		clearGrids();
-		// requestNewGrid(gridArea);
 		drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
     }
     else if (currentArea == thresholdArea) {
-    	map.setZoom(map.getZoom() - 2);
-    	newBounds = map.getBounds();
-    	map.setZoom(map.getZoom() + 2);
     	clearZones();
-    	requestZones(newBounds);
+    	requestZones(minBounds);
     }
 };
 
@@ -134,17 +129,10 @@ this.onGridClicked = function(swCoord, neCoord, areaOfGrid) {
 	isReady(swCoord, neCoord, areaOfGrid);
 };
 
-this.onZoomOut = function() {
+this.onZoomOut = function(minBounds) {
 	if (currentArea > thresholdArea && currentArea < initArea) {
 		clearGrids();
 		drawGrid(getCurrentSwPoint(), getCurrentNePoint(), currentArea, onGridClicked);
-    }
-    else if (currentArea == thresholdArea) {
-    	map.setZoom(map.getZoom() - 2);
-    	newBounds = map.getBounds();
-    	map.setZoom(map.getZoom() + 2);
-    	clearZones();
-    	requestZones(newBounds);
     }
 }
 
@@ -153,8 +141,9 @@ this.onZoomOut = function() {
  *
  */
 this.requestStats = function() {
+	var currentMapID = getActiveMapID();
 	$.ajax({
-		url:  'http://localhost:3000/stats',
+		url:  'http://localhost:3000/stats/?mapID=' + currentMapID,
 		type: 'GET',
 		success: function(res) {
 			onStatsFetched(res);
@@ -165,12 +154,39 @@ this.requestStats = function() {
 	});
 }
 
+this.getActiveMapID = function() {
+	var currentMapID = $('.active').attr('id');
+	var currentID = 0;
+
+	if (currentMapID === 'prMap') {
+		currentID = 0;
+	}
+	else if (currentMapID === 'bostonMap') {
+		currentID = 1;
+	}
+	else if (currentMapID === 'atlMap') {
+		currentID = 2;
+	}
+	else if (currentMapID === 'sfMap') {
+		currentID = 3;
+	}
+	else if (currentMapID === 'laMap') {
+		currentID = 4;
+	}
+	else if (currentMapID === 'chicagoMap') {
+		currentID = 5;
+	}
+	return currentID;
+}
+
 /**
  * Connects to the server and retrieves the zones.
  *
  * @param bounds: (Stats) the map's bounds
  */
 this.requestZones = function(bounds) {
+	var currentMapID = getActiveMapID();
+
 	$("#loading-img").show();		// Show loading image
 	$("#googleMap").hide();			// Hide map
 
@@ -184,7 +200,7 @@ this.requestZones = function(bounds) {
 	points.push(new GeoPoint('', sw.lat(), ne.lng())); // se point
 
 	// Preparing buffer for HTTP request 
-	var gridBounds = new GridBounds(points);
+	var gridBounds = new GridBounds(currentMapID, points);
 	var buffer = gridBounds.encode();
 	var message = buffer.toArrayBuffer();
 
@@ -209,13 +225,15 @@ this.requestZones = function(bounds) {
  *
  */
 this.requestMaxZone = function() {
+	var currentMapID = getActiveMapID();
+
 	$('#maxZoneMap').hide();
 	$("#loading-img").show();
 	$("#googleMap").hide();
 	reloadMaxMap();
 
 	$.ajax({
-        url: 'http://localhost:3000/stats/maxZone',
+        url: 'http://localhost:3000/stats/maxZone/?mapID=' + currentMapID,
         type: 'GET',
         dataType: 'json',
         success: function(res) {
@@ -223,8 +241,6 @@ this.requestMaxZone = function() {
         	$('#maxZoneMap').show();
         	reloadMaxMap();
         	onMaxZoneFetched(res);
-        	
-
         }
     });
 }
@@ -234,13 +250,15 @@ this.requestMaxZone = function() {
  *
  */
 this.requestZonesByLevel = function(level) {
+	var currentMapID = getActiveMapID();
+
 	$('#maxZoneMap').hide();
 	$("#loading-img").show();
 	$("#googleMap").hide();
 	reloadMaxMap();
 
 	$.ajax({
-        url: 'http://localhost:3000/zones/level/?level=' + level,
+        url: 'http://localhost:3000/zones/level/?mapID=' + currentMapID + '&level=' + level,
         type: 'GET',
         dataType: 'json',
         success: function(res) {
@@ -272,6 +290,7 @@ this.onZonesFetched = function(geozones) {
 	// Parse GeoJson from response
 	newJson = JSON.parse(JSON.stringify(geozones));
 	drawZones(newJson);
+	// alert(newJson.features.length);
 };
 
 this.onMaxZoneFetched = function(maxZoneJson) {
@@ -365,21 +384,11 @@ this.onMaxBackButtonClicked = function() {
 }
 
 /**
- * Change the current map.
- *
- * @param newID: (int) the new id
- */
-this.showNewMap = function(newID) {
-	changeMapID(newID);
-	changeMainMap(newID);
-}
-
-/**
  * Clears the current map and shows a new map with the new location.
  *
  * @param newID: (int) the new id
  */
-this.changeMainMap = function(newID) {
+this.showNewMap = function(newID) {
 	$("#googleMap").show();
 	clearGrids();
 	clearZones();
@@ -448,6 +457,18 @@ this.changeMainMap = function(newID) {
 		var mapLocLat = 34.0500,
 			mapLocLng = -118.2500;
 	}
+	// Chicago
+	else if (newID == 5) {
+		// Initial position of the grid
+		var swLat = 41.588743,
+			swLng = -87.967529,
+			neLat = 42.051332,
+			neLng = -87.377014;
+
+		// Map's location
+		var mapLocLat = 41.8369,
+			mapLocLng = -87.6847;
+	}
 
 	// Initial grid size
 	var initialArea = 20;
@@ -458,30 +479,6 @@ this.changeMainMap = function(newID) {
 	buildMap(mapLocLat, mapLocLng, swLat, swLng, neLat, neLng, initialArea);
 	requestStats();						// Fetch current statatistics from database
 };
-
-/**
- * Sends the new map location id to the server.
- *
- * @param newID: (int) the new id
- */
-this.changeMapID = function(newID) {
-
-	// Preparing buffer for HTTP request 
-	var mapID = new MapID(newID);
-	var buffer = mapID.encode();
-	var message = buffer.toArrayBuffer();
-
-	$.ajax({
-		url:  'http://localhost:3000/zones/mapid',
-		type: 'POST',
-		data: message,
-		contentType: 'application/octet-stream',
-		processData: false,
-		success: function(res) {
-			
-		}
-	});
-}
 
 /**
  * Remove CSS class from the specified map DIV.
@@ -508,6 +505,10 @@ this.removeMapIdClass = function(newID) {
 	// Los Angeles
 	else if (prevMapID == 4) {
 		$("#laMap").removeClass("active");
+	}
+	// Chicago
+	else if (prevMapID == 5) {
+		$("#chicagoMap").removeClass("active");
 	}
 
 	prevMapID = newID;
@@ -539,6 +540,10 @@ this.addMapIdClass = function(newID) {
 	// Los Angeles
 	else if (newID == 4) {
 		$("#laMap").addClass("active");
+	}
+	// Chicago
+	else if (newID == 5) {
+		$("#chicagoMap").addClass("active");
 	}
 };
 

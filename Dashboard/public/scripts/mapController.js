@@ -6,11 +6,12 @@
 var map,			// Main map
 	maxMap,			// Map where the max zones are shown
 	mapViewer,		// Map to view the current position of the main map
-	mapLoc,			// Map location latitude and longitude
+	mapLoc,			// Latitude and longitude for the map's location
 	mapMarker,		// Marker in  Map Viewer 
 	infoWindow,		// Window that shows the details about a zone
-	instrWindow,	// Window that appears when the map loads to show a brief message
-	initialZoom,	// The initial zoom for map
+	instrWindow,	// Window to show message in mao
+	initialZoom,	// Initial zoom for map
+	idealZoneZoom,	// Ideal zoom to view the zones
 	minimumZoom,	// To keep track of the minimum zoom permitted
 	maximumZoom;	// To keep track of the maximum zoom permitted
 
@@ -60,6 +61,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 	nePoint = nePoint_;
 	initialZoom = minimumZoom = 9;
 	maximumZoom = 19;
+	idealZoneZoom = 15;
 
 	// Initially only the main map is shown
 	isMaxZoneMapShown = false;
@@ -91,7 +93,7 @@ this.drawMap = function(locLat, locLng, swPoint_, nePoint_, area, onGridClickedC
 
 	// Instantiate the info window for the zones statistics
 	infoWindow = new google.maps.InfoWindow({});
-	showInstructions();
+	showMessage(map, 'Click on a grid to expand the area.', '5000');
 	addMapViewer();
   	onHover(map);						// Listen for hover events for main map
   	onHover(maxMap);					// Listen for hover events for max zone map
@@ -215,6 +217,19 @@ this.getCurrentSwPoint = function() {
 };
 
 /**
+ * Gets the minimum bounds that are ideal to view the zones.
+ *
+ * @return LatLgn: the minimum bounds to show a zone
+ */
+this.getZoneMinBounds = function(mapVar) {
+	var currentMapZoom = mapVar.getZoom();
+	mapVar.setZoom(idealZoneZoom);
+	var minBounds = mapVar.getBounds();
+	mapVar.setZoom(currentMapZoom);
+	return minBounds;
+}
+
+/**
  * Function to be called when the main map is zoomed.
  *
  * @param zoomInButton	: 	the zoom in button
@@ -235,11 +250,15 @@ this.zoomControl = function(zoomInButton, zoomOutButton, callback) {
 	// Listener for zoomOut
 	google.maps.event.addDomListener(zoomOutButton, 'click', function() {
 		var currentZoom = map.getZoom();
-		if (currentZoom <= minimumZoom)
+		if (currentZoom <= minimumZoom) {
 			map.setZoom(minimumZoom);
-		else
+			showMessage(map, 'You reached the minimum zoom.', '3000');
+		}
+		else {
 			map.setZoom(map.getZoom() - 1);
-		callback();
+			currentMinBounds = getZoneMinBounds(map);
+			callback(currentMinBounds);
+		}
 	});  
 };
 
@@ -248,7 +267,6 @@ this.zoomControl = function(zoomInButton, zoomOutButton, callback) {
  *
  * @param zoomInButton	: 	the zoom in button
  * @param zoomOutButton	: 	the zoom out button
- * @param callback 		: 	Callback function to be called when a zoom out event is detected
  */
 this.maxZoomControl = function(zoomInButton, zoomOutButton) {
 
@@ -284,6 +302,7 @@ this.boundsControl = function(currentMap, swPoint, nePoint) {
 		swPoint,
 		nePoint
 		);
+
 	var boundLimits = {
 		maxLat : allowedBounds.getNorthEast().lat(),
 		maxLng : allowedBounds.getNorthEast().lng(),
@@ -340,7 +359,9 @@ this.onHover = function(mapVar) {
 this.onDrag = function(callback) {
 	map.addListener('dragend', function() {
 		infoWindow.close();
-		callback();
+		instrWindow.close();
+		var currentMinBounds = getZoneMinBounds(map);
+		callback(currentMinBounds);
 		mapMarker.setPosition(map.getCenter());
 	});
 };
@@ -348,11 +369,11 @@ this.onDrag = function(callback) {
 /**
  * Function to be called when the user drags the max map.
  *
- * @param callback: Callback function to be called when a drag is detected.
  */
 this.onMaxDrag = function() {
 	maxMap.addListener('dragend', function() {
 		infoWindow.close();
+		instrWindow.close();
 		mapMarker.setPosition(maxMap.getCenter());
 	});
 };
@@ -370,7 +391,8 @@ this.onClick = function(callback) {
 		}
 		else {
 			map.setCenter(event.latLng);
-			callback();
+			var currentMinBounds = getZoneMinBounds(map);
+			callback(currentMinBounds);
 			mapMarker.setPosition(map.getCenter());
 		}
 	});
@@ -384,7 +406,7 @@ this.onClick = function(callback) {
  */
 this.drawZones = function(geozones) {
 	if (geozones.features.length == 0) {
-		showZonesError(map);
+		showMessage(map, 'There are not zones to show.', '10000');
 	}
 	else {
 		map.data.addGeoJson(geozones);
@@ -401,7 +423,7 @@ this.drawZones = function(geozones) {
  */
 this.drawInitMaxZone = function(maxZoneGeoJson) {
 	if (maxZoneGeoJson.features.length == 0) {
-		showZonesError(maxMap);
+		showMessage(map, 'There are not zones to show.', '10000');
 	}
 	else {
 		maxZones = maxZoneGeoJson;
@@ -461,8 +483,7 @@ this.drawZoneStats = function(event, mapVar) {
  * Callback function to be called when a click event 
  * in a zone is detected.
  *
- * @param mapVar: (map) current map reference
- */
+  */
 this.onZoneClicked = function() {
 	popupListenerHandle = map.data.addListener('click', function(event) {
 		drawZoneStats(event, map);
@@ -481,33 +502,14 @@ this.onMaxZoneClicked = function() {
 };
 
 /**
- * Shows an info window when the dashboard loads.
+ * Shows an info window with a message.
  *
+ * @param mapVar : (map) current map reference
+ * @param message: (string) message to show
+ * @param timeOut: (string) time out to close the message
  */
-this.showInstructions = function() {
-	var contentString = '<div id="instrWindow">'+
-	'Click on a grid to expand the area.' +
-	'</div>';
-
-	instrWindow = new google.maps.InfoWindow({
-		content: contentString,
-		maxWidth: 200
-	});
-
-	instrWindow.setPosition(map.getCenter());
-	instrWindow.open(map);
-	// After 5 seconds the info window closes itself
-	setTimeout(function(){instrWindow.close();}, '5000');
-};
-
-/**
- * Shows an info window when there are not zones to show.
- *
- */
-this.showZonesError = function(mapVar) {
-	var contentString = '<div id="instrWindow">'+
-	'There are not zones to show.' +
-	'</div>';
+this.showMessage = function(mapVar, message, timeOut) {
+	var contentString = '<div id="instrWindow">'+ message +'</div>';
 
 	instrWindow = new google.maps.InfoWindow({
 		content: contentString,
@@ -516,8 +518,8 @@ this.showZonesError = function(mapVar) {
 
 	instrWindow.setPosition(mapVar.getCenter());
 	instrWindow.open(mapVar);
-	// After 5 seconds the info window closes itself
-	setTimeout(function(){instrWindow.close();}, '10000');
+	// After timeOut seconds the info window closes itself
+	setTimeout(function(){instrWindow.close();}, timeOut);
 };
 
 /**

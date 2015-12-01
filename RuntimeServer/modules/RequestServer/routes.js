@@ -32,8 +32,6 @@ module.exports = function Route(app, handlers) {
 	app.post('/zones', bufferParser, handlers.getZones);
 	
 	app.post('/zones/current/', bufferParser, handlers.handleCurrentZone);
-
-	app.post('/zones/mapid', bufferParser, handlers.setMapID);
 	
 	app.post('/location/checkin/', bufferParser, handlers.handleCheckIn);
 	

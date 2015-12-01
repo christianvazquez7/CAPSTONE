@@ -24,7 +24,8 @@ module.exports = function RequestHandlers() {
 	 */
 	this.getStats = function(req, res) {
 		logger.debug("GET --> Get stats handle");
-		mDashboardHandler.requestStats(function(err, result) {
+		currentMapID = parseInt(req.query.mapID);
+		mDashboardHandler.requestStats(currentMapID, function(err, result) {
 			if (err) {
 				res.statusCode = 404;
 				res.send('No stats found');
@@ -45,7 +46,8 @@ module.exports = function RequestHandlers() {
 	 */
 	this.getMaxZone = function(req, res) {
 		logger.debug("GET --> Get Max Zone handle");
-		mDashboardHandler.requestMaxZone(function(err, result) {
+		currentMapID = parseInt(req.query.mapID);
+		mDashboardHandler.requestMaxZone(currentMapID, function(err, result) {
 			if (err) {
 				res.statusCode = 404;
 				res.send('No max zone found');
@@ -98,8 +100,9 @@ module.exports = function RequestHandlers() {
 	 */
 	this.getZonesByLevel = function(req, res) {
 		logger.debug("GET --> Zones by level handle");
+		currentMapID = parseInt(req.query.mapID);
 		level = parseInt(req.query.level);
-		mDashboardHandler.requestZonesByLevel(level, function(err, result){
+		mDashboardHandler.requestZonesByLevel(currentMapID, level, function(err, result){
 			if (err) {
 				res.statusCode = 400;
 				res.send(err);
@@ -233,28 +236,6 @@ module.exports = function RequestHandlers() {
 		logger.debug("POST --> Threshold handle");
 		threshold = req.body;
 		mDashboardHandler.setThreshold(threshold, function(err, result){
-			if (err) {
-				res.statusCode = 400;
-				res.send(err);
-			}
-			else {
-				res.send(result);
-				// logger.info('Threshold result --> ', result);
-			}
-		});
-	}
-
-	/**
-	 * Sends the new map location id value to the dashboard handler.
-	 *
-	 * @param req: Object containing the following parameter:
-	 *   1) mapID	: the new map location ID
-	 * @param response: if it was succesusfull or not in sending the data
-	 */
-	this.setMapID = function(req, res) {
-		logger.debug("POST --> MapID handle");
-		mapID = req.body;
-		mDashboardHandler.setMapID(mapID, function(err, result){
 			if (err) {
 				res.statusCode = 400;
 				res.send(err);

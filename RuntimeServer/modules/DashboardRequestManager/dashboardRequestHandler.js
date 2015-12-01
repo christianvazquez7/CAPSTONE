@@ -21,8 +21,7 @@ module.exports = function DashboardRequestHandler() {
 	var KYA = protoBuilder.build("com.nvbyte.kya"),
 		GridBounds = KYA.GridBounds,
 		Stats = KYA.Stats,
-		Threshold = KYA.Threshold,
-		MapID = KYA.MapID;
+		Threshold = KYA.Threshold;
 	var zonesManager = new ZonesManager();
 	var gridController;
 
@@ -36,11 +35,14 @@ module.exports = function DashboardRequestHandler() {
 	 *
 	 * @param callback: Callback function to be called when the crime statistics have been fecthed from the database.
 	 */
-	this.requestStats = function(callback) {
+	this.requestStats = function(currentMapID, callback) {
 		var maxCrime;
 		var minCrime;
 		var crimeAverage;
-	
+
+		// Set current database URL
+		setURL(currentMapID);
+		
 		// Use connect method to connect to the Server
 		MongoClient.connect(url, function (err, db) {
 			// Documents collection
@@ -109,7 +111,10 @@ module.exports = function DashboardRequestHandler() {
 	 *
 	 * @param callback: Callback function to be called when the zone(s) have been fecthed from the database.
 	 */
-	this.requestMaxZone = function(callback) {
+	this.requestMaxZone = function(currentMapID, callback) {
+		// Set current database URL
+		setURL(currentMapID);
+
 		// Use connect method to connect to the Server
 		MongoClient.connect(url, function (err, db) {
 			// Documents collection
@@ -147,7 +152,10 @@ module.exports = function DashboardRequestHandler() {
 	 *
 	 * @param callback: Callback function to be called when the zone(s) have been fecthed from the database.
 	 */
-	this.requestZonesByLevel = function(level, callback) {
+	this.requestZonesByLevel = function(currentMapID, level, callback) {
+		// Set current database URL
+		setURL(currentMapID);
+
 		// Use connect method to connect to the Server
 		MongoClient.connect(url, function (err, db) {
 			// Documents collection
@@ -181,6 +189,9 @@ module.exports = function DashboardRequestHandler() {
 	this.requestZones = function(gridBoundsBuffer, callback) {
 		try {
 			var gridBounds = GridBounds.decode(gridBoundsBuffer);
+			var currentMapID = gridBounds.mapID;
+			// Set current database URL
+			setURL(currentMapID);
 
 			var swPoint = [gridBounds.boundaries[0].longitude, gridBounds.boundaries[0].latitude];
 			var nwPoint = [gridBounds.boundaries[1].longitude, gridBounds.boundaries[1].latitude];
@@ -304,40 +315,35 @@ module.exports = function DashboardRequestHandler() {
 	};
 
 	/**
-	 * Sets the threshold value that indicates when to fetch the zones.
+	 * Sets the database URL according to the selected mapID in the client.
 	 *
-	 * @param threshold: the threshold value
-	 * @param callback: Callback function to be called when the threshold have been set
+	 * @param mapID: the map's id
 	 */
-	this.setMapID = function(mapID, callback) {
+	function setURL(mapID) {
 		logger.debug('Setting mapID...');
-		
-		try {
-			var mapIDBuf = MapID.decode(mapID);
-			var mapIDValue = mapIDBuf.mapID;
-			logger.debug('    mapID ->', mapIDValue)
-			if (mapIDValue == 0) {
+		logger.debug('    mapID --> ', mapID);
+			if (mapID == 0) {
 				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';			// Puerto Rico's geozones db
 			}
-			else if (mapIDValue == 1) {
+			else if (mapID == 1) {
 				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneBoston';		// Boston's geozones db
 			}
-			else if (mapIDValue == 2) {
+			else if (mapID == 2) {
 				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneAtlanta';	// Atlanta's geozones db
 			}
-			else if (mapIDValue == 3) {
+			else if (mapID == 3) {
 				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneSF';			// San Francisco's geozones db
 			}
-			else if (mapIDValue == 4) {
+			else if (mapID == 4) {
 				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneLA';			// Los Angeles's geozones db
 			}
-
-			callback(null, 'SUCCESS');
-		}
-		catch(err) {
-			logger.debug('ERROR:  Error when trying to set mapID.');
-			callback(err);
-		}
+			else if (mapID == 5) {
+				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozoneChicago';	// Chicago's geozones db
+			}
+			else {
+				// Default case
+				url = 'mongodb://ec2-52-24-21-205.us-west-2.compute.amazonaws.com:27017/GeozonePR';			// Puerto Rico's geozones db		
+			}
 	};
 
 	/**

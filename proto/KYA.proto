@@ -132,9 +132,10 @@ message Grid {
 
 // Contains the bounds of a grid
 message GridBounds {
-    
+    required int32 mapID = 1;
     // LatLng of the north-west corner
-    repeated GeoPoint boundaries = 1;
+    repeated GeoPoint boundaries = 2;
+
 }
 
 // Stats
@@ -148,9 +149,4 @@ message Stats {
 // Threshold
 message Threshold {
     required double threshold = 1;
-}
-
-// 
-message MapID {
-    required int32 mapID = 1;
 }
