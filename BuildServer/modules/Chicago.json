@@ -1,0 +1,20 @@
+{
+	"Location": "Chicago",																												/* LOCATION WHERE THE DATA WILL BE COLLECTED */
+	"SodaSource": "https://data.cityofchicago.org/", 																							/* SODA DATA SOURCE */
+	"Token": "mxH22n8js0toWFnxPSEUDzVKi", 																							/* TOKEN USED TO CONNECT TO SODA DATA SOURCE */
+	"Resource": "x2n5-8w5q", 																										/* RESOURCE USED TO CONNECT TO SODA DATA SOURCE */
+	"From": "2001-01-01",  																											/* FROM WHICH DAY TO RETREIVE DATA */
+	"To": "2015-11-22", 																											/* TO WHICH DAT TO RETREIVE DATA */
+	"CrimesToIgnore": "CRIMINAL TRESPASS, 10, INTERFERENCE WITH PUBLIC OFFICER, 9, PROSTITUTION, 7, LIQUOR LAW VIOLATION, 5, ARSON, THEFT, 16, BURGLARY, 13, PUBLIC PEACE VIOLATION, 4, OTHER OFFENSE, 11, MOTOR VEHICLE THEFT, 14, CRIMINAL DAMAGE, 15, DECEPTIVE PRACTICE, 8", 									/* LIST TYPE OF CRIMES TO IGNORE */
+	"NWCoordinate": "42.047763, -87.960663",																						/* NORTH-WEST COORDINATE FOR THE GRID */
+	"SECoordinate": "41.550728, -87.331696",																						/* SOUTH-EAST COORDINATE FOR THE GRID */
+	"Area": "40",																													/* AREA OF THE GRID IN KILOMETERS SQUARE */
+	"Marshall": { 																													/* MARSHALL TO SET ATTRIBUTES OF SODA ENTITY*/
+					"Date": "date_of_occurrence", 
+					"Time": "date_of_occurrence",
+					"Longitude": "longitude",
+					"Latitude": "latitude",
+					"Type": "_primary_decsription",
+					"Id": "case_"
+				}
+}
